@@ -44,6 +44,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=1.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.1.2.1\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
       <Private>True</Private>
@@ -86,6 +94,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -151,12 +160,6 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="EntityFramework">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
@@ -209,13 +212,18 @@
     <Compile Include="Controllers\CurrenciesController.cs" />
     <Compile Include="Controllers\DestinationsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\InvoicesController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PackageTypesController.cs" />
     <Compile Include="Controllers\PakageTypeSizesController.cs" />
     <Compile Include="Controllers\PersonalShippingAccountsController.cs" />
+    <Compile Include="Controllers\PickupsController.cs" />
+    <Compile Include="Controllers\RecipientsController.cs" />
+    <Compile Include="Controllers\SavedAddressesController.cs" />
     <Compile Include="Controllers\ServicePackageFeesController.cs" />
     <Compile Include="Controllers\ServiceTypesController.cs" />
     <Compile Include="Controllers\ShipmentsController.cs" />
+    <Compile Include="Controllers\TrackingsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -226,24 +234,33 @@
     <Compile Include="Models\Currency.cs" />
     <Compile Include="Models\Destination.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\Invoice.cs" />
     <Compile Include="Models\keyAttribute.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Package.cs" />
     <Compile Include="Models\PackageType.cs" />
     <Compile Include="Models\PakageTypeSize.cs" />
     <Compile Include="Models\PersonalShippingAccount.cs" />
+    <Compile Include="Models\Pickup.cs" />
+    <Compile Include="Models\Recipient.cs" />
+    <Compile Include="Models\SavedAddress.cs" />
     <Compile Include="Models\ServicePackageFee.cs" />
     <Compile Include="Models\ServiceType.cs" />
     <Compile Include="Models\Shipment.cs" />
     <Compile Include="Models\ShippingAccount.cs" />
     <Compile Include="Models\SinExWebApp20256461Context.cs" />
+    <Compile Include="Models\Tracking.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\CostCalculationViewModel.cs" />
     <Compile Include="ViewModels\CostViewModel.cs" />
+    <Compile Include="ViewModels\CreateShipmentViewModel.cs" />
     <Compile Include="ViewModels\RegisterCustomerViewModel.cs" />
     <Compile Include="ViewModels\ServicePackageFeeViewModel.cs" />
     <Compile Include="ViewModels\ShipmentsSearchViewModel.cs" />
     <Compile Include="ViewModels\ShipmentsListViewModel.cs" />
     <Compile Include="ViewModels\ShipmentsReportViewModel.cs" />
+    <Compile Include="ViewModels\TrackingViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
@@ -361,10 +378,18 @@
     <Content Include="Views\Shipments\getCost.cshtml" />
     <Content Include="Views\Shipments\_getCostsSearchPartial.cshtml" />
     <Content Include="Views\Shipments\_getCostsDisplayPartial.cshtml" />
+    <Content Include="Views\ServicePackageFees\Costcalculation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Base\" />
+    <Folder Include="Views\CreateShipment\" />
+    <Folder Include="Views\Invoices\" />
+    <Folder Include="Views\Packages\" />
+    <Folder Include="Views\Pickups\" />
+    <Folder Include="Views\Recipients\" />
+    <Folder Include="Views\SavedAddresses\" />
+    <Folder Include="Views\Trackings\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

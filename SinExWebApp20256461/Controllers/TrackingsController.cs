@@ -17,6 +17,7 @@ namespace SinExWebApp20256461.Controllers
         // GET: Trackings
         public ActionResult Index()
         {
+            var a = 0;
             var trackings = db.Trackings;
             return View(trackings.ToList());
         }

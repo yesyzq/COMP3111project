@@ -1,0 +1,34 @@
+﻿@model SinExWebApp20256461.ViewModels.RegisterCustomerViewModel
+@{
+    ViewBag.Title = "Create a " + ViewBag.AccountType + " Shipping Account";
+}
+
+<h2>@ViewBag.Title.</h2>
+
+@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <hr />
+    if (ViewBag.AccountType == "Personal")
+    {
+        <h4>Personal Information</h4>
+        @Html.Partial("~/Views/PersonalShippingAccounts/_PersonalInformationPartial.cshtml", Model)
+    }
+    else
+    {
+        <h4>Business Information</h4>
+        @Html.Partial("~/Views/BusinessShippingAccounts/_BusinessInformationPartial.cshtml", Model)
+    }
+    <hr />
+    @Html.Partial("~/Views/Shared/_RegisterLoginPartial.cshtml", Model)
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" value="Register" />
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

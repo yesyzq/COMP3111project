@@ -9,25 +9,29 @@
                 @Html.DisplayNameFor(model => model.WaybillId)
             </th>
             <th>
-                @Html.ActionLink("ServiceType", "GenerateHistoryReport", new{ sortOrder = ViewBag.ServiceTypeSortParm,
-               ShippingAccountId = ViewBag.CurrentShippingAccountId })
+                @Html.ActionLink("ServiceType", "GenerateHistoryReport", new{
+               sortOrder = ViewBag.ServiceTypeSortParm,
+               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
+           })
             </th>
             <th>
-                @Html.ActionLink("ShippedDate", "GenerateHistoryReport", new{ sortOrder = ViewBag.ShippedDateSortParm,
-               ShippingAccountId = ViewBag.CurrentShippingAccountId })
+                @Html.ActionLink("ShippedDate", "GenerateHistoryReport", new{
+               sortOrder = ViewBag.ShippedDateSortParm,
+               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
+           })
             </th>
             <th>
                 @Html.ActionLink("DeliveredDate", "GenerateHistoryReport", new
            {
                sortOrder = ViewBag.DeliveredDateSortParm,
-               ShippingAccountId = ViewBag.CurrentShippingAccountId
+               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
            })
             </th>
             <th>
                 @Html.ActionLink("RecipientName", "GenerateHistoryReport", new
            {
                sortOrder = ViewBag.RecipientNameSortParm,
-               ShippingAccountId = ViewBag.CurrentShippingAccountId
+               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
            })
             </th>
             <th>
@@ -37,22 +41,18 @@
                 @Html.ActionLink("Origin", "GenerateHistoryReport", new
            {
                sortOrder = ViewBag.OriginSortParm,
-               ShippingAccountId = ViewBag.CurrentShippingAccountId
+               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
            })
             </th>
             <th>
                 @Html.ActionLink("Destination", "GenerateHistoryReport", new
            {
                sortOrder = ViewBag.DestinationSortParm,
-               ShippingAccountId = ViewBag.CurrentShippingAccountId
+               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
            })
             </th>
             <th>
-                @Html.ActionLink("ShippingAccountId", "GenerateHistoryReport", new
-           {
-               sortOrder = ViewBag.ShippingAccountIdSortParm,
-               ShippingAccountId = ViewBag.CurrentShippingAccountId
-           })
+                @Html.DisplayNameFor(model => model.ShippingAccountNumber)
             </th>
         </tr>
         @foreach(var item in Model)
@@ -83,7 +83,7 @@
                     @Html.DisplayFor(modelItem => item.Destination)
                 </th>
                 <th>
-                    @Html.DisplayFor(modelItem => item.ShippingAccountId)
+                    @Html.DisplayFor(modelItem => item.ShippingAccountNumber)
                 </th>
             </tr>
         }

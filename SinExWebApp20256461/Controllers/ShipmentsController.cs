@@ -476,6 +476,11 @@ namespace SinExWebApp20256461.Controllers
             return View(invoiceSearch);
         }
 
+        public ActionResult DisplayInvoice(int WaybillId)
+        {
+            return View();
+        }
+
         public ActionResult getCost(string Origin, string Destination, string ServiceType, string PackageType, string Size, int? weights)
         {
             var cost = new CostViewModel();

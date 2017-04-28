@@ -62,7 +62,11 @@
         {
             <tr>
                 <th>
-                    @Html.DisplayFor(modelItem => item.WaybillId)
+                    @Html.ActionLink(item.WaybillId.ToString().PadLeft(16), "GenerateInvoiceReport", new
+               {
+                   sortOrder = ViewBag.ShippingAccountIdSortParm,
+                   ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
+               })
                 </th>
                 <th>
                     @Html.DisplayFor(modelItem => item.ServiceType)

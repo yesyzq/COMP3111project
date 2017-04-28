@@ -464,14 +464,12 @@ namespace SinExWebApp20256461.Controllers
 
                 var shipment = shipmentView.Shipment;
                 var shipmentDB = db.Shipments.Find(id);
-                
-                if (submit == "add")
+              
+                if (submit == "add" && shipmentView.Packages.Count < 10)
                 {
-                    shipment.NumberOfPackages += 1;
-                    var newPackage = new Package();
-                    newPackage.WaybillId = shipment.WaybillId;
-                    newPackage.Shipment = shipment;
-                    return View(shipment);
+                    var new_package = new Package();
+                    shipmentView.Packages.Add(new_package);
+                    return View(shipmentView);
                 }
 
                 if (IfSendEmail == "Yes")

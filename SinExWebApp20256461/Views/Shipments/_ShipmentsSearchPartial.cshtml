@@ -2,10 +2,22 @@
 
 @using (Html.BeginForm("GenerateHistoryReport", "Shipments", FormMethod.Get))
 {
-    @Html.LabelFor(a => a.ShippingAccountNumber, "Shipping Account")
-    @Html.DropDownListFor(a => a.ShippingAccountNumber, Model.ShippingAccounts, "please Select")
-    @Html.TextBoxFor(a => a.ShippedStartDate, htmlAttributes: new { @value = ViewBag.CurrentShippingStartDate})
-    @Html.TextBoxFor(a => a.ShippedEndDate, htmlAttributes: new { @value = ViewBag.CurrentShippingEndDate })
-    <input type="submit" value="Search" />
+    <div class="row">
+        <div class="col-md-2">
+            @Html.LabelFor(a => a.ShippingAccountNumber, "Shipping Account")
+        </div>
+        <div class="col-md-3">
+            @Html.DropDownListFor(a => a.ShippingAccountNumber, Model.ShippingAccounts, "please Select", new { @class = "form-control" })
+        </div>
+        <div class="col-md-3">
+            @Html.TextBoxFor(a => a.ShippedStartDate, htmlAttributes: new { @value = ViewBag.CurrentShippingStartDate, @type = "date", @class = "form-control" })
+        </div>
+        <div class="col-md-3">
+            @Html.TextBoxFor(a => a.ShippedEndDate, htmlAttributes: new { @value = ViewBag.CurrentShippingEndDate, @type = "date", @class = "form-control" })
+        </div>
+        <div class="col-md-1">
+            <input type="submit" value="Search" class="form-control"/>
+        </div>
+    </div>
 }
 

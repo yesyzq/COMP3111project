@@ -111,10 +111,10 @@ namespace SinExWebApp20256461.Controllers
             ViewBag.ShippingAccountIdSortParm = sortOrder == "ShippingAccountId" ? "ShippingAccountId_desc" : "ShippingAccountId";
             switch (sortOrder)
             {
-                case "serviceType":
+                case "ServiceType":
                     shipmentQuery = shipmentQuery.OrderBy(s => s.ServiceType);
                     break;
-                case "shippedDate":
+                case "ShippedDate":
                     shipmentQuery = shipmentQuery.OrderBy(s => s.ShippedDate);
                     break;
                 case "DeliveredDate":
@@ -132,10 +132,10 @@ namespace SinExWebApp20256461.Controllers
                 case "ShippingAccountId":
                     shipmentQuery = shipmentQuery.OrderBy(s => s.ShippingAccountNumber);
                     break;
-                case "serviceType_desc":
+                case "ServiceType_desc":
                     shipmentQuery = shipmentQuery.OrderByDescending(s => s.ServiceType);
                     break;
-                case "shippedDate_desc":
+                case "ShippedDate_desc":
                     shipmentQuery = shipmentQuery.OrderByDescending(s => s.ShippedDate);
                     break;
                 case "DeliveredDate_desc":

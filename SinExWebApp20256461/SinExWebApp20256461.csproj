@@ -380,6 +380,13 @@
     <Content Include="Views\Shipments\_getCostsSearchPartial.cshtml" />
     <Content Include="Views\Shipments\_getCostsDisplayPartial.cshtml" />
     <Content Include="Views\ServicePackageFees\Costcalculation.cshtml" />
+    <Content Include="Views\Trackings\Create.cshtml" />
+    <Content Include="Views\Trackings\Delete.cshtml" />
+    <Content Include="Views\Trackings\Details.cshtml" />
+    <Content Include="Views\Trackings\Edit.cshtml" />
+    <Content Include="Views\Trackings\GetTracking.cshtml" />
+    <Content Include="Views\Trackings\Index.cshtml" />
+    <Content Include="Views\Trackings\_GetTrackingListPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -390,7 +397,6 @@
     <Folder Include="Views\Pickups\" />
     <Folder Include="Views\Recipients\" />
     <Folder Include="Views\SavedAddresses\" />
-    <Folder Include="Views\Trackings\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

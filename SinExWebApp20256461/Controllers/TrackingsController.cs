@@ -41,30 +41,30 @@ namespace SinExWebApp20256461.Controllers
         [Authorize(Roles = "Employee")]
         public ActionResult Create()
         {
-            ViewBag.currTime = DateTime.Now;
-            ViewBag.WaybillIds = new SelectList(db.Shipments.Select(a => a.WaybillId).Distinct());
+            ViewBag.currTime = DateTime.Now.ToString("yyyyMMddHHmmss");
+            ViewBag.WaybillNumbers = new SelectList(db.Shipments.Select(a => a.WaybillNumber).Distinct());
             return View();
         }
 
         // POST: Trackings/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Create([Bind(Include = "TrackingID,WaybillNumber,DateTime,Description,Location,Remarks")] Tracking tracking)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        string WaybillNumber = tracking.WaybillNumber;
-        //        tracking.WaybillId = db.Shipments.SingleOrDefault(a => a.WaybillNumber == WaybillNumber).WaybillId;
-        //        db.Trackings.Add(tracking);
-        //        db.SaveChanges();
-        //        return RedirectToAction("Create");
-        //    }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind(Include = "TrackingID,WaybillNumber,DateTime,Description,Location,Remarks")] Tracking tracking)
+        {
+            //if (ModelState.IsValid)
+            //{
+                string WaybillNumber = tracking.WaybillNumber;
+                tracking.WaybillId = db.Shipments.SingleOrDefault(a => a.WaybillNumber == WaybillNumber).WaybillId;
+                db.Trackings.Add(tracking);
+                db.SaveChanges();
+                return RedirectToAction("Create");
+            //}
 
-        //    ViewBag.WaybillId = new SelectList(db.Shipments, "WaybillId", "ReferenceNumber", tracking.WaybillId);
-        //    return View(tracking);
-        //}
+            // ViewBag.WaybillId = new SelectList(db.Shipments, "WaybillId", "ReferenceNumber", tracking.WaybillId);
+            return View(tracking);
+        }
 
         // GET: Trackings/Edit/5
         public ActionResult Edit(int? id)
@@ -113,18 +113,18 @@ namespace SinExWebApp20256461.Controllers
             }
             return View(tracking);
         }
-        //public ActionResult GetTracking(string WaybillNumber)
-        //{
-        //    TrackingViewModel TrackingView = new TrackingViewModel();
+        public ActionResult GetTracking(string WaybillNumber)
+        {
+            TrackingViewModel TrackingView = new TrackingViewModel();
 
-        //    if (WaybillNumber == null)
-        //    {
-        //        return View(TrackingView);
-        //    }
-        //    TrackingView.Trackings = db.Trackings.Where(a => a.Shipment.WaybillNumber == WaybillNumber).OrderBy(a => a.DateTime).ToList();
-        //    TrackingView.Shipment = db.Shipments.SingleOrDefault(a => a.WaybillNumber == WaybillNumber);
-        //    return View(TrackingView);
-        //}
+            if (WaybillNumber == null)
+            {
+                return View(TrackingView);
+            }
+            TrackingView.Trackings = db.Trackings.Where(a => a.Shipment.WaybillNumber == WaybillNumber).OrderBy(a => a.DateTime).ToList();
+            TrackingView.Shipment = db.Shipments.SingleOrDefault(a => a.WaybillNumber == WaybillNumber);
+            return View(TrackingView);
+        }
         // POST: Trackings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]

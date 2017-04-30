@@ -14,6 +14,9 @@ using Invoicer.Helpers;
 using Invoicer.Models;
 using Invoicer.Services.Impl;
 using Invoicer.Services;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
+using System.IO;
 
 namespace SinExWebApp20256461.Controllers
 {
@@ -235,6 +238,7 @@ namespace SinExWebApp20256461.Controllers
                 + senderShippingAccount.PostalCode;
 
             double dutyAndTaxAmount = dutyAndTaxInvoice.TotalAmountPayable;
+            string invoiceFolder = Server.MapPath("~/Invoices");
 
             bool seperateInvoice = (shipmentInvoice.ShippingAccountNumber != dutyAndTaxInvoice.ShippingAccountNumber);
 
@@ -271,7 +275,7 @@ namespace SinExWebApp20256461.Controllers
                     .Details(new List<DetailRow> {
                         DetailRow.Make("SHIPMENT INFORMATION", shipmentInfo)
                     })
-                    .Save(Server.MapPath("~/Invoices") + "/" + waybillNumber + "_shipment.pdf");
+                    .Save(Path.Combine(invoiceFolder, waybillNumber + "_shipment.pdf"));
 
                 // Send Email
 
@@ -320,11 +324,25 @@ namespace SinExWebApp20256461.Controllers
                     .Details(new List<DetailRow> {
                         DetailRow.Make("SHIPMENT INFORMATION", shipmentInfo)
                     })
-                    .Save(Server.MapPath("~/Invoices") + "/" + waybillNumber + "_duty_and_tax.pdf");
+                    .Save(Path.Combine(invoiceFolder, waybillNumber + "_duty_and_tax.pdf"));
 
                 // Send Email
 
+                
 
+                string filepath1 = invoiceFolder + waybillNumber + "_shipment.pdf";
+                string filepath2 = invoiceFolder + waybillNumber + "_duty_and_tax.pdf";
+                if (System.IO.File.Exists(filepath1) && System.IO.File.Exists(filepath2))
+                {
+                    using (PdfDocument one = PdfReader.Open("file1.pdf", PdfDocumentOpenMode.Import))
+                    using (PdfDocument two = PdfReader.Open("file2.pdf", PdfDocumentOpenMode.Import))
+                    using (PdfDocument outPdf = new PdfDocument())
+                    {
+                        CopyPages(one, outPdf);
+                        CopyPages(two, outPdf);
+                        outPdf.Save(Path.Combine(invoiceFolder, waybillNumber + "_total.pdf"));
+                    }
+                }
             }
             else
             {
@@ -360,7 +378,7 @@ namespace SinExWebApp20256461.Controllers
                     .Details(new List<DetailRow> {
                         DetailRow.Make("SHIPMENT INFORMATION", shipmentInfo)
                     })
-                    .Save(Server.MapPath("~/Invoices") + "/" + waybillNumber + "_total.pdf");
+                    .Save(Path.Combine(invoiceFolder, waybillNumber + "_total.pdf"));
 
                 // Send Email
 
@@ -389,14 +407,15 @@ namespace SinExWebApp20256461.Controllers
                                where s.ShippingAccountNumber.Equals(ShippingAccountNumber)
                                select new InvoicesListViewModel
                                {
-                                   WaybillId = s.WaybillId,
+                                   WaybillNumber = db.Shipments.FirstOrDefault(a => a.WaybillId == s.WaybillId).WaybillNumber,
                                    ServiceType = s.Shipment.ServiceType,
                                    ShippedDate = s.Shipment.ShippedDate,
                                    RecipientName = s.Shipment.RecipientName,
                                    TotalAmountPayable = s.TotalAmountPayable,
                                    Origin = s.Shipment.Origin,
                                    Destination = s.Shipment.Destination,
-                                   ShippingAccountNumber = s.ShippingAccountNumber
+                                   ShippingAccountNumber = s.ShippingAccountNumber,
+                                   Type = s.Type
                                };
             if (User.IsInRole("Customer"))
             {
@@ -406,14 +425,15 @@ namespace SinExWebApp20256461.Controllers
                                 where s.ShippingAccountNumber.Equals(shippingAccountNumber)
                                 select new InvoicesListViewModel
                                 {
-                                    WaybillId = s.WaybillId,
+                                    WaybillNumber = db.Shipments.FirstOrDefault(a => a.WaybillId == s.WaybillId).WaybillNumber,
                                     ServiceType = s.Shipment.ServiceType,
                                     ShippedDate = s.Shipment.ShippedDate,
                                     RecipientName = s.Shipment.RecipientName,
                                     TotalAmountPayable = s.TotalAmountPayable,
                                     Origin = s.Shipment.Origin,
                                     Destination = s.Shipment.Destination,
-                                    ShippingAccountNumber = s.ShippingAccountNumber
+                                    ShippingAccountNumber = s.ShippingAccountNumber,
+                                    Type = s.Type
                                 };
             }
 
@@ -468,7 +488,7 @@ namespace SinExWebApp20256461.Controllers
                     invoiceQuery = invoiceQuery.OrderByDescending(s => s.Destination);
                     break;
                 default:
-                    invoiceQuery = invoiceQuery.OrderBy(s => s.WaybillId);
+                    invoiceQuery = invoiceQuery.OrderBy(s => s.WaybillNumber);
                     break;
             }
 
@@ -476,9 +496,19 @@ namespace SinExWebApp20256461.Controllers
             return View(invoiceSearch);
         }
 
-        public ActionResult DisplayInvoice(int WaybillId)
+        public ActionResult DisplayInvoice(string WaybillNumber)
         {
-            return View();
+            var shipment = db.Shipments.SingleOrDefault(a => a.WaybillNumber.Equals(WaybillNumber));
+            string invoiceFolder = Server.MapPath("~/Invoices");
+            string invoicePath = Path.Combine(invoiceFolder, WaybillNumber + "_total.pdf");
+            if (System.IO.File.Exists(invoicePath))
+            {
+                return File(invoicePath, "application/pdf");
+            }
+            else
+            {
+                return View();
+            }
         }
 
         public ActionResult getCost(string Origin, string Destination, string ServiceType, string PackageType, string Size, int? weights)
@@ -597,6 +627,15 @@ namespace SinExWebApp20256461.Controllers
             }
             return View(cost);
         }
+
+        void CopyPages(PdfDocument from, PdfDocument to)
+        {
+            for (int i = 0; i < from.PageCount; i++)
+            {
+                to.AddPage(from.Pages[i]);
+            }
+        }
+
         private SelectList PopulateShippingAccountsDropdownList()
         {
             // TODO: Construct the LINQ query to retrieve the unique list of shipping account ids.

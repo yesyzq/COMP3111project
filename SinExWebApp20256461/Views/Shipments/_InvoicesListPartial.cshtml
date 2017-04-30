@@ -6,7 +6,7 @@
     <table class="table">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.WaybillId)
+                @Html.DisplayNameFor(model => model.WaybillNumber)
             </th>
             <th>
                 @Html.ActionLink("ServiceType", "GenerateInvoiceReport", new
@@ -57,39 +57,51 @@
                ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
            })
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Type)
+            </th>
         </tr>
-        @foreach(var item in Model)
+        @foreach (var item in Model)
         {
             <tr>
-                <th>
-                    @Html.ActionLink(item.WaybillId.ToString().PadLeft(16, '0'), "GenerateInvoiceReport", new
-               {
-                   sortOrder = ViewBag.ShippingAccountIdSortParm,
-                   ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
-               })
-                </th>
-                <th>
-                    @Html.DisplayFor(modelItem => item.ServiceType)
-                </th>
-                <th>
-                    @Html.DisplayFor(modelItem => item.ShippedDate)
-                </th>
-                <th>
-                    @Html.DisplayFor(modelItem => item.RecipientName)
-                </th>
-                <th>
-                    @Html.DisplayFor(modelItem => item.TotalAmountPayable)
-                </th>
-                <th>
-                    @Html.DisplayFor(modelItem => item.Origin)
-                </th>
-                <th>
-                    @Html.DisplayFor(modelItem => item.Destination)
-                </th>
-                <th>
-                    @Html.DisplayFor(modelItem => item.ShippingAccountNumber)
-                </th>
-            </tr>
+            <th>
+                @if (System.IO.File.Exists(Path.Combine(Server.MapPath("~/Invoices"), item.WaybillNumber + "_total.pdf")))
+            {
+                @Html.ActionLink(item.WaybillNumber, "DisplayInvoice", new
+           {
+               WaybillNumber = item.WaybillNumber
+           }, new { target = "_blank" })
+            }
+                else
+            {
+                @Html.DisplayFor(modelItem => item.WaybillNumber)
+            }
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.ServiceType)
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.ShippedDate)
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.RecipientName)
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.TotalAmountPayable)
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.Origin)
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.Destination)
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.ShippingAccountNumber)
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.Type)
+            </th>
+        </tr>
         }
     </table>
 }

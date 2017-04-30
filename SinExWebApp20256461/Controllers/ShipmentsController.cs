@@ -17,6 +17,7 @@ using Invoicer.Services;
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
 using System.IO;
+using System.Net.Mail;
 
 namespace SinExWebApp20256461.Controllers
 {
@@ -220,16 +221,19 @@ namespace SinExWebApp20256461.Controllers
             shipmentInfo[2] = "Service Type: " + shipment.ServiceType;
             shipmentInfo[3] = "Sender's Reference Number: " + shipment.ReferenceNumber;
             var senderShippingAccount = shipment.ShippingAccount;
+            string firstName = "";
             if (senderShippingAccount is BusinessShippingAccount)
             {
                 var senderBusinessShippingAccount = (BusinessShippingAccount)senderShippingAccount;
                 shipmentInfo[4] = "Sender Company: " + senderBusinessShippingAccount.CompanyName
                     + " (Contact Person: " + senderBusinessShippingAccount.ContactPersonName + ")";
+                firstName = senderBusinessShippingAccount.CompanyName;
             }
             else
             {
                 var senderPersonalShippingAccount = (PersonalShippingAccount)senderShippingAccount;
                 shipmentInfo[4] = "Sender's Full Name: " + senderPersonalShippingAccount.FirstName + " " + senderPersonalShippingAccount.LastName;
+                firstName = senderPersonalShippingAccount.FirstName;
             }
             shipmentInfo[5] = "Sender's Address: " + senderShippingAccount.BuildingInformation + ", "
                 + senderShippingAccount.StreetInformation + ", "
@@ -278,8 +282,33 @@ namespace SinExWebApp20256461.Controllers
                     .Save(Path.Combine(invoiceFolder, waybillNumber + "_shipment.pdf"));
 
                 // Send Email
+                try
+                {
+                    MailMessage mailMessage = new MailMessage();
+                    //Add recipients 
+                    mailMessage.To.Add(senderShippingAccount.EmailAddress);
 
+                    //Setting the displayed email address and display name
+                    //!!!Do not use this to prank others!!!
+                    mailMessage.From = new MailAddress("invoice@sinex.com", "SinEx Invoices");
 
+                    //Subject and content of the email
+                    mailMessage.Subject = "E-Invoice for Your Shipment (Waybill No. " + waybillNumber + ")";
+                    mailMessage.Body = "Dear " + firstName + ",\n \n Please find attached the invoice for your Sino Express shipment (Waybill Number: " + waybillNumber + "). Thanks for choosing SinEx! \n \n Best Regards, \n Sino Express Invoicing System";
+                    mailMessage.Priority = MailPriority.Normal;
+                    mailMessage.Attachments.Add(new Attachment(Path.Combine(invoiceFolder, waybillNumber + "_shipment.pdf")));
+
+                    //Instantiate a new SmtpClient instance
+                    SmtpClient smtpClient = new SmtpClient("smtp.cse.ust.hk");
+                    smtpClient.Credentials = new System.Net.NetworkCredential("comp3111_team108@cse.ust.hk", "team108#");
+                    smtpClient.UseDefaultCredentials = true;
+                    smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                    smtpClient.EnableSsl = true;
+                    //Send
+                    smtpClient.Send(mailMessage);
+                    //Response.Write("Email Sent!!! Yay!");
+                }
+                catch { }
 
                 // -------------------------------
                 // Duty and Tax Invoice
@@ -327,8 +356,34 @@ namespace SinExWebApp20256461.Controllers
                     .Save(Path.Combine(invoiceFolder, waybillNumber + "_duty_and_tax.pdf"));
 
                 // Send Email
+                try
+                {
+                    MailMessage mailMessage = new MailMessage();
+                    //Add recipients 
+                    mailMessage.To.Add(senderShippingAccount.EmailAddress);
 
-                
+                    //Setting the displayed email address and display name
+                    //!!!Do not use this to prank others!!!
+                    mailMessage.From = new MailAddress("invoice@sinex.com", "SinEx Invoices");
+
+                    //Subject and content of the email
+                    mailMessage.Subject = "E-Invoice for Your Shipment (Waybill No. " + waybillNumber + ")";
+                    mailMessage.Body = "Dear " + firstName + ",\n \n Please find attached the invoice for your Sino Express shipment (Waybill Number: " + waybillNumber + "). Thanks for choosing SinEx! \n \n Best Regards, \n Sino Express Invoicing System";
+                    mailMessage.Priority = MailPriority.Normal;
+                    mailMessage.Attachments.Add(new Attachment(Path.Combine(invoiceFolder, waybillNumber + "_duty_and_tax.pdf")));
+
+                    //Instantiate a new SmtpClient instance
+                    SmtpClient smtpClient = new SmtpClient("smtp.cse.ust.hk");
+                    smtpClient.Credentials = new System.Net.NetworkCredential("comp3111_team108@cse.ust.hk", "team108#");
+                    smtpClient.UseDefaultCredentials = true;
+                    smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                    smtpClient.EnableSsl = true;
+                    //Send
+                    smtpClient.Send(mailMessage);
+                    //Response.Write("Email Sent!!! Yay!");
+                }
+                catch { }
+
 
                 string filepath1 = invoiceFolder + waybillNumber + "_shipment.pdf";
                 string filepath2 = invoiceFolder + waybillNumber + "_duty_and_tax.pdf";
@@ -381,7 +436,33 @@ namespace SinExWebApp20256461.Controllers
                     .Save(Path.Combine(invoiceFolder, waybillNumber + "_total.pdf"));
 
                 // Send Email
+                try
+                {
+                    MailMessage mailMessage = new MailMessage();
+                    //Add recipients 
+                    mailMessage.To.Add(senderShippingAccount.EmailAddress);
 
+                    //Setting the displayed email address and display name
+                    //!!!Do not use this to prank others!!!
+                    mailMessage.From = new MailAddress("invoice@sinex.com", "SinEx Invoices");
+
+                    //Subject and content of the email
+                    mailMessage.Subject = "E-Invoice for Your Shipment (Waybill No. " + waybillNumber + ")";
+                    mailMessage.Body = "Dear " + firstName + ",\n \n Please find attached the invoice for your Sino Express shipment (Waybill Number: " + waybillNumber + "). Thanks for choosing SinEx! \n \n Best Regards, \n Sino Express Invoicing System";
+                    mailMessage.Priority = MailPriority.Normal;
+                    mailMessage.Attachments.Add(new Attachment(Path.Combine(invoiceFolder, waybillNumber + "_total.pdf")));
+
+                    //Instantiate a new SmtpClient instance
+                    SmtpClient smtpClient = new SmtpClient("smtp.cse.ust.hk");
+                    smtpClient.Credentials = new System.Net.NetworkCredential("comp3111_team108@cse.ust.hk", "team108#");
+                    smtpClient.UseDefaultCredentials = true;
+                    smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                    smtpClient.EnableSsl = true;
+                    //Send
+                    smtpClient.Send(mailMessage);
+                    //Response.Write("Email Sent!!! Yay!");
+                }
+                catch { }
 
             }
         }

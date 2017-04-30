@@ -60,7 +60,8 @@
         {
             string packageNum = "Package Number " + (i + 1);
             <h3>@Html.Label(packageNum)</h3>
-            @Html.ActionLink("delete", "Create", new { id = i }, null)
+            string n = "delete " + (i+1);
+            <input type="submit" name="submit" value= "@n" class="btn btn-danger" />
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].PackageTypeSize, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">

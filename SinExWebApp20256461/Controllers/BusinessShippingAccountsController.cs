@@ -74,13 +74,13 @@ namespace SinExWebApp20256461.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ShippingAccountID,BuildingInformation,StreetInformation,City,ProvinceCode,PostalCode,CardType,CardNumber,SecurityNumber,CardHolderName,Month,Year,PhoneNumber,EmailAddress,ContactPersonName,CompanyName,DepartmentName")] BusinessShippingAccount businessShippingAccount)
+        public ActionResult Edit([Bind(Include = "ShippingAccountNumber, UserName, ShippingAccountID,BuildingInformation,StreetInformation,City,ProvinceCode,PostalCode,CardType,CardNumber,SecurityNumber,CardHolderName,Month,Year,PhoneNumber,EmailAddress,ContactPersonName,CompanyName,DepartmentName")] BusinessShippingAccount businessShippingAccount)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(businessShippingAccount).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Home");
             }
             return View(businessShippingAccount);
         }

@@ -350,8 +350,12 @@ namespace SinExWebApp20256461.Controllers
                 shipment.WaybillNumber = strNum;
                 shipment.Status = "pending";
                 shipment.Recipient = recipient;
+                foreach(Package package in shipment.Packages)
+                {
+
+                }
                 shipment.ShippedDate = DateTime.Now;
-                shipment.DeliveredDate = DateTime.Now;
+                shipment.DeliveredDate = DateTime.Now; //should be null at creation
                 /* remove packages */
                 if (id.HasValue)
                 {

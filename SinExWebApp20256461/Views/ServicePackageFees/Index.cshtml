@@ -16,10 +16,15 @@
         <th>
             @Html.DisplayNameFor(model => model.Fee)
         </th>
+        <th>Fee(HKD)</th>
+        <th>Fee(MOP)</th>
+        <th>Fee(TWD)</th>
         <th>
             @Html.DisplayNameFor(model => model.MinimumFee)
         </th>
-        <th></th>
+        <th>MinimumFee(HKD)</th>
+        <th>MinimumFee(MOP)</th>
+        <th>MinimumFee(TWD)</th>
     </tr>
 
 @foreach (var item in Model) {
@@ -34,7 +39,28 @@
             @Html.DisplayFor(modelItem => item.Fee)
         </td>
         <td>
+            @(item.Fee* (decimal)ViewBag.HKD)
+        </td>
+        <td>
+            @(item.Fee * (decimal)ViewBag.MOP)
+        </td>
+        <td>
+            @(item.Fee * (decimal)ViewBag.TWD)
+        </td>
+        <td>
             @Html.DisplayFor(modelItem => item.MinimumFee)
+        </td>
+        <td>
+            @(item.MinimumFee * (decimal)ViewBag.HKD)
+        </td>
+        <td>
+            @(item.MinimumFee * (decimal)ViewBag.MOP)
+        </td>
+        <td>
+            @(item.MinimumFee * (decimal)ViewBag.TWD)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.ServicePackageFeeID })
         </td>
     </tr>
 }

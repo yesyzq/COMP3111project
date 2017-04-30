@@ -15,6 +15,6 @@ namespace SinExWebApp20256461.ViewModels
         public virtual int NumberOfPackages { get; set; }
         public virtual string Origin { get; set; }
         public virtual string Destination { get; set; }
-        public virtual string ShippingAccountNumber { get; set; }
+        public virtual string ShippingAccountNumber{ get; set; }
     }
 }

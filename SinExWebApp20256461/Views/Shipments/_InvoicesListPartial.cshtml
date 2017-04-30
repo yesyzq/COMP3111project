@@ -62,7 +62,7 @@
         {
             <tr>
                 <th>
-                    @Html.ActionLink(item.WaybillId.ToString().PadLeft(16), "GenerateInvoiceReport", new
+                    @Html.ActionLink(item.WaybillId.ToString().PadLeft(16, '0'), "GenerateInvoiceReport", new
                {
                    sortOrder = ViewBag.ShippingAccountIdSortParm,
                    ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber

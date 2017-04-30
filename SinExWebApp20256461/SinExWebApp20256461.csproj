@@ -402,8 +402,8 @@
     <Content Include="Views\ServicePackageFees\Costcalculation.cshtml" />
     <Content Include="Views\Shipments\_InvoicesListPartial.cshtml" />
     <Content Include="Views\Shipments\_InvoicesPagingPartial.cshtml" />
-    <Content Include="Views\Shipments\_InvoicesSearchPartial.cshtml" />
     <Content Include="Views\Shipments\GenerateInvoiceReport.cshtml" />
+    <Content Include="Views\Shipments\_InvoicesSearchPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

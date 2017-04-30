@@ -293,7 +293,14 @@ namespace SinExWebApp20256461.Controllers
         // GET: Shipments
         public ActionResult Index()
         {
-            return View(db.Shipments.ToList());
+            var shippingAccount = (from s in db.ShippingAccounts
+                                   where s.UserName == User.Identity.Name
+                                   select s).First();
+            var ShippingAccountId = shippingAccount.ShippingAccountId;
+            var shipments = from s in db.Shipments
+                            where s.ShippingAccountId == ShippingAccountId
+                            select s;
+            return View(shipments.ToList());
         }
 
         // GET: Shipments/Details/5
@@ -325,23 +332,33 @@ namespace SinExWebApp20256461.Controllers
             return View(shipmentView);
         }
 
-   
         // POST: Shipments/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(int? id, string ShipmentPayer, string TaxPayer, string submit, CreateShipmentViewModel shipmentView = null, Recipient recipient = null)
+        public ActionResult Create(string ShipmentPayer, string TaxPayer, string submit, CreateShipmentViewModel shipmentView = null, Recipient recipient = null)
         {
             ViewBag.ServiceTypes = db.ServiceTypes.Select(a => a.Type).Distinct().ToList();
             ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(a => a.size).Distinct().ToList();
             ViewBag.PackageCurrency = db.Currencies.Select(a => a.CurrencyCode).Distinct().ToList();
             /* add packages */
-            if (submit == "add" && shipmentView.Packages.Count < 10)
+            if (submit == "add")
             {
-                var new_package = new Package();
-                shipmentView.Packages.Add(new_package);
+                if (shipmentView.Packages.Count < 10)
+                {
+                    var new_package = new Package();
+                    shipmentView.Packages.Add(new_package);
+                }
                 return View(shipmentView);
             }
-
+            else if (submit != null)
+            {
+                if(shipmentView.Packages.Count > 1)
+                {
+                    int id = Int32.Parse(submit.Split(' ')[1]) - 1;
+                    shipmentView.Packages.Remove(shipmentView.Packages[id]);
+                }
+                return View(shipmentView);
+            }
             if (ModelState.IsValid)
             {
                 var shipment = shipmentView.Shipment;
@@ -350,20 +367,12 @@ namespace SinExWebApp20256461.Controllers
                 shipment.WaybillNumber = strNum;
                 shipment.Status = "pending";
                 shipment.Recipient = recipient;
-                foreach(Package package in shipment.Packages)
-                {
-
-                }
                 shipment.ShippedDate = DateTime.Now;
-                shipment.DeliveredDate = DateTime.Now; //should be null at creation
-                /* remove packages */
-                if (id.HasValue)
-                {
-                    shipmentView.Packages.Remove(shipmentView.Packages[(int)id]);
-                }
+                shipment.DeliveredDate = DateTime.Now;
                 shipment.Packages = new List<Package>();
                 for (int i = 0; i< shipmentView.Packages.Count; i++)
                 {
+                    shipmentView.Packages[i].WeightEstimated = Math.Round(shipmentView.Packages[i].WeightEstimated, 1);
                     shipment.Packages.Add(shipmentView.Packages[i]);
                     db.Packages.Add(shipmentView.Packages[i]);
                 }
@@ -431,7 +440,7 @@ namespace SinExWebApp20256461.Controllers
                 return RedirectToAction("Index");
             }
 
-            return View();
+            return View(shipmentView);
         }
 
         // GET: Shipments/Edit

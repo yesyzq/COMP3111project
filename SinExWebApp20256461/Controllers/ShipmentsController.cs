@@ -507,7 +507,7 @@ namespace SinExWebApp20256461.Controllers
             }
             else
             {
-                return View();
+                return new EmptyResult();
             }
         }
 

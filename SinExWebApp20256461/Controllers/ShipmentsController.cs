@@ -296,11 +296,15 @@ namespace SinExWebApp20256461.Controllers
             var shippingAccount = (from s in db.ShippingAccounts
                                    where s.UserName == User.Identity.Name
                                    select s).First();
-            var ShippingAccountId = shippingAccount.ShippingAccountId;
-            var shipments = from s in db.Shipments
-                            where s.ShippingAccountId == ShippingAccountId
-                            select s;
-            return View(shipments.ToList());
+            if (shippingAccount != null)
+            {
+                var ShippingAccountId = shippingAccount.ShippingAccountId;
+                var shipments = from s in db.Shipments
+                                where s.ShippingAccountId == ShippingAccountId
+                                select s;
+                return View(shipments.ToList());
+            }
+            return View();
         }
 
         // GET: Shipments/Details/5

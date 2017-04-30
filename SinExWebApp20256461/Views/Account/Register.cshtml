@@ -9,15 +9,12 @@
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    <hr />
     if (ViewBag.AccountType == "Personal")
     {
-        <h4>Personal Information</h4>
         @Html.Partial("~/Views/PersonalShippingAccounts/_PersonalInformationPartial.cshtml", Model)
     }
     else
     {
-        <h4>Business Information</h4>
         @Html.Partial("~/Views/BusinessShippingAccounts/_BusinessInformationPartial.cshtml", Model)
     }
     <hr />

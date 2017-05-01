@@ -18,6 +18,9 @@ namespace SinExWebApp20256461.Controllers
         public ActionResult Index()
         {
             var servicePackageFees = db.ServicePackageFees.Include(s => s.PackageType).Include(s => s.ServiceType);
+            ViewBag.HKD = db.Currencies.SingleOrDefault(s => s.CurrencyCode == "HKD").ExchangeRate;
+            ViewBag.MOP = db.Currencies.SingleOrDefault(s => s.CurrencyCode == "MOP").ExchangeRate;
+            ViewBag.TWD = db.Currencies.SingleOrDefault(s => s.CurrencyCode == "TWD").ExchangeRate;
             return View(servicePackageFees.ToList());
         }
 

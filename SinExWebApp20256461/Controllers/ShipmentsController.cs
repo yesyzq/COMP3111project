@@ -373,10 +373,10 @@ namespace SinExWebApp20256461.Controllers
                 shipment.Recipient = recipient;
                 shipment.ShippedDate = DateTime.Now;
                 shipment.DeliveredDate = DateTime.Now;
-
                 shipment.Packages = new List<Package>();
                 for (int i = 0; i< shipmentView.Packages.Count; i++)
                 {
+                    shipmentView.Packages[i].WeightEstimated = Math.Round(shipmentView.Packages[i].WeightEstimated, 1);
                     shipment.Packages.Add(shipmentView.Packages[i]);
                     db.Packages.Add(shipmentView.Packages[i]);
                 }

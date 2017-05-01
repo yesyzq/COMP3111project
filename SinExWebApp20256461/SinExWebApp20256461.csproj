@@ -387,6 +387,11 @@
     <Content Include="Views\Trackings\GetTracking.cshtml" />
     <Content Include="Views\Trackings\Index.cshtml" />
     <Content Include="Views\Trackings\_GetTrackingListPartial.cshtml" />
+    <Content Include="Views\SavedAddresses\Create.cshtml" />
+    <Content Include="Views\SavedAddresses\Delete.cshtml" />
+    <Content Include="Views\SavedAddresses\Details.cshtml" />
+    <Content Include="Views\SavedAddresses\Edit.cshtml" />
+    <Content Include="Views\SavedAddresses\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -396,7 +401,6 @@
     <Folder Include="Views\Packages\" />
     <Folder Include="Views\Pickups\" />
     <Folder Include="Views\Recipients\" />
-    <Folder Include="Views\SavedAddresses\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

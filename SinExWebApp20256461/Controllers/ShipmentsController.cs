@@ -415,12 +415,12 @@ namespace SinExWebApp20256461.Controllers
                     SavedAddress helper_address = new SavedAddress
                     {
                         NickName = shipmentView.Nickname,
-                        Address = r.Street + ":" + r.City + ":" + r.ProvinceCode,
+                        //Address = r.Street + ":" + r.City + ":" + r.ProvinceCode,
                         Type = "recipient"
                     };
                     if (r.Building != null)
                     {
-                        helper_address.Address = r.Building + ":" + helper_address.Address;
+                        //helper_address.Address = r.Building + ":" + helper_address.Address;
                     }
                     shippingAccount.SavedAddresses.Add(helper_address);
                     db.SavedAddresses.Add(helper_address);

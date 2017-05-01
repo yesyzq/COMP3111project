@@ -17,8 +17,18 @@ namespace SinExWebApp20256461.Controllers
         // GET: SavedAddresses
         public ActionResult Index()
         {
-            var savedAddresses = db.SavedAddresses.Include(s => s.ShippingAccount);
-            return View(savedAddresses.ToList());
+            var shippingAccount = (from s in db.ShippingAccounts
+                                   where s.UserName == User.Identity.Name
+                                   select s).First();
+            if (shippingAccount != null)
+            {
+                var ShippingAccountId = shippingAccount.ShippingAccountId;
+                var addresses = from s in db.SavedAddresses
+                                where s.ShippingAccountId == ShippingAccountId
+                                select s;
+                return View(addresses.ToList());
+            }
+            return View();
         }
 
         // GET: SavedAddresses/Details/5
@@ -48,10 +58,14 @@ namespace SinExWebApp20256461.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "SavedAddressID,NickName,Address,Type,ShippingAccountId")] SavedAddress savedAddress)
+        public ActionResult Create([Bind(Include = "SavedAddressID,NickName,Building,Street,City,ProvinceCode,PostalCode,Type")] SavedAddress savedAddress)
         {
             if (ModelState.IsValid)
             {
+                var shippingAccount = (from s in db.ShippingAccounts
+                                       where s.UserName == User.Identity.Name
+                                       select s).First();
+                savedAddress.ShippingAccountId = shippingAccount.ShippingAccountId;
                 db.SavedAddresses.Add(savedAddress);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -82,7 +96,7 @@ namespace SinExWebApp20256461.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "SavedAddressID,NickName,Address,Type,ShippingAccountId")] SavedAddress savedAddress)
+        public ActionResult Edit([Bind(Include = "SavedAddressID,NickName,Building,Street,City,ProvinceCode,PostalCode,Type,ShippingAccountId")] SavedAddress savedAddress)
         {
             if (ModelState.IsValid)
             {

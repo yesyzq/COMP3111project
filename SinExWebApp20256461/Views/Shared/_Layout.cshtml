@@ -36,6 +36,7 @@
                             @if (User.IsInRole("Customer"))
                             {
                                 <li>@Html.ActionLink("Manage Shipments", "Index", "Shipments")</li>
+                                <li>@Html.ActionLink("Saved Addresses", "Index", "SavedAddresses")</li>
                             }
                             @if (User.IsInRole("Employee"))
                             {

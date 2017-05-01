@@ -1,0 +1,90 @@
+﻿@model SinExWebApp20256461.Models.SavedAddress
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Details</title>
+</head>
+<body>
+    <div>
+        <h4>SavedAddress</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.ShippingAccount.ShippingAccountNumber)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.ShippingAccount.ShippingAccountNumber)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.NickName)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.NickName)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Building)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Building)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Street)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Street)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.City)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.City)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.ProvinceCode)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.ProvinceCode)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.PostalCode)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.PostalCode)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Type)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Type)
+            </dd>
+    
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.SavedAddressID }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+</body>
+</html>

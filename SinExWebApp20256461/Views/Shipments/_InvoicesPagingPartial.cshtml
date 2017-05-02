@@ -1,0 +1,18 @@
+﻿@model X.PagedList.IPagedList<SinExWebApp20256461.ViewModels.InvoicesListViewModel>
+@using X.PagedList.Mvc;
+
+@if(Model.PageCount > 1)
+{
+    <div class="pager">
+        @Html.PagedListPager(Model, page => Url.Action("GenerateInvoiceReport", new
+   {
+       page,
+       sortOrder = ViewBag.CurrentSort,
+       ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber,
+       ShippedStartDate = ViewBag.CurrentShippingStartDate,
+       ShippedEndDate = ViewBag.CurrentShippingEndDate
+   }))
+        Page @Model.PageNumber of @Model.PageCount
+    </div>
+}
+

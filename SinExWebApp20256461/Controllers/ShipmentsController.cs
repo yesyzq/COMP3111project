@@ -11,6 +11,14 @@ using SinExWebApp20256461.ViewModels;
 using X.PagedList;
 using System.Windows.Forms;
 using System.Data.Entity.Validation;
+using Invoicer.Helpers;
+using Invoicer.Models;
+using Invoicer.Services.Impl;
+using Invoicer.Services;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
+using System.IO;
+using System.Net.Mail;
 
 namespace SinExWebApp20256461.Controllers
 {
@@ -162,7 +170,319 @@ namespace SinExWebApp20256461.Controllers
             ViewBag.msg = sortOrder;
             return View(shipmentSearch);
         }
-        // this section of code is like shit
+
+        public void SendInvoice(int? WaybillId)
+        {
+            var shipment = db.Shipments.SingleOrDefault(s => s.WaybillId == WaybillId);
+            if (shipment == null)
+            {
+                return;
+            }
+
+            SinExWebApp20256461.Models.Invoice shipmentInvoice = null;
+            SinExWebApp20256461.Models.Invoice dutyAndTaxInvoice = null;
+            foreach (var invoice in shipment.Invoices)
+            {
+                if (invoice.Type.Equals("shipment"))
+                    shipmentInvoice = invoice;
+                else if (invoice.Type.Equals("tax_duty"))
+                    dutyAndTaxInvoice = invoice;
+            }
+
+            string[] CompanyAddress = { "Sino Express LLC", "HKUST" };
+
+            // Shipment Invoice
+            string shipmentPayerShippingAccountNumber = shipmentInvoice.ShippingAccountNumber;
+            var shipmentPayerShippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountNumber.Equals(shipmentPayerShippingAccountNumber));
+            string shipmentPayerCurrencyCode = db.Destinations.SingleOrDefault(s => s.ProvinceCode.Equals(shipmentPayerShippingAccount.ProvinceCode)).CurrencyCode + " ";
+
+            // Shipment Payer Info
+            string[] shipmentPayerInfo = new string[5];
+            if (shipmentPayerShippingAccount is BusinessShippingAccount)
+            {
+                var shipmentPayerBusinessShippingAccount = (BusinessShippingAccount)shipmentPayerShippingAccount;
+                shipmentPayerInfo[0] = shipmentPayerBusinessShippingAccount.CompanyName;
+            }
+            else
+            {
+                var shipmentPayerPersonalShippingAccount = (PersonalShippingAccount)shipmentPayerShippingAccount;
+                shipmentPayerInfo[0] = shipmentPayerPersonalShippingAccount.FirstName + " " + shipmentPayerPersonalShippingAccount.LastName;
+            }
+            shipmentPayerInfo[1] = "Shipping Account Number: " + shipmentPayerShippingAccount.ShippingAccountNumber;
+            shipmentPayerInfo[2] = "Credit Card Type: " + shipmentPayerShippingAccount.CardType;
+            string shipmentPayerCreditCardNumber = shipmentPayerShippingAccount.CardNumber;
+            shipmentPayerInfo[3] = "Credit Card Number (Last Four Digits): " + shipmentPayerCreditCardNumber.Substring(shipmentPayerCreditCardNumber.Length - 4);
+            shipmentPayerInfo[4] = "Authorization Code: " + shipmentInvoice.AuthenticationCode;
+
+            // Shipment Info
+            string waybillNumber = WaybillId.ToString().PadLeft(16, '0');
+            string[] shipmentInfo = new string[6];
+            shipmentInfo[0] = "Waybill Number: " + waybillNumber;
+            shipmentInfo[1] = "Shipped Date: " + shipment.ShippedDate.ToString();
+            shipmentInfo[2] = "Service Type: " + shipment.ServiceType;
+            shipmentInfo[3] = "Sender's Reference Number: " + shipment.ReferenceNumber;
+            var senderShippingAccount = shipment.ShippingAccount;
+            string firstName = "";
+            if (senderShippingAccount is BusinessShippingAccount)
+            {
+                var senderBusinessShippingAccount = (BusinessShippingAccount)senderShippingAccount;
+                shipmentInfo[4] = "Sender Company: " + senderBusinessShippingAccount.CompanyName
+                    + " (Contact Person: " + senderBusinessShippingAccount.ContactPersonName + ")";
+                firstName = senderBusinessShippingAccount.CompanyName;
+            }
+            else
+            {
+                var senderPersonalShippingAccount = (PersonalShippingAccount)senderShippingAccount;
+                shipmentInfo[4] = "Sender's Full Name: " + senderPersonalShippingAccount.FirstName + " " + senderPersonalShippingAccount.LastName;
+                firstName = senderPersonalShippingAccount.FirstName;
+            }
+            shipmentInfo[5] = "Sender's Address: " + senderShippingAccount.BuildingInformation + ", "
+                + senderShippingAccount.StreetInformation + ", "
+                + senderShippingAccount.City + ", "
+                + senderShippingAccount.ProvinceCode + ", "
+                + senderShippingAccount.PostalCode;
+
+            double dutyAndTaxAmount = dutyAndTaxInvoice.TotalAmountPayable;
+            string invoiceFolder = Server.MapPath("~/Invoices");
+
+            bool seperateInvoice = (shipmentInvoice.ShippingAccountNumber != dutyAndTaxInvoice.ShippingAccountNumber);
+
+            if (seperateInvoice)
+            {
+                // -------------------------------
+                // Shipment Invoice
+                // -------------------------------
+                int i = 0;
+                decimal totalShipmentCost = 0;
+                List<ItemRow> shipmentItems = new List<ItemRow>();
+                foreach (var package in shipment.Packages)
+                {
+                    i++;
+                    string packageInfo = "Package Type: " + package.PackageTypeSize
+                        + "\nActual Weight: " + package.WeightActual;
+                    decimal cost = 100;
+                    totalShipmentCost += cost;
+                    shipmentItems.Add(ItemRow.Make("Package " + i.ToString(), packageInfo, (decimal)1, 0, (decimal)cost, (decimal)cost));
+                }
+
+                new InvoicerApi(SizeOption.A4, OrientationOption.Landscape, shipmentPayerCurrencyCode)
+                    .TextColor("#CC0000")
+                    .BackColor("#FFD6CC")
+                    .Reference(waybillNumber)
+                    //.Image(@"company.jpg", 125, 27)
+                    .Company(Address.Make("FROM", CompanyAddress))
+                    .Client(Address.Make("BILLING TO", shipmentPayerInfo))
+                    .Items(shipmentItems)
+                    .Totals(new List<TotalRow> {
+                        //TotalRow.Make("Sub Total", (decimal)totalShipmentCost),
+                        TotalRow.Make("Total", (decimal)totalShipmentCost, true),
+                    })
+                    .Details(new List<DetailRow> {
+                        DetailRow.Make("SHIPMENT INFORMATION", shipmentInfo)
+                    })
+                    .Save(Path.Combine(invoiceFolder, waybillNumber + "_shipment.pdf"));
+
+                // Send Email
+                try
+                {
+                    MailMessage mailMessage = new MailMessage();
+                    //Add recipients 
+                    mailMessage.To.Add(senderShippingAccount.EmailAddress);
+
+                    //Setting the displayed email address and display name
+                    //!!!Do not use this to prank others!!!
+                    mailMessage.From = new MailAddress("invoice@sinex.com", "SinEx Invoices");
+
+                    //Subject and content of the email
+                    mailMessage.Subject = "E-Invoice for Your Shipment (Waybill No. " + waybillNumber + ")";
+                    mailMessage.Body = "Dear " + firstName + ",\n \n Please find attached the invoice for your Sino Express shipment (Waybill Number: " + waybillNumber + "). Thanks for choosing SinEx! \n \n Best Regards, \n Sino Express Invoicing System";
+                    mailMessage.Priority = MailPriority.Normal;
+                    mailMessage.Attachments.Add(new Attachment(Path.Combine(invoiceFolder, waybillNumber + "_shipment.pdf")));
+
+                    //Instantiate a new SmtpClient instance
+                    SmtpClient smtpClient = new SmtpClient("smtp.cse.ust.hk");
+                    smtpClient.Credentials = new System.Net.NetworkCredential("comp3111_team108@cse.ust.hk", "team108#");
+                    smtpClient.UseDefaultCredentials = true;
+                    smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                    smtpClient.EnableSsl = true;
+                    //Send
+                    smtpClient.Send(mailMessage);
+                    //Response.Write("Email Sent!!! Yay!");
+                }
+                catch { }
+
+                // -------------------------------
+                // Duty and Tax Invoice
+                // -------------------------------
+                string dutyAndTaxPayerShippingAccountNumber = dutyAndTaxInvoice.ShippingAccountNumber;
+                var dutyAndTaxPayerShippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountNumber.Equals(dutyAndTaxPayerShippingAccountNumber));
+                string dutyAndTaxPayerCurrencyCode = db.Destinations.SingleOrDefault(s => s.ProvinceCode.Equals(dutyAndTaxPayerShippingAccount.ProvinceCode)).CurrencyCode + " ";
+
+                // Duty and Tax Payer Info
+                string[] dutyAndTaxPayerInfo = new string[5];
+                if (dutyAndTaxPayerShippingAccount is BusinessShippingAccount)
+                {
+                    var dutyAndTaxPayerBusinessShippingAccount = (BusinessShippingAccount)dutyAndTaxPayerShippingAccount;
+                    dutyAndTaxPayerInfo[0] = dutyAndTaxPayerBusinessShippingAccount.CompanyName;
+                }
+                else
+                {
+                    var dutyAndTaxPayerPersonalShippingAccount = (PersonalShippingAccount)dutyAndTaxPayerShippingAccount;
+                    dutyAndTaxPayerInfo[0] = dutyAndTaxPayerPersonalShippingAccount.FirstName + " " + dutyAndTaxPayerPersonalShippingAccount.LastName;
+                }
+                dutyAndTaxPayerInfo[1] = "Shipping Account Number: " + dutyAndTaxPayerShippingAccount.ShippingAccountNumber;
+                dutyAndTaxPayerInfo[2] = "Credit Card Type: " + dutyAndTaxPayerShippingAccount.CardType;
+                string dutyAndTaxPayerCreditCardNumber = dutyAndTaxPayerShippingAccount.CardNumber;
+                dutyAndTaxPayerInfo[3] = "Credit Card Number (Last Four Digits): " + dutyAndTaxPayerCreditCardNumber.Substring(dutyAndTaxPayerCreditCardNumber.Length - 4);
+                dutyAndTaxPayerInfo[4] = "Authorization Code: " + dutyAndTaxInvoice.AuthenticationCode;
+
+                // Duty and Tax Invoice
+                new InvoicerApi(SizeOption.A4, OrientationOption.Landscape, dutyAndTaxPayerCurrencyCode)
+                    .TextColor("#CC0000")
+                    .BackColor("#FFD6CC")
+                    .Reference(waybillNumber)
+                    //.Image(@"company.jpg", 125, 27)
+                    .Company(Address.Make("FROM", CompanyAddress))
+                    .Client(Address.Make("BILLING TO", dutyAndTaxPayerInfo))
+                    .Items(new List<ItemRow> {
+                        ItemRow.Make("Duty and Tax", "", (decimal)1, 0, (decimal)dutyAndTaxAmount, (decimal)dutyAndTaxAmount)
+                    })
+                    .Totals(new List<TotalRow> {
+                        //TotalRow.Make("Sub Total", (decimal)dutyAndTaxAmount),
+                        TotalRow.Make("Total", (decimal)dutyAndTaxAmount, true),
+                    })
+                    .Details(new List<DetailRow> {
+                        DetailRow.Make("SHIPMENT INFORMATION", shipmentInfo)
+                    })
+                    .Save(Path.Combine(invoiceFolder, waybillNumber + "_duty_and_tax.pdf"));
+
+                // Send Email
+                try
+                {
+                    MailMessage mailMessage = new MailMessage();
+                    //Add recipients 
+                    mailMessage.To.Add(senderShippingAccount.EmailAddress);
+
+                    //Setting the displayed email address and display name
+                    //!!!Do not use this to prank others!!!
+                    mailMessage.From = new MailAddress("invoice@sinex.com", "SinEx Invoices");
+
+                    //Subject and content of the email
+                    mailMessage.Subject = "E-Invoice for Your Shipment (Waybill No. " + waybillNumber + ")";
+                    mailMessage.Body = "Dear " + firstName + ",\n \n Please find attached the invoice for your Sino Express shipment (Waybill Number: " + waybillNumber + "). Thanks for choosing SinEx! \n \n Best Regards, \n Sino Express Invoicing System";
+                    mailMessage.Priority = MailPriority.Normal;
+                    mailMessage.Attachments.Add(new Attachment(Path.Combine(invoiceFolder, waybillNumber + "_duty_and_tax.pdf")));
+
+                    //Instantiate a new SmtpClient instance
+                    SmtpClient smtpClient = new SmtpClient("smtp.cse.ust.hk");
+                    smtpClient.Credentials = new System.Net.NetworkCredential("comp3111_team108@cse.ust.hk", "team108#");
+                    smtpClient.UseDefaultCredentials = true;
+                    smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                    smtpClient.EnableSsl = true;
+                    //Send
+                    smtpClient.Send(mailMessage);
+                    //Response.Write("Email Sent!!! Yay!");
+                }
+                catch { }
+
+
+                string filepath1 = invoiceFolder + waybillNumber + "_shipment.pdf";
+                string filepath2 = invoiceFolder + waybillNumber + "_duty_and_tax.pdf";
+                if (System.IO.File.Exists(filepath1) && System.IO.File.Exists(filepath2))
+                {
+                    using (PdfDocument one = PdfReader.Open("file1.pdf", PdfDocumentOpenMode.Import))
+                    using (PdfDocument two = PdfReader.Open("file2.pdf", PdfDocumentOpenMode.Import))
+                    using (PdfDocument outPdf = new PdfDocument())
+                    {
+                        CopyPages(one, outPdf);
+                        CopyPages(two, outPdf);
+                        outPdf.Save(Path.Combine(invoiceFolder, waybillNumber + "_total.pdf"));
+                    }
+                }
+            }
+            else
+            {
+                // -----------------------------------
+                // Shipment and Duty and Tax Invoice
+                // -----------------------------------
+                int i = 0;
+                decimal totalShipmentCost = 0;
+                List<ItemRow> shipmentItems = new List<ItemRow>();
+                foreach (var package in shipment.Packages)
+                {
+                    i++;
+                    string packageInfo = "Package Type: " + package.PackageTypeSize
+                        + "\nActual Weight: " + package.WeightActual;
+                    decimal cost = 100;
+                    totalShipmentCost += cost;
+                    shipmentItems.Add(ItemRow.Make("Package " + i.ToString(), packageInfo, (decimal)1, 0, (decimal)cost, (decimal)cost));
+                }
+                shipmentItems.Add(ItemRow.Make("Duty and Tax", "", (decimal)1, 0, (decimal)dutyAndTaxAmount, (decimal)dutyAndTaxAmount));
+
+                new InvoicerApi(SizeOption.A4, OrientationOption.Landscape, shipmentPayerCurrencyCode)
+                    .TextColor("#CC0000")
+                    .BackColor("#FFD6CC")
+                    .Reference(waybillNumber)
+                    //.Image(@"company.jpg", 125, 27)
+                    .Company(Address.Make("FROM", CompanyAddress))
+                    .Client(Address.Make("BILLING TO", shipmentPayerInfo))
+                    .Items(shipmentItems)
+                    .Totals(new List<TotalRow> {
+                        //TotalRow.Make("Sub Total", (decimal)dutyAndTaxAmount),
+                        TotalRow.Make("Total", (decimal)(totalShipmentCost + (decimal)dutyAndTaxAmount), true),
+                    })
+                    .Details(new List<DetailRow> {
+                        DetailRow.Make("SHIPMENT INFORMATION", shipmentInfo)
+                    })
+                    .Save(Path.Combine(invoiceFolder, waybillNumber + "_total.pdf"));
+
+                // Send Email
+                try
+                {
+                    MailMessage mailMessage = new MailMessage();
+                    //Add recipients 
+                    mailMessage.To.Add(senderShippingAccount.EmailAddress);
+
+                    //Setting the displayed email address and display name
+                    //!!!Do not use this to prank others!!!
+                    mailMessage.From = new MailAddress("invoice@sinex.com", "SinEx Invoices");
+
+                    //Subject and content of the email
+                    mailMessage.Subject = "E-Invoice for Your Shipment (Waybill No. " + waybillNumber + ")";
+                    mailMessage.Body = "Dear " + firstName + ",\n \n Please find attached the invoice for your Sino Express shipment (Waybill Number: " + waybillNumber + "). Thanks for choosing SinEx! \n \n Best Regards, \n Sino Express Invoicing System";
+                    mailMessage.Priority = MailPriority.Normal;
+                    mailMessage.Attachments.Add(new Attachment(Path.Combine(invoiceFolder, waybillNumber + "_total.pdf")));
+
+                    //Instantiate a new SmtpClient instance
+                    SmtpClient smtpClient = new SmtpClient("smtp.cse.ust.hk");
+                    smtpClient.Credentials = new System.Net.NetworkCredential("comp3111_team108@cse.ust.hk", "team108#");
+                    smtpClient.UseDefaultCredentials = true;
+                    smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                    smtpClient.EnableSsl = true;
+                    //Send
+                    smtpClient.Send(mailMessage);
+                    //Response.Write("Email Sent!!! Yay!");
+                }
+                catch { }
+
+            }
+        }
+
+        public ActionResult DisplayInvoice(string WaybillNumber)
+        {
+            var shipment = db.Shipments.SingleOrDefault(a => a.WaybillNumber.Equals(WaybillNumber));
+            string invoiceFolder = Server.MapPath("~/Invoices");
+            string invoicePath = Path.Combine(invoiceFolder, WaybillNumber + "_total.pdf");
+            if (System.IO.File.Exists(invoicePath))
+            {
+                return File(invoicePath, "application/pdf");
+            }
+            else
+            {
+                return new EmptyResult();
+            }
+        }
+
         public ActionResult getCost(string Origin, string Destination, string ServiceType, string PackageType, string Size, int? weights)
         {
             var cost = new CostViewModel();
@@ -279,6 +599,15 @@ namespace SinExWebApp20256461.Controllers
             }
             return View(cost);
         }
+
+        void CopyPages(PdfDocument from, PdfDocument to)
+        {
+            for (int i = 0; i < from.PageCount; i++)
+            {
+                to.AddPage(from.Pages[i]);
+            }
+        }
+
         private SelectList PopulateShippingAccountsDropdownList()
         {
             // TODO: Construct the LINQ query to retrieve the unique list of shipping account ids.
@@ -401,10 +730,10 @@ namespace SinExWebApp20256461.Controllers
                         return View(shipmentView);
                     }
                 }
-                shipment.Invoices = new List<Invoice>();
-                var shipmentInvoice = new Invoice { Type = "shipment" };
+                shipment.Invoices = new List<SinExWebApp20256461.Models.Invoice>();
+                var shipmentInvoice = new SinExWebApp20256461.Models.Invoice { Type = "shipment" };
                 shipmentInvoice.ShippingAccountNumber = ShipmentPayer == "Sender" ? shippingAccount.ShippingAccountNumber : shipmentView.RecipientShippingAccountNumber;
-                var taxInvoice = new Invoice { Type = "tax_duty" };
+                var taxInvoice = new SinExWebApp20256461.Models.Invoice { Type = "tax_duty" };
                 taxInvoice.ShippingAccountNumber = TaxPayer == "Sender" ? shippingAccount.ShippingAccountNumber : shipmentView.RecipientShippingAccountNumber;
                 shipment.Invoices.Add(shipmentInvoice);
                 shipment.Invoices.Add(taxInvoice);

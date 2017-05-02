@@ -52,6 +52,9 @@
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Invoicer">
+      <HintPath>..\packages\Invoicer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=1.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.1.2.1\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
       <Private>True</Private>
@@ -85,6 +88,21 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MigraDoc.DocumentObjectModel">
+      <HintPath>..\packages\MigraDoc.DocumentObjectModel.dll</HintPath>
+    </Reference>
+    <Reference Include="MigraDoc.Rendering">
+      <HintPath>..\packages\MigraDoc.Rendering.dll</HintPath>
+    </Reference>
+    <Reference Include="MigraDoc.RtfRendering">
+      <HintPath>..\packages\MigraDoc.RtfRendering.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp">
+      <HintPath>..\packages\PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Charting">
+      <HintPath>..\packages\PdfSharp.Charting.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -255,6 +273,9 @@
     <Compile Include="ViewModels\CostCalculationViewModel.cs" />
     <Compile Include="ViewModels\CostViewModel.cs" />
     <Compile Include="ViewModels\CreateShipmentViewModel.cs" />
+    <Compile Include="ViewModels\InvoicesListViewModel.cs" />
+    <Compile Include="ViewModels\InvoicesReportViewModel.cs" />
+    <Compile Include="ViewModels\InvoicesSearchViewModel.cs" />
     <Compile Include="ViewModels\RegisterCustomerViewModel.cs" />
     <Compile Include="ViewModels\ServicePackageFeeViewModel.cs" />
     <Compile Include="ViewModels\ShipmentsSearchViewModel.cs" />
@@ -392,6 +413,10 @@
     <Content Include="Views\SavedAddresses\Details.cshtml" />
     <Content Include="Views\SavedAddresses\Edit.cshtml" />
     <Content Include="Views\SavedAddresses\Index.cshtml" />
+    <Content Include="Views\Shipments\_InvoicesListPartial.cshtml" />
+    <Content Include="Views\Shipments\_InvoicesPagingPartial.cshtml" />
+    <Content Include="Views\Shipments\GenerateInvoiceReport.cshtml" />
+    <Content Include="Views\Shipments\_InvoicesSearchPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

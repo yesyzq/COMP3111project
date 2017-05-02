@@ -242,7 +242,8 @@ namespace SinExWebApp20256461.Controllers
                 + senderShippingAccount.ProvinceCode + ", "
                 + senderShippingAccount.PostalCode;
 
-            double dutyAndTaxAmount = dutyAndTaxInvoice.TotalAmountPayable;
+            double dutyAmount = dutyAndTaxInvoice.Duty;
+            double taxAmount = dutyAndTaxInvoice.Tax;
             string invoiceFolder = Server.MapPath("~/Invoices");
 
             bool seperateInvoice = (shipmentInvoice.ShippingAccountNumber != dutyAndTaxInvoice.ShippingAccountNumber);
@@ -265,7 +266,9 @@ namespace SinExWebApp20256461.Controllers
                     shipmentItems.Add(ItemRow.Make("Package " + i.ToString(), packageInfo, (decimal)1, 0, (decimal)cost, (decimal)cost));
                 }
 
-                new InvoicerApi(SizeOption.A4, OrientationOption.Landscape, shipmentPayerCurrencyCode)
+                try
+                {
+                    new InvoicerApi(SizeOption.A4, OrientationOption.Landscape, shipmentPayerCurrencyCode)
                     .TextColor("#CC0000")
                     .BackColor("#FFD6CC")
                     .Reference(waybillNumber)
@@ -281,6 +284,9 @@ namespace SinExWebApp20256461.Controllers
                         DetailRow.Make("SHIPMENT INFORMATION", shipmentInfo)
                     })
                     .Save(Path.Combine(invoiceFolder, waybillNumber + "_shipment.pdf"));
+                }
+                catch (Exception e)
+                { }
 
                 // Send Email
                 try
@@ -309,7 +315,7 @@ namespace SinExWebApp20256461.Controllers
                     smtpClient.Send(mailMessage);
                     //Response.Write("Email Sent!!! Yay!");
                 }
-                catch { }
+                catch (Exception e) { }
 
                 // -------------------------------
                 // Duty and Tax Invoice
@@ -337,7 +343,9 @@ namespace SinExWebApp20256461.Controllers
                 dutyAndTaxPayerInfo[4] = "Authorization Code: " + dutyAndTaxInvoice.AuthenticationCode;
 
                 // Duty and Tax Invoice
-                new InvoicerApi(SizeOption.A4, OrientationOption.Landscape, dutyAndTaxPayerCurrencyCode)
+                try
+                {
+                    new InvoicerApi(SizeOption.A4, OrientationOption.Landscape, dutyAndTaxPayerCurrencyCode)
                     .TextColor("#CC0000")
                     .BackColor("#FFD6CC")
                     .Reference(waybillNumber)
@@ -345,16 +353,20 @@ namespace SinExWebApp20256461.Controllers
                     .Company(Address.Make("FROM", CompanyAddress))
                     .Client(Address.Make("BILLING TO", dutyAndTaxPayerInfo))
                     .Items(new List<ItemRow> {
-                        ItemRow.Make("Duty and Tax", "", (decimal)1, 0, (decimal)dutyAndTaxAmount, (decimal)dutyAndTaxAmount)
+                        ItemRow.Make("Duty", "", (decimal)1, 0, (decimal)dutyAmount, (decimal)dutyAmount),
+                        ItemRow.Make("Tax", "", (decimal)1, 0, (decimal)taxAmount, (decimal)taxAmount),
                     })
                     .Totals(new List<TotalRow> {
                         //TotalRow.Make("Sub Total", (decimal)dutyAndTaxAmount),
-                        TotalRow.Make("Total", (decimal)dutyAndTaxAmount, true),
+                        TotalRow.Make("Total", (decimal)(dutyAmount + taxAmount), true),
                     })
                     .Details(new List<DetailRow> {
                         DetailRow.Make("SHIPMENT INFORMATION", shipmentInfo)
                     })
                     .Save(Path.Combine(invoiceFolder, waybillNumber + "_duty_and_tax.pdf"));
+                }
+                catch (Exception e)
+                { }
 
                 // Send Email
                 try
@@ -383,7 +395,7 @@ namespace SinExWebApp20256461.Controllers
                     smtpClient.Send(mailMessage);
                     //Response.Write("Email Sent!!! Yay!");
                 }
-                catch { }
+                catch (Exception e) { }
 
 
                 string filepath1 = invoiceFolder + waybillNumber + "_shipment.pdf";
@@ -417,9 +429,12 @@ namespace SinExWebApp20256461.Controllers
                     totalShipmentCost += cost;
                     shipmentItems.Add(ItemRow.Make("Package " + i.ToString(), packageInfo, (decimal)1, 0, (decimal)cost, (decimal)cost));
                 }
-                shipmentItems.Add(ItemRow.Make("Duty and Tax", "", (decimal)1, 0, (decimal)dutyAndTaxAmount, (decimal)dutyAndTaxAmount));
+                shipmentItems.Add(ItemRow.Make("Duty", "", (decimal)1, 0, (decimal)dutyAmount, (decimal)dutyAmount));
+                shipmentItems.Add(ItemRow.Make("Tax", "", (decimal)1, 0, (decimal)taxAmount, (decimal)taxAmount));
 
-                new InvoicerApi(SizeOption.A4, OrientationOption.Landscape, shipmentPayerCurrencyCode)
+                try
+                {
+                    new InvoicerApi(SizeOption.A4, OrientationOption.Landscape, shipmentPayerCurrencyCode)
                     .TextColor("#CC0000")
                     .BackColor("#FFD6CC")
                     .Reference(waybillNumber)
@@ -429,19 +444,27 @@ namespace SinExWebApp20256461.Controllers
                     .Items(shipmentItems)
                     .Totals(new List<TotalRow> {
                         //TotalRow.Make("Sub Total", (decimal)dutyAndTaxAmount),
-                        TotalRow.Make("Total", (decimal)(totalShipmentCost + (decimal)dutyAndTaxAmount), true),
+                        TotalRow.Make("Total", (decimal)(totalShipmentCost + (decimal)(dutyAmount + taxAmount)), true),
                     })
                     .Details(new List<DetailRow> {
                         DetailRow.Make("SHIPMENT INFORMATION", shipmentInfo)
                     })
                     .Save(Path.Combine(invoiceFolder, waybillNumber + "_total.pdf"));
+                }
+                catch (Exception e)
+                { }
+                
 
                 // Send Email
                 try
                 {
                     MailMessage mailMessage = new MailMessage();
                     //Add recipients 
-                    mailMessage.To.Add(senderShippingAccount.EmailAddress);
+                    //mailMessage.To.Add(senderShippingAccount.EmailAddress);
+                    mailMessage.To.Add("gqi@connect.ust.hk");
+                    mailMessage.To.Add("xduac@connect.ust.hk");
+                    mailMessage.To.Add("zyuaf@connect.ust.hk");
+                    mailMessage.To.Add("swuai@connect.ust.hk");
 
                     //Setting the displayed email address and display name
                     //!!!Do not use this to prank others!!!
@@ -463,7 +486,7 @@ namespace SinExWebApp20256461.Controllers
                     smtpClient.Send(mailMessage);
                     //Response.Write("Email Sent!!! Yay!");
                 }
-                catch { }
+                catch (Exception e) { Console.WriteLine("{0} Exception caught.", e); }
 
             }
         }
@@ -621,20 +644,24 @@ namespace SinExWebApp20256461.Controllers
             return new SelectList(shippingAccountQuery);
         }
         // GET: Shipments
+        [Authorize(Roles = "Employee, Customer")]
         public ActionResult Index()
         {
-            var shippingAccount = (from s in db.ShippingAccounts
-                                   where s.UserName == User.Identity.Name
-                                   select s).First();
-            if (shippingAccount != null)
+            var shipments = from s in db.Shipments select s;
+            if (User.IsInRole("Customer"))
             {
-                var ShippingAccountId = shippingAccount.ShippingAccountId;
-                var shipments = from s in db.Shipments
-                                where s.ShippingAccountId == ShippingAccountId
-                                select s;
+                var shippingAccount = db.ShippingAccounts.FirstOrDefault(s => s.UserName.Equals(User.Identity.Name));
+                var shippingAccountId = 0;
+                if (shippingAccount != null)
+                {
+                    shippingAccountId = shippingAccount.ShippingAccountId;
+                }
+                shipments = from s in shipments
+                            where s.ShippingAccountId == shippingAccountId
+                            select s;
                 return View(shipments.ToList());
             }
-            return View();
+            return View(shipments.ToList());
         }
 
         // GET: Shipments/Details/5
@@ -775,7 +802,6 @@ namespace SinExWebApp20256461.Controllers
                 {
                     Console.WriteLine(e);
                 }
-                
 
                 ViewBag.waybillId = shipment.WaybillId;
 
@@ -786,17 +812,41 @@ namespace SinExWebApp20256461.Controllers
         }
 
         // GET: Shipments/Edit
-        public ActionResult Edit(int? id)
+        public ActionResult EditCustomer(int? id)
         {
             Shipment shipment = db.Shipments.Find(id);
             if (shipment == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            string shipmentPayer;
+            string taxPayer;
+            int i_id1 = shipment.Invoices.SingleOrDefault(a => a.Type.Equals("shipment")).InvoiceID;
+            int i_id2 = shipment.Invoices.SingleOrDefault(a => a.Type.Equals("tax_duty")).InvoiceID;
+            var shipmentInvoice = db.Invoices.Find(i_id1);
+            var taxInvoice = db.Invoices.Find(i_id2);
+            string shipmentShippingAccountNumber = db.ShippingAccounts.SingleOrDefault(a => a.ShippingAccountId == shipment.ShippingAccountId).ShippingAccountNumber;
+            if (string.IsNullOrWhiteSpace(shipmentInvoice.ShippingAccountNumber))
+                shipmentPayer = "";
+            else if (shipmentInvoice.ShippingAccountNumber.Equals(shipmentShippingAccountNumber))
+                shipmentPayer = "Sender";
+            else
+                shipmentPayer = "Recipient";
+            if (string.IsNullOrWhiteSpace(taxInvoice.ShippingAccountNumber))
+                taxPayer = "";
+            else if (taxInvoice.ShippingAccountNumber.Equals(shipmentShippingAccountNumber))
+                taxPayer = "Sender";
+            else
+                taxPayer = "Recipient";
             var ret = new CreateShipmentViewModel {
                 Shipment = shipment,
-                Packages = shipment.Packages.ToList()
-             };
+                DutyAmount = taxInvoice.Duty,
+                TaxAmount = taxInvoice.Tax,
+                Packages = shipment.Packages.ToList(),
+                IfSendEmail = (shipment.IfSendEmail) ? "Yes" : "No",
+                ShipmentPayer = shipmentPayer,
+                TaxPayer = taxPayer,
+            };
             ViewBag.ServiceTypes = db.ServiceTypes.Select(a => a.Type).Distinct().ToList();
             ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(a => a.size).Distinct().ToList();
             ViewBag.PackageCurrency = db.Currencies.Select(a => a.CurrencyCode).Distinct().ToList();
@@ -809,7 +859,7 @@ namespace SinExWebApp20256461.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int? id, CreateShipmentViewModel shipmentView, string submit, string IfSendEmail, string ShipmentPayer, string TaxPayer)
+        public ActionResult EditCustomer(int? id, CreateShipmentViewModel shipmentView, string submit, string IfSendEmail, string ShipmentPayer, string TaxPayer)
         {   
             if (ModelState.IsValid)
             {
@@ -886,6 +936,112 @@ namespace SinExWebApp20256461.Controllers
                 return RedirectToAction("Index");
             }
             
+            return RedirectToAction("Index");
+        }
+
+        // GET: Shipments/Edit
+        public ActionResult EditEmployee(int? id)
+        {
+            Shipment shipment = db.Shipments.Find(id);
+            if (shipment == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            string shipmentPayer;
+            string taxPayer;
+            int i_id1 = shipment.Invoices.SingleOrDefault(a => a.Type.Equals("shipment")).InvoiceID;
+            int i_id2 = shipment.Invoices.SingleOrDefault(a => a.Type.Equals("tax_duty")).InvoiceID;
+            var shipmentInvoice = db.Invoices.Find(i_id1);
+            var taxInvoice = db.Invoices.Find(i_id2);
+            string shipmentShippingAccountNumber = db.ShippingAccounts.SingleOrDefault(a => a.ShippingAccountId == shipment.ShippingAccountId).ShippingAccountNumber;
+            if (string.IsNullOrWhiteSpace(shipmentInvoice.ShippingAccountNumber))
+                shipmentPayer = "";
+            else if (shipmentInvoice.ShippingAccountNumber.Equals(shipmentShippingAccountNumber))
+                shipmentPayer = "Sender";
+            else
+                shipmentPayer = "Recipient";
+            if (string.IsNullOrWhiteSpace(taxInvoice.ShippingAccountNumber))
+                taxPayer = "";
+            else if (taxInvoice.ShippingAccountNumber.Equals(shipmentShippingAccountNumber))
+                taxPayer = "Sender";
+            else
+                taxPayer = "Recipient";
+
+            var ret = new CreateShipmentViewModel
+            {
+                Shipment = shipment,
+                DutyAmount = taxInvoice.Duty,
+                TaxAmount = taxInvoice.Tax,
+                Packages = shipment.Packages.ToList(),
+                IfSendEmail = (shipment.IfSendEmail) ? "Yes" : "No",
+                ShipmentPayer = shipmentPayer,
+                TaxPayer = taxPayer,
+            };
+            ViewBag.ServiceTypes = db.ServiceTypes.Select(a => a.Type).Distinct().ToList();
+            ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(a => a.size).Distinct().ToList();
+            ViewBag.PackageCurrency = db.Currencies.Select(a => a.CurrencyCode).Distinct().ToList();
+
+            return View(ret);
+        }
+
+        // POST: Shipments/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditEmployee(int? id, CreateShipmentViewModel shipmentView, string submit, string IfSendEmail, string ShipmentPayer, string TaxPayer)
+        {
+            if (ModelState.IsValid)
+            {
+                bool sendInvoice = true;
+
+                ViewBag.PackageCurrency = db.Currencies.Select(m => m.CurrencyCode).Distinct().ToList();
+                ViewBag.ServiceTypes = db.ServiceTypes.Select(m => m.Type).Distinct().ToList();
+                ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(m => m.size).Distinct().ToList();
+
+                var shipment = shipmentView.Shipment;
+                var shipmentDB = db.Shipments.Find(id);
+
+                /* Update packages */
+                var old_packages = from s in db.Packages
+                                   where s.WaybillId == shipmentDB.WaybillId
+                                   select s;
+                foreach (var i in old_packages)
+                    db.Packages.Remove(i);
+                for (int i = 0; i < shipmentView.Packages.Count; i++)
+                {
+                    shipmentDB.Packages.Add(shipmentView.Packages[i]);
+                    db.Packages.Add(shipmentView.Packages[i]);
+                    if (shipmentView.Packages[i].WeightActual.Equals(0))
+                        sendInvoice = false;
+                }
+                shipmentDB.NumberOfPackages = shipmentView.Packages.Count;
+
+                /* Update Invoice */
+                int i_id1 = shipmentDB.Invoices.SingleOrDefault(a => a.Type.Equals("shipment")).InvoiceID;
+                int i_id2 = shipmentDB.Invoices.SingleOrDefault(a => a.Type.Equals("tax_duty")).InvoiceID;
+                var shipmentInvoice = db.Invoices.Find(i_id1);
+                var dutyAndTaxInvoice = db.Invoices.Find(i_id2);
+
+                // shipment costs to be determined when sending shipment invoice
+                dutyAndTaxInvoice.Duty = shipmentView.DutyAmount;
+                dutyAndTaxInvoice.Tax = shipmentView.TaxAmount;
+
+                if (shipmentView.DutyAmount.Equals(0) || shipmentView.TaxAmount.Equals(0))
+                    sendInvoice = false;
+
+                db.Entry(shipmentInvoice).State = EntityState.Modified;
+                db.Entry(dutyAndTaxInvoice).State = EntityState.Modified;
+                db.Entry(shipmentDB).State = EntityState.Modified;
+                db.SaveChanges();
+
+                if (sendInvoice)
+                    SendInvoice(id);
+
+                return RedirectToAction("Index");
+            }
+
             return RedirectToAction("Index");
         }
 

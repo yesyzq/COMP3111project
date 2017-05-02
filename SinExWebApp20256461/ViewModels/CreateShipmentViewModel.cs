@@ -23,5 +23,7 @@ namespace SinExWebApp20256461.ViewModels
         public virtual IList<Package> Packages { get; set; }
         public virtual List<String> ServiceTypes { get; set; }
         public virtual List<String> PackageTypeSizes { get; set; }
+        public virtual double DutyAmount { get; set; }
+        public virtual double TaxAmount { get; set; }
     }
 }

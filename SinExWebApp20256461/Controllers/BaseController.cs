@@ -27,6 +27,7 @@ namespace SinExWebApp20256461.Controllers
             ServiceType CostServiceType = db.ServiceTypes.SingleOrDefault(a => a.Type == ServiceType);
             PakageTypeSize CostPackageTypeSize = db.PakageTypeSizes.SingleOrDefault(a => a.size == PackageTypeSize);
             ServicePackageFee CostFee = db.ServicePackageFees.SingleOrDefault(a => a.PackageTypeID == CostPackageTypeSize.PackageType.PackageTypeID && a.ServiceTypeID == CostServiceType.ServiceTypeID);
+            decimal penaltyFee = db.PenaltyFees.SingleOrDefault(a => a.PenaltyFeeID == 1).Fee;
             string WeightLimit = CostPackageTypeSize.weightLimit;
             decimal Fee = CostFee.Fee;
             decimal MinimumFee = CostFee.MinimumFee;
@@ -44,7 +45,7 @@ namespace SinExWebApp20256461.Controllers
                     decimal actualWeightLimit = decimal.Parse(WeightLimit.Replace("kg", ""));
                     if (actualWeight > actualWeightLimit)
                     {
-                        Price += 500;
+                        Price += penaltyFee;
                     }
                 }
                 if (Price < MinimumFee)

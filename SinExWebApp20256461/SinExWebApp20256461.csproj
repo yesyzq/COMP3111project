@@ -216,6 +216,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PackageTypesController.cs" />
     <Compile Include="Controllers\PakageTypeSizesController.cs" />
+    <Compile Include="Controllers\PenaltyFeesController.cs" />
     <Compile Include="Controllers\PersonalShippingAccountsController.cs" />
     <Compile Include="Controllers\PickupsController.cs" />
     <Compile Include="Controllers\RecipientsController.cs" />
@@ -240,6 +241,7 @@
     <Compile Include="Models\Package.cs" />
     <Compile Include="Models\PackageType.cs" />
     <Compile Include="Models\PakageTypeSize.cs" />
+    <Compile Include="Models\PenaltyFee.cs" />
     <Compile Include="Models\PersonalShippingAccount.cs" />
     <Compile Include="Models\Pickup.cs" />
     <Compile Include="Models\Recipient.cs" />
@@ -392,6 +394,11 @@
     <Content Include="Views\SavedAddresses\Details.cshtml" />
     <Content Include="Views\SavedAddresses\Edit.cshtml" />
     <Content Include="Views\SavedAddresses\Index.cshtml" />
+    <Content Include="Views\PenaltyFees\Create.cshtml" />
+    <Content Include="Views\PenaltyFees\Delete.cshtml" />
+    <Content Include="Views\PenaltyFees\Details.cshtml" />
+    <Content Include="Views\PenaltyFees\Edit.cshtml" />
+    <Content Include="Views\PenaltyFees\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

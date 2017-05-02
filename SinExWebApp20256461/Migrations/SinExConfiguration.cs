@@ -98,6 +98,10 @@ namespace SinExWebApp20256461.Migrations
                 new PakageTypeSize { size = "Box-medium - 400x350x250mm", weightLimit = "20kg", PackageTypeID = 4 },
                 new PakageTypeSize { size = "Box-large - 500x450x350mm", weightLimit = "30kg", PackageTypeID = 4 }
                 );
+            context.PenaltyFees.AddOrUpdate(
+                p => p.PenaltyFeeID,
+                new PenaltyFee { PenaltyFeeID = 1, Fee = 500}
+                );
             context.Destinations.AddOrUpdate(
                p => p.City,
                new Destination { City = "Beijing", ProvinceCode = "BJ", CurrencyCode = "CNY" },

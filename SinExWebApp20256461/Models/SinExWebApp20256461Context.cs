@@ -56,5 +56,7 @@ namespace SinExWebApp20256461.Models
         public System.Data.Entity.DbSet<SinExWebApp20256461.Models.SavedAddress> SavedAddresses { get; set; }
 
         public System.Data.Entity.DbSet<SinExWebApp20256461.Models.Tracking> Trackings { get; set; }
+
+        public System.Data.Entity.DbSet<SinExWebApp20256461.Models.PenaltyFee> PenaltyFees { get; set; }
     }
 }

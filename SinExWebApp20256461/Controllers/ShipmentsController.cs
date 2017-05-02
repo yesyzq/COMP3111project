@@ -617,7 +617,7 @@ namespace SinExWebApp20256461.Controllers
         private SelectList PopulateCustomerShippingAccountsDropdownList()
         {
             // TODO: Construct the LINQ query to retrieve the unique list of shipping account ids.
-            var shippingAccountQuery = db.Shipments.Where(a => a.ShippingAccount.UserName == User.Identity.Name).Select(a => a.ShippingAccountId).Distinct().OrderBy(c => c);
+            var shippingAccountQuery = db.Shipments.Where(a => a.ShippingAccount.UserName == User.Identity.Name).Select(a => a.ShippingAccount.ShippingAccountNumber).Distinct().OrderBy(c => c);
             return new SelectList(shippingAccountQuery);
         }
         // GET: Shipments

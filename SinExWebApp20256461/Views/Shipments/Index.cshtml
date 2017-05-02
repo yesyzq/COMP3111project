@@ -6,10 +6,11 @@
 
 <h2>Manage Shipments</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
+@if (User.IsInRole("Customer"))
+{
+    <p>@Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-default" })</p>
+}
 
-</p>
 <table class="table">
     <tr>
         <th>
@@ -63,8 +64,15 @@
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.WaybillId }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.WaybillId })
+                @if (User.IsInRole("Employee"))
+                {
+                    @Html.ActionLink("Edit", "EditEmployee", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm" })
+                }
+                else if (User.IsInRole("Customer"))
+                {
+                    @Html.ActionLink("Edit", "EditCustomer", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm" })
+                    @Html.ActionLink("Delete", "Delete", new { id = item.WaybillId }, new { @class = "btn btn-danger btn-sm" })
+                }
             </td>
         </tr>
     }

@@ -40,6 +40,7 @@
                             }
                             @if (User.IsInRole("Employee"))
                             {
+                                <li>@Html.ActionLink("Manage Shipments", "Index", "Shipments")</li>
                                 <li>@Html.ActionLink("Input Tracking", "Create", "Trackings")</li>
                                 <li>@Html.ActionLink("Change Penalty Fee", "Edit", "PenaltyFees", new { id = 1 }, null)</li>
                             }

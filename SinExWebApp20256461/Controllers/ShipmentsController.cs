@@ -10,6 +10,7 @@ using SinExWebApp20256461.Models;
 using SinExWebApp20256461.ViewModels;
 using X.PagedList;
 using System.Windows.Forms;
+using System.Data.Entity.Validation;
 
 namespace SinExWebApp20256461.Controllers
 {
@@ -408,7 +409,7 @@ namespace SinExWebApp20256461.Controllers
                 shipment.Invoices.Add(shipmentInvoice);
                 shipment.Invoices.Add(taxInvoice);
                           
-                /* Add shipping account helper address */
+                /* Add shipping account helper address 
                 if (shipmentView.Nickname != null)
                 {
                     var r = shipmentView.Recipient;
@@ -424,7 +425,7 @@ namespace SinExWebApp20256461.Controllers
                     }
                     shippingAccount.SavedAddresses.Add(helper_address);
                     db.SavedAddresses.Add(helper_address);
-                }
+                } */
 
                 shipment.IfSendEmail = shipmentView.IfSendEmail == "Yes" ? true : false;
 
@@ -437,7 +438,15 @@ namespace SinExWebApp20256461.Controllers
                 db.Recipients.Add(recipient);
                 
                 db.Shipments.Add(shipment);
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch(DbEntityValidationException e)
+                {
+                    Console.WriteLine(e);
+                }
+                
 
                 ViewBag.waybillId = shipment.WaybillId;
 

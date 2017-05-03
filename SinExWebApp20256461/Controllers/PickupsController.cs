@@ -15,6 +15,8 @@ namespace SinExWebApp20256461.Controllers
     {
         private SinExWebApp20256461Context db = new SinExWebApp20256461Context();
 
+        public object Viewbag { get; private set; }
+
         public ActionResult New(bool? isSameAsSender, string type)
         {
             List<string> pickupTypes = new List<string>();
@@ -57,10 +59,8 @@ namespace SinExWebApp20256461.Controllers
             pickupView.Pickup = new Pickup();
             pickupView.Pickup.Date = DateTime.Now;
             pickupView.Pickup.Type = pickupType;
+            ViewBag.WaybillId=waybillId;
 
-            //for debugging only 
-            //TODO: delete this and pass the waybillId in
-            waybillId = 15;
 
             /* bind shipment */
             var shipment = (from s in db.Shipments
@@ -73,6 +73,12 @@ namespace SinExWebApp20256461.Controllers
             var postalCode = shipment.ShippingAccount.PostalCode;
             var senderMailingAddress = buildingInfo + ":" + streetInfo + ":" + cityInfo + ":" + provinceCode + ":" + postalCode;
 
+            /* bind savedAddress */
+            var savedAddressNicknames = (from s in db.SavedAddresses
+                                         where s.ShippingAccountId == shipment.ShippingAccountId
+                                         select s.NickName);
+            ViewBag.pickupLocations = savedAddressNicknames.Distinct().ToList();
+
             if (location != null)
             {
                 ViewBag.Location = location;//Same, Diff
@@ -80,18 +86,6 @@ namespace SinExWebApp20256461.Controllers
                 {
                     pickupView.Pickup.Location = senderMailingAddress;
                 }
-
-                else if (location == "Diff")
-                {
-                    // ViewBag.pickupLocations = shipment.ShippingAccount.SavedAddresses.Select(a => a.Address).ToList();
-                    //hardcode test
-                    var locations = new List<string>();
-                    locations.Add("Home:123,UG Hall 3,HKUST");
-                    locations.Add("Office: 4213, CSE lab, HKUST");
-                    ViewBag.pickupLocations = locations;
-                }
-
-
 
                 return View(pickupView);
             }
@@ -104,24 +98,21 @@ namespace SinExWebApp20256461.Controllers
             // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
             // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
- //       [ValidateAntiForgeryToken]    
-        public ActionResult Create(string submit,NewPickupViewModel pickupView = null)   //model binding
+        [ValidateAntiForgeryToken]    
+        public ActionResult Create(int waybillId, string pickupType, NewPickupViewModel pickupView)   //model binding
         {
-            pickupView = new NewPickupViewModel();
-            pickupView.Pickup = new Pickup();
-            pickupView.Pickup.Date = DateTime.Now;
-            
-           
+            /* bind shipment */
+            var shipment = (from s in db.Shipments
+                            where s.WaybillId == waybillId
+                            select s).First();
 
-            return View(pickupView);
-            /*
-            db.Pickups.Add(pickup);
+            shipment.Pickup.Date = pickupView.Pickup.Date;
+            shipment.Pickup.Location = pickupView.PickupLocationNickname;
+            shipment.Pickup.Type = pickupView.Pickup.Type;         
+            
             db.SaveChanges();
 
-
             return RedirectToAction("Index", "Shipments");
-
-    */
         }
 
         // GET: Pickups/Edit/5

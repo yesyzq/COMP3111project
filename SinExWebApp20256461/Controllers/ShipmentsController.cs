@@ -851,11 +851,7 @@ namespace SinExWebApp20256461.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult EditCustomer(int? id, CreateShipmentViewModel shipmentView, string submit, string IfSendEmail, string ShipmentPayer, string TaxPayer)
-        {
-            //if (submit == "Save")
-            //{
-
-            //}
+        {   
             if (ModelState.IsValid)
             {
                 ViewBag.PackageCurrency = db.Currencies.Select(m => m.CurrencyCode).Distinct().ToList();

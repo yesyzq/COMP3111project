@@ -64,18 +64,38 @@
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                @if (User.IsInRole("Employee") && (item.Status.Equals("confirmed") || item.Status.Equals("picked_up")))
+                @if (User.IsInRole("Employee"))
                 {
-                    @Html.ActionLink("Edit", "EditEmployee", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm" })
+                    if ((item.Status.Equals("confirmed") || item.Status.Equals("picked_up")))
+                    {
+                        @Html.ActionLink("Edit", "EditEmployee", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm" })
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Edit", "EditEmployee", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm disabled" })
+                    }
+                    <!--@Html.ActionLink("Delete", "Delete", new { id = item.WaybillId }, new { @class = "btn btn-danger btn-sm disabled"})-->
                 }
-                else if (User.IsInRole("Customer") && (item.Status == "pending" || item.Status == "confirmed"))
+
+                else if (User.IsInRole("Customer"))
                 {
                     if (item.Status == "pending")
                     {
                         @Html.ActionLink("Edit", "EditCustomer", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm" })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.WaybillId }, new { @class = "btn btn-danger btn-sm" })
                     }
-                    @Html.ActionLink("Delete", "Delete", new { id = item.WaybillId }, new { @class = "btn btn-danger btn-sm" })
+                    else if (item.Status == "confirmed")
+                    {
+                        @Html.ActionLink("Edit", "EditCustomer", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm disabled" })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.WaybillId }, new { @class = "btn btn-danger btn-sm" })
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Edit", "EditCustomer", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm disabled" })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.WaybillId }, new { @class = "btn btn-danger btn-sm disabled" })
+                    }
                 }
+
             </td>
         </tr>
     }

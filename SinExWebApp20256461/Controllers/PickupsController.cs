@@ -60,7 +60,7 @@ namespace SinExWebApp20256461.Controllers
 
             //for debugging only 
             //TODO: delete this and pass the waybillId in
-            waybillId = 12;
+            waybillId = 15;
 
             /* bind shipment */
             var shipment = (from s in db.Shipments

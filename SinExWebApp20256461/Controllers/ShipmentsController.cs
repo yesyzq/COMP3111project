@@ -194,7 +194,7 @@ namespace SinExWebApp20256461.Controllers
             // Shipment Invoice
             string shipmentPayerShippingAccountNumber = shipmentInvoice.ShippingAccountNumber;
             var shipmentPayerShippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountNumber.Equals(shipmentPayerShippingAccountNumber));
-            string shipmentPayerCurrencyCode = db.Destinations.SingleOrDefault(s => s.ProvinceCode.Equals(shipmentPayerShippingAccount.ProvinceCode)).CurrencyCode + " ";
+            string shipmentPayerCurrencyCode = db.Destinations.SingleOrDefault(s => s.ProvinceCode.Equals(shipmentPayerShippingAccount.ProvinceCode)).CurrencyCode;
 
             // Shipment Payer Info
             string[] shipmentPayerInfo = new string[5];
@@ -246,6 +246,22 @@ namespace SinExWebApp20256461.Controllers
             double taxAmount = dutyAndTaxInvoice.Tax;
             string invoiceFolder = Server.MapPath("~/Invoices");
 
+            // calculate package costs
+            int i = 0;
+            decimal totalShipmentCost = 0;
+            List<ItemRow> shipmentItems = new List<ItemRow>();
+            foreach (var package in shipment.Packages)
+            {
+                i++;
+                string packageInfo = "Package Type: " + package.PackageTypeSize
+                    + "\nActual Weight: " + package.WeightActual;
+                decimal actualWeight = (decimal)package.WeightActual;
+                Dictionary<string, decimal> cost = Calculate(package.Shipment.ServiceType, package.PackageTypeSize, actualWeight);
+                totalShipmentCost += cost[shipmentPayerCurrencyCode];
+                shipmentItems.Add(ItemRow.Make("Package " + i.ToString(), packageInfo, (decimal)1, 0, cost[shipmentPayerCurrencyCode], cost[shipmentPayerCurrencyCode]));
+            }
+
+
             bool seperateInvoice = (shipmentInvoice.ShippingAccountNumber != dutyAndTaxInvoice.ShippingAccountNumber);
 
             if (seperateInvoice)
@@ -253,22 +269,9 @@ namespace SinExWebApp20256461.Controllers
                 // -------------------------------
                 // Shipment Invoice
                 // -------------------------------
-                int i = 0;
-                decimal totalShipmentCost = 0;
-                List<ItemRow> shipmentItems = new List<ItemRow>();
-                foreach (var package in shipment.Packages)
-                {
-                    i++;
-                    string packageInfo = "Package Type: " + package.PackageTypeSize
-                        + "\nActual Weight: " + package.WeightActual;
-                    decimal cost = 100;
-                    totalShipmentCost += cost;
-                    shipmentItems.Add(ItemRow.Make("Package " + i.ToString(), packageInfo, (decimal)1, 0, (decimal)cost, (decimal)cost));
-                }
-
                 try
                 {
-                    new InvoicerApi(SizeOption.A4, OrientationOption.Landscape, shipmentPayerCurrencyCode)
+                    new InvoicerApi(SizeOption.A4, OrientationOption.Landscape, shipmentPayerCurrencyCode + " ")
                     .TextColor("#CC0000")
                     .BackColor("#FFD6CC")
                     .Reference(waybillNumber)
@@ -322,7 +325,7 @@ namespace SinExWebApp20256461.Controllers
                 // -------------------------------
                 string dutyAndTaxPayerShippingAccountNumber = dutyAndTaxInvoice.ShippingAccountNumber;
                 var dutyAndTaxPayerShippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountNumber.Equals(dutyAndTaxPayerShippingAccountNumber));
-                string dutyAndTaxPayerCurrencyCode = db.Destinations.SingleOrDefault(s => s.ProvinceCode.Equals(dutyAndTaxPayerShippingAccount.ProvinceCode)).CurrencyCode + " ";
+                string dutyAndTaxPayerCurrencyCode = db.Destinations.SingleOrDefault(s => s.ProvinceCode.Equals(dutyAndTaxPayerShippingAccount.ProvinceCode)).CurrencyCode;
 
                 // Duty and Tax Payer Info
                 string[] dutyAndTaxPayerInfo = new string[5];
@@ -345,7 +348,7 @@ namespace SinExWebApp20256461.Controllers
                 // Duty and Tax Invoice
                 try
                 {
-                    new InvoicerApi(SizeOption.A4, OrientationOption.Landscape, dutyAndTaxPayerCurrencyCode)
+                    new InvoicerApi(SizeOption.A4, OrientationOption.Landscape, dutyAndTaxPayerCurrencyCode + " ")
                     .TextColor("#CC0000")
                     .BackColor("#FFD6CC")
                     .Reference(waybillNumber)
@@ -417,18 +420,6 @@ namespace SinExWebApp20256461.Controllers
                 // -----------------------------------
                 // Shipment and Duty and Tax Invoice
                 // -----------------------------------
-                int i = 0;
-                decimal totalShipmentCost = 0;
-                List<ItemRow> shipmentItems = new List<ItemRow>();
-                foreach (var package in shipment.Packages)
-                {
-                    i++;
-                    string packageInfo = "Package Type: " + package.PackageTypeSize
-                        + "\nActual Weight: " + package.WeightActual;
-                    decimal cost = 100;
-                    totalShipmentCost += cost;
-                    shipmentItems.Add(ItemRow.Make("Package " + i.ToString(), packageInfo, (decimal)1, 0, (decimal)cost, (decimal)cost));
-                }
                 shipmentItems.Add(ItemRow.Make("Duty", "", (decimal)1, 0, (decimal)dutyAmount, (decimal)dutyAmount));
                 shipmentItems.Add(ItemRow.Make("Tax", "", (decimal)1, 0, (decimal)taxAmount, (decimal)taxAmount));
 

@@ -15,6 +15,8 @@ namespace SinExWebApp20256461.Controllers
     {
         private SinExWebApp20256461Context db = new SinExWebApp20256461Context();
 
+        public object Viewbag { get; private set; }
+
         public ActionResult New(bool? isSameAsSender, string type)
         {
             List<string> pickupTypes = new List<string>();
@@ -57,10 +59,7 @@ namespace SinExWebApp20256461.Controllers
             pickupView.Pickup = new Pickup();
             pickupView.Pickup.Date = DateTime.Now;
             pickupView.Pickup.Type = pickupType;
-
-            //for debugging only 
-            //TODO: delete this and pass the waybillId in
-            waybillId = 12;
+            ViewBag.WaybillId=waybillId;
 
             /* bind shipment */
             var shipment = (from s in db.Shipments

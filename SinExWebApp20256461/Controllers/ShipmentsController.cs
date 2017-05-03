@@ -852,12 +852,6 @@ namespace SinExWebApp20256461.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditCustomer(int? id, CreateShipmentViewModel shipmentView, string submit, string IfSendEmail, string ShipmentPayer, string TaxPayer)
         {   
-            if(submit == "Save")
-            {
-
-            }
-
-
             if (ModelState.IsValid)
             {
                 ViewBag.PackageCurrency = db.Currencies.Select(m => m.CurrencyCode).Distinct().ToList();
@@ -930,18 +924,11 @@ namespace SinExWebApp20256461.Controllers
                 db.Entry(shipmentDB).State = EntityState.Modified;
                 db.SaveChanges();
 
-
-
-                if (submit == "Confirm")
-                {
-                   return RedirectToAction("Create", "Pickups", new { waybillId = shipment.WaybillId });
-
-                }
-
-
+            if (submit == "Confirm") return RedirectToAction("Create", "Pickups", new { waybillId = id });
                 return RedirectToAction("Index");
             }
-            
+
+            if (submit == "Confirm") return RedirectToAction("Create", "Pickups", new { waybillId = id });
             return RedirectToAction("Index");
         }
 

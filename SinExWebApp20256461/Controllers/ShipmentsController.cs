@@ -977,6 +977,7 @@ namespace SinExWebApp20256461.Controllers
             var ret = new CreateShipmentViewModel
             {
                 Shipment = shipment,
+                Status = shipment.Status,
                 DutyAmount = taxInvoice.Duty,
                 TaxAmount = taxInvoice.Tax,
                 Packages = shipment.Packages.ToList(),
@@ -987,6 +988,23 @@ namespace SinExWebApp20256461.Controllers
             ViewBag.ServiceTypes = db.ServiceTypes.Select(a => a.Type).Distinct().ToList();
             ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(a => a.size).Distinct().ToList();
             ViewBag.PackageCurrency = db.Currencies.Select(a => a.CurrencyCode).Distinct().ToList();
+
+            switch (shipment.Status)
+            {
+                case "confirmed":
+                    ViewBag.Statuses = new List<string>{ "picked_up" };
+                    break;
+                case "picked_up":
+                    ViewBag.Statuses = new List<string>{ "picked_up", "lost" };
+                    break;
+                case "pending":
+                case "invoice_sent":
+                case "delivered":
+                case "lost":
+                case "cancelled":
+                default:
+                    break;
+            }
 
             return View(ret);
         }
@@ -1009,7 +1027,7 @@ namespace SinExWebApp20256461.Controllers
                 var shipment = shipmentView.Shipment;
                 var shipmentDB = db.Shipments.Find(id);
 
-                /* Update packages */
+                /* Packages */
                 var old_packages = from s in db.Packages
                                    where s.WaybillId == shipmentDB.WaybillId
                                    select s;
@@ -1023,12 +1041,37 @@ namespace SinExWebApp20256461.Controllers
                         sendInvoice = false;
                 }
                 shipmentDB.NumberOfPackages = shipmentView.Packages.Count;
+                shipmentDB.Status = shipmentView.Status;
 
-                /* Update Invoice */
+                /* Invoice */
                 int i_id1 = shipmentDB.Invoices.SingleOrDefault(a => a.Type.Equals("shipment")).InvoiceID;
                 int i_id2 = shipmentDB.Invoices.SingleOrDefault(a => a.Type.Equals("tax_duty")).InvoiceID;
                 var shipmentInvoice = db.Invoices.Find(i_id1);
                 var dutyAndTaxInvoice = db.Invoices.Find(i_id2);
+
+
+                if (shipmentInvoice.ShippingAccountNumber.Equals(dutyAndTaxInvoice.ShippingAccountNumber))
+                {
+                    if (string.IsNullOrWhiteSpace(shipmentView.ShipmentAuthorizationCode))
+                    {
+                        sendInvoice = false;
+                    }
+                }
+                else
+                {
+                    if (string.IsNullOrWhiteSpace(shipmentView.ShipmentAuthorizationCode) ||
+                        string.IsNullOrWhiteSpace(shipmentView.DutyAndTaxAuthorizationCode))
+                    {
+                        sendInvoice = false;
+                    }
+                }
+
+                // If not yet picked up, authorization codes will not be generated
+                if (shipmentView.Status.Equals("picked_up"))
+                {
+                    shipmentInvoice.AuthenticationCode = shipmentView.ShipmentAuthorizationCode;
+                    dutyAndTaxInvoice.AuthenticationCode = shipmentView.DutyAndTaxAuthorizationCode;
+                }
 
                 // shipment costs to be determined when sending shipment invoice
                 dutyAndTaxInvoice.Duty = shipmentView.DutyAmount;

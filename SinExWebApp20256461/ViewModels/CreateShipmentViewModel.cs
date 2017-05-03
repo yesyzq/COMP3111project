@@ -15,6 +15,7 @@ namespace SinExWebApp20256461.ViewModels
         public virtual Shipment Shipment { get; set; }
         public virtual Recipient Recipient { get; set; }
         public virtual Pickup Pickup { get; set; }
+        public virtual string Status { get; set; }
         public virtual string Nickname { get; set; }
         public virtual string IfSendEmail { get; set; }
         public virtual string ShipmentPayer { get; set; }
@@ -25,5 +26,11 @@ namespace SinExWebApp20256461.ViewModels
         public virtual List<String> PackageTypeSizes { get; set; }
         public virtual double DutyAmount { get; set; }
         public virtual double TaxAmount { get; set; }
+        [StringLength(4, MinimumLength = 4)]
+        [RegularExpression(@"^[0-9]+$", ErrorMessage = "Please input 4-digit authorization code")]
+        public virtual string ShipmentAuthorizationCode { get; set; }
+        [StringLength(4, MinimumLength = 4)]
+        [RegularExpression(@"^[0-9]+$", ErrorMessage = "Please input 4-digit authorization code")]
+        public virtual string DutyAndTaxAuthorizationCode { get; set; }
     }
 }

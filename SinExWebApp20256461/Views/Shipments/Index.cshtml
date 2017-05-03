@@ -64,7 +64,7 @@
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                @if (User.IsInRole("Employee"))
+                @if (User.IsInRole("Employee") && (item.Status.Equals("confirmed") || item.Status.Equals("picked_up")))
                 {
                     @Html.ActionLink("Edit", "EditEmployee", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm" })
                 }

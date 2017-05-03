@@ -852,12 +852,6 @@ namespace SinExWebApp20256461.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditCustomer(int? id, CreateShipmentViewModel shipmentView, string submit, string IfSendEmail, string ShipmentPayer, string TaxPayer)
         {   
-            if(submit == "Save")
-            {
-
-            }
-
-
             if (ModelState.IsValid)
             {
                 ViewBag.PackageCurrency = db.Currencies.Select(m => m.CurrencyCode).Distinct().ToList();
@@ -866,7 +860,7 @@ namespace SinExWebApp20256461.Controllers
 
                 var shipment = shipmentView.Shipment;
                 var shipmentDB = db.Shipments.Find(id);
-              
+
                 if (submit == "add" && shipmentView.Packages.Count < 10)
                 {
                     var new_package = new Package();
@@ -924,24 +918,20 @@ namespace SinExWebApp20256461.Controllers
                 shipmentDB.ServiceType = shipment.ServiceType;
                 shipmentDB.IfSendEmail = IfSendEmail == "Yes" ? true : false;
 
+
+                shipmentDB.Status = submit == "Confirm" ? "confirmed" : "pending";
+
                 db.Entry(_invoice1).State = EntityState.Modified;
                 db.Entry(_invoice2).State = EntityState.Modified;
                 db.Entry(_recipient).State = EntityState.Modified;
                 db.Entry(shipmentDB).State = EntityState.Modified;
                 db.SaveChanges();
 
-
-
-                if (submit == "Confirm")
-                {
-                   return RedirectToAction("Create", "Pickups", new { waybillId = shipment.WaybillId });
-
-                }
-
-
+                if (submit == "Confirm") return RedirectToAction("Create", "Pickups", new { waybillId = id });
                 return RedirectToAction("Index");
             }
-            
+
+            if (submit == "Confirm") return RedirectToAction("Create", "Pickups", new { waybillId = id });
             return RedirectToAction("Index");
         }
 

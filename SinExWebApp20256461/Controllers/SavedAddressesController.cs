@@ -96,8 +96,13 @@ namespace SinExWebApp20256461.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "SavedAddressID,NickName,Building,Street,City,ProvinceCode,PostalCode,Type,ShippingAccountId")] SavedAddress savedAddress)
+        public ActionResult Edit([Bind(Include = "SavedAddressID,NickName,Building,Street,City,ProvinceCode,PostalCode,Type")] SavedAddress savedAddress)
         {
+            var shippingAccount = (from s in db.ShippingAccounts
+                                   where s.UserName == User.Identity.Name
+                                   select s).First();
+            savedAddress.ShippingAccountId = shippingAccount.ShippingAccountId;
+
             if (ModelState.IsValid)
             {
                 db.Entry(savedAddress).State = EntityState.Modified;

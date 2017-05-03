@@ -5,11 +5,17 @@
 }
 
 <h2>New @Html.DisplayFor(model => model.Pickup.Type) Pickup</h2>
+
+
 @using (Html.BeginForm("Create", "Pickups"))
 {
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Pickup.Type)
+    @Html.HiddenFor(model => model.WaybillId)
+
     <div class="btn-group" style="margin:5px 0 10px 0;">
-        @Html.ActionLink("Immediate", "Create", new { pickupType = "Immediate", location = ViewBag.Location }, new { @class = "btn btn-primary btn-large" })
-        @Html.ActionLink("Prearranged", "Create", new { pickupType = "Prearranged", location = ViewBag.Location }, new { @class = "btn btn-info btn-large" })
+        @Html.ActionLink("Immediate", "Create", new {waybillId= ViewBag.WaybillId, pickupType = "Immediate", location = ViewBag.Location }, new { @class = "btn btn-primary btn-large" })
+        @Html.ActionLink("Prearranged", "Create", new { waybillId = ViewBag.WaybillId, pickupType = "Prearranged", location = ViewBag.Location }, new { @class = "btn btn-info btn-large" })
     </div>
 
     if (Model.Pickup.Type == "Immediate")
@@ -29,12 +35,10 @@
 
 
 
-
-
 <h2>The pickup Location  :</h2>
     <div class="btn-group" style="margin:5px 0 10px 0;">
-        @Html.ActionLink("Same", "Create", new { pickupType = Model.Pickup.Type, location = "Same" }, new { @class = "btn btn-success btn-large" })
-        @Html.ActionLink("Diff", "Create", new { pickupType = Model.Pickup.Type, location = "Diff" }, new { @class = "btn btn-warning btn-large" })
+        @Html.ActionLink("Same", "Create", new { waybillId = ViewBag.WaybillId, pickupType = Model.Pickup.Type, location = "Same" }, new { @class = "btn btn-success btn-large" })
+        @Html.ActionLink("Diff", "Create", new { waybillId = ViewBag.WaybillId, pickupType = Model.Pickup.Type, location = "Diff" }, new { @class = "btn btn-warning btn-large" })
     </div>
 
     <div>
@@ -45,9 +49,11 @@
 
        @if (ViewBag.location == "Diff")
         {
-        @Html.DropDownListFor(model => model.Pickup.Location, new SelectList(ViewBag.PickupLocations), "Please select another pickup location", new {@class = "form-control" })
-        }
+        @Html.DropDownListFor(model => model.PickupLocationNickname, new SelectList(ViewBag.pickupLocations), "Please select another pickup location", new {@class = "form-control" })
+       }
     </div>
+
+
 
 <div class="form-group">
     <div class="col-md-offset-2 col-md-10">

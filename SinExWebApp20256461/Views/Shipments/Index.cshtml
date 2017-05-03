@@ -68,9 +68,12 @@
                 {
                     @Html.ActionLink("Edit", "EditEmployee", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm" })
                 }
-                else if (User.IsInRole("Customer"))
+                else if (User.IsInRole("Customer") && (item.Status == "pending" || item.Status == "confirmed"))
                 {
-                    @Html.ActionLink("Edit", "EditCustomer", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm" })
+                    if (item.Status == "pending")
+                    {
+                        @Html.ActionLink("Edit", "EditCustomer", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm" })
+                    }
                     @Html.ActionLink("Delete", "Delete", new { id = item.WaybillId }, new { @class = "btn btn-danger btn-sm" })
                 }
             </td>

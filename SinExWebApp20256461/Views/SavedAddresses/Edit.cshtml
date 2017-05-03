@@ -13,6 +13,7 @@
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.SavedAddressID)
+        @Html.HiddenFor(model => model.NickName)
 
         <h4>Nickname: @(Model.NickName)</h4>
 

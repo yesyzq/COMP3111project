@@ -10,6 +10,6 @@ namespace SinExWebApp20256461.ViewModels
     {
         public virtual IEnumerable<String> Locations { get; set; }
         public virtual Pickup Pickup { get; set; }
-        
+        public virtual IEnumerable<SavedAddress> pickupLocations { get; set; }
     }
 }

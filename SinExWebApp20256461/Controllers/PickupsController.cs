@@ -76,8 +76,7 @@ namespace SinExWebApp20256461.Controllers
             var savedAddressNicknames = (from s in db.SavedAddresses
                                          where s.ShippingAccountId == shipment.ShippingAccountId
                                          select s.NickName);
-            ViewBag.pickupLocationNicknames = savedAddressNicknames.Distinct().ToList();
-
+            ViewBag.pickupLocations = savedAddressNicknames.Distinct().ToList();
 
             if (location != null)
             {
@@ -86,14 +85,6 @@ namespace SinExWebApp20256461.Controllers
                 {
                     pickupView.Pickup.Location = senderMailingAddress;
                 }
-
-                else if (location == "Diff")
-                {
-                    // ViewBag.pickupLocations = shipment.ShippingAccount.SavedAddresses.Select(a => a.Address).ToList();
-                    //hardcode test
-                }
-
-
 
                 return View(pickupView);
             }
@@ -106,24 +97,21 @@ namespace SinExWebApp20256461.Controllers
             // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
             // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
- //       [ValidateAntiForgeryToken]    
-        public ActionResult Create(string submit,NewPickupViewModel pickupView = null)   //model binding
+        [ValidateAntiForgeryToken]    
+        public ActionResult Create(int waybillId, string pickupType, NewPickupViewModel pickupView)   //model binding
         {
-            pickupView = new NewPickupViewModel();
-            pickupView.Pickup = new Pickup();
-            pickupView.Pickup.Date = DateTime.Now;
-            
-           
+            /* bind shipment */
+            var shipment = (from s in db.Shipments
+                            where s.WaybillId == waybillId
+                            select s).First();
 
-            return View(pickupView);
-            /*
-            db.Pickups.Add(pickup);
+            shipment.Pickup.Date = pickupView.Pickup.Date;
+            shipment.Pickup.Location = pickupView.PickupLocationNickname;
+            shipment.Pickup.Type = pickupView.Pickup.Type;         
+            
             db.SaveChanges();
 
-
             return RedirectToAction("Index", "Shipments");
-
-    */
         }
 
         // GET: Pickups/Edit/5

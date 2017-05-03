@@ -261,9 +261,10 @@ namespace SinExWebApp20256461.Controllers
                     i++;
                     string packageInfo = "Package Type: " + package.PackageTypeSize
                         + "\nActual Weight: " + package.WeightActual;
-                    decimal cost = 100;
-                    totalShipmentCost += cost;
-                    shipmentItems.Add(ItemRow.Make("Package " + i.ToString(), packageInfo, (decimal)1, 0, (decimal)cost, (decimal)cost));
+                    decimal actualWeight = (decimal)package.WeightActual;
+                    Dictionary<string, decimal> cost = Calculate(package.Shipment.ServiceType, package.PackageTypeSize, actualWeight);
+                    totalShipmentCost += cost["CNY"];
+                    shipmentItems.Add(ItemRow.Make("Package " + i.ToString(), packageInfo, (decimal)1, 0, cost["CNY"], cost["CNY"]));
                 }
 
                 try

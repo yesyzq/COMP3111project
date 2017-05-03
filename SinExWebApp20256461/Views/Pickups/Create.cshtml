@@ -45,11 +45,7 @@
 
        @if (ViewBag.location == "Diff")
         {
-        @Html.DropDownListFor(model => model.Pickup.Location, new SelectList(ViewBag.PickupLocations), "Please select another pickup location", new {@class = "form-control" })
-
-
-
-
+        @Html.DropDownListFor(model => model.Pickup.Location, new SelectList(ViewBag.pickupLocationNicknames), "Please select another pickup location", new {@class = "form-control" })
 
        }
     </div>

@@ -72,6 +72,13 @@ namespace SinExWebApp20256461.Controllers
             var postalCode = shipment.ShippingAccount.PostalCode;
             var senderMailingAddress = buildingInfo + ":" + streetInfo + ":" + cityInfo + ":" + provinceCode + ":" + postalCode;
 
+            /* bind savedAddress */
+            var savedAddressNicknames = (from s in db.SavedAddresses
+                                         where s.ShippingAccountId == shipment.ShippingAccountId
+                                         select s.NickName);
+            ViewBag.pickupLocationNicknames = savedAddressNicknames.Distinct().ToList();
+
+
             if (location != null)
             {
                 ViewBag.Location = location;//Same, Diff
@@ -84,10 +91,6 @@ namespace SinExWebApp20256461.Controllers
                 {
                     // ViewBag.pickupLocations = shipment.ShippingAccount.SavedAddresses.Select(a => a.Address).ToList();
                     //hardcode test
-                    var locations = new List<string>();
-                    locations.Add("Home:123,UG Hall 3,HKUST");
-                    locations.Add("Office: 4213, CSE lab, HKUST");
-                    ViewBag.pickupLocations = locations;
                 }
 
 

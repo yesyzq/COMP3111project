@@ -926,9 +926,12 @@ namespace SinExWebApp20256461.Controllers
                 db.Entry(_recipient).State = EntityState.Modified;
                 db.Entry(shipmentDB).State = EntityState.Modified;
                 db.SaveChanges();
-                if (submit == "Confirm")
-                    return RedirectToAction("Create", "Pickups", new { waybillId = shipment.WaybillId });
+
+                if (submit == "Confirm") return RedirectToAction("Create", "Pickups", new { waybillId = id });
+                return RedirectToAction("Index");
             }
+
+            if (submit == "Confirm") return RedirectToAction("Create", "Pickups", new { waybillId = id });
             return RedirectToAction("Index");
         }
 

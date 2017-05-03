@@ -278,6 +278,7 @@
     <Compile Include="ViewModels\InvoicesListViewModel.cs" />
     <Compile Include="ViewModels\InvoicesReportViewModel.cs" />
     <Compile Include="ViewModels\InvoicesSearchViewModel.cs" />
+    <Compile Include="ViewModels\NewPickupViewModel.cs" />
     <Compile Include="ViewModels\RegisterCustomerViewModel.cs" />
     <Compile Include="ViewModels\ServicePackageFeeViewModel.cs" />
     <Compile Include="ViewModels\ShipmentsSearchViewModel.cs" />
@@ -425,6 +426,7 @@
     <Content Include="Views\Shipments\GenerateInvoiceReport.cshtml" />
     <Content Include="Views\Shipments\_InvoicesSearchPartial.cshtml" />
     <Content Include="Views\Shipments\EditCustomer.cshtml" />
+    <Content Include="Views\Pickups\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -432,7 +434,6 @@
     <Folder Include="Views\CreateShipment\" />
     <Folder Include="Views\Invoices\" />
     <Folder Include="Views\Packages\" />
-    <Folder Include="Views\Pickups\" />
     <Folder Include="Views\Recipients\" />
   </ItemGroup>
   <ItemGroup>

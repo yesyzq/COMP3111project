@@ -6,7 +6,7 @@
 
 <h2>Edit the Shipment</h2>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("EditCustomer","Shipments"))
 {
     @Html.AntiForgeryToken()
     
@@ -251,10 +251,10 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-2">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" name="submit" value="Save" class="btn btn-default" />
             </div>
             <div class="col-md-8">
-                <input type="submit" value="Confirm" class="btn btn-default" />
+                <input type="submit" name="submit" value="Confirm" class="btn btn-default" />
             </div>
         </div>
     </div>

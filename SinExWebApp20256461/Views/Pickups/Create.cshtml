@@ -1,0 +1,58 @@
+﻿@model SinExWebApp20256461.ViewModels.NewPickupViewModel
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>New @Html.DisplayFor(model => model.Pickup.Type) Pickup</h2>
+@using (Html.BeginForm("Create", "Pickups"))
+{
+    <div class="btn-group" style="margin:5px 0 10px 0;">
+        @Html.ActionLink("Immediate", "Create", new { pickupType = "Immediate", location = ViewBag.Location }, new { @class = "btn btn-primary btn-large" })
+        @Html.ActionLink("Prearranged", "Create", new { pickupType = "Prearranged", location = ViewBag.Location }, new { @class = "btn btn-info btn-large" })
+    </div>
+
+    if (Model.Pickup.Type == "Immediate")
+    {
+        <div class="form-group">
+            @Html.TextBoxFor(model => model.Pickup.Date, htmlAttributes: new { @Value = @DateTime.Now, @type = "datetime", @class = "form-control", @readonly = "readonly" })
+        </div>
+    }
+
+    if (Model.Pickup.Type == "Prearranged")
+    {
+        <div class="form-group">
+            @Html.TextBoxFor(model => model.Pickup.Date, htmlAttributes: new { @Value = @DateTime.Now, @type = "datetime", @class = "form-control" })
+        </div>
+        <div>You can prearranged your pickup up to 5 days, specify both date and time</div>
+    }
+
+
+
+
+
+<h2>The pickup Location  :</h2>
+    <div class="btn-group" style="margin:5px 0 10px 0;">
+        @Html.ActionLink("Same", "Create", new { pickupType = Model.Pickup.Type, location = "Same" }, new { @class = "btn btn-success btn-large" })
+        @Html.ActionLink("Diff", "Create", new { pickupType = Model.Pickup.Type, location = "Diff" }, new { @class = "btn btn-warning btn-large" })
+    </div>
+
+    <div>
+        @if (ViewBag.location == "Same")
+        {
+        @Html.TextBoxFor(model => model.Pickup.Location, new { @Value = Model.Pickup.Location, @class = "form-control", @readonly = "readonly" })
+        }
+
+       @if (ViewBag.location == "Diff")
+        {
+        @Html.DropDownListFor(model => model.Pickup.Location, new SelectList(ViewBag.PickupLocations), "Please select another pickup location", new {@class = "form-control" })
+        }
+    </div>
+
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+        <button type="submit" value="Create" class="btn btn-primary">Save</button>
+    </div>
+</div>
+
+}

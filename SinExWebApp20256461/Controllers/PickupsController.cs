@@ -7,12 +7,27 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using SinExWebApp20256461.Models;
+using SinExWebApp20256461.ViewModels;
 
 namespace SinExWebApp20256461.Controllers
 {
     public class PickupsController : Controller
     {
         private SinExWebApp20256461Context db = new SinExWebApp20256461Context();
+
+        public ActionResult New(bool? isSameAsSender, string type)
+        {
+            List<string> pickupTypes = new List<string>();
+            pickupTypes.Add("Immediate");
+            pickupTypes.Add("Prearranged");
+
+            ViewBag.IsSameAsSender = isSameAsSender;
+            ViewBag.Type = type;
+
+            var viewModel = new NewPickupViewModel();
+            return View(viewModel);
+        }
+
 
         // GET: Pickups
         public ActionResult Index()
@@ -36,26 +51,77 @@ namespace SinExWebApp20256461.Controllers
         }
 
         // GET: Pickups/Create
-        public ActionResult Create()
+        public ActionResult Create(int? waybillId, string pickupType, string location, NewPickupViewModel pickupView = null)   //model binding
         {
-            return View();
-        }
+            pickupView = new NewPickupViewModel();
+            pickupView.Pickup = new Pickup();
+            pickupView.Pickup.Date = DateTime.Now;
+            pickupView.Pickup.Type = pickupType;
 
-        // POST: Pickups/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "PickupID,Location,Date,Type")] Pickup pickup)
-        {
-            if (ModelState.IsValid)
+            //for debugging only 
+            //TODO: delete this and pass the waybillId in
+            waybillId = 12;
+
+            /* bind shipment */
+            var shipment = (from s in db.Shipments
+                            where s.WaybillId == waybillId
+                            select s).First();
+            var buildingInfo = shipment.ShippingAccount.BuildingInformation;
+            var streetInfo = shipment.ShippingAccount.StreetInformation;
+            var cityInfo = shipment.ShippingAccount.City;
+            var provinceCode = shipment.ShippingAccount.ProvinceCode;
+            var postalCode = shipment.ShippingAccount.PostalCode;
+            var senderMailingAddress = buildingInfo + ":" + streetInfo + ":" + cityInfo + ":" + provinceCode + ":" + postalCode;
+
+            if (location != null)
             {
-                db.Pickups.Add(pickup);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                ViewBag.Location = location;//Same, Diff
+                if(location == "Same")
+                {
+                    pickupView.Pickup.Location = senderMailingAddress;
+                }
+
+                else if (location == "Diff")
+                {
+                    // ViewBag.pickupLocations = shipment.ShippingAccount.SavedAddresses.Select(a => a.Address).ToList();
+                    //hardcode test
+                    var locations = new List<string>();
+                    locations.Add("Home:123,UG Hall 3,HKUST");
+                    locations.Add("Office: 4213, CSE lab, HKUST");
+                    ViewBag.pickupLocations = locations;
+                }
+
+
+
+                return View(pickupView);
             }
 
-            return View(pickup);
+            return View(pickupView);
+        }
+
+
+            // POST: Pickups/Create
+            // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+            // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+ //       [ValidateAntiForgeryToken]    
+        public ActionResult Create(string submit,NewPickupViewModel pickupView = null)   //model binding
+        {
+            pickupView = new NewPickupViewModel();
+            pickupView.Pickup = new Pickup();
+            pickupView.Pickup.Date = DateTime.Now;
+            
+           
+
+            return View(pickupView);
+            /*
+            db.Pickups.Add(pickup);
+            db.SaveChanges();
+
+
+            return RedirectToAction("Index", "Shipments");
+
+    */
         }
 
         // GET: Pickups/Edit/5

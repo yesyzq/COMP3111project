@@ -8,12 +8,15 @@ using System.Web;
 using System.Web.Mvc;
 using SinExWebApp20256461.Models;
 using SinExWebApp20256461.ViewModels;
+using System.Data.Entity.Validation;
 
 namespace SinExWebApp20256461.Controllers
 {
     public class PickupsController : Controller
     {
         private SinExWebApp20256461Context db = new SinExWebApp20256461Context();
+
+        public object Viewbag { get; private set; }
 
         public ActionResult New(bool? isSameAsSender, string type)
         {
@@ -54,15 +57,14 @@ namespace SinExWebApp20256461.Controllers
         public ActionResult Create(int? waybillId, string pickupType, string location, NewPickupViewModel pickupView = null)
         {
             pickupView = new NewPickupViewModel();
-            if(waybillId != null)
-            {
-                pickupView.shipmentID = (int)waybillId;
-            }                     
+                 
             pickupView.Pickup = new Pickup
             {
                 Date = DateTime.Now,
                 Type = pickupType
             };
+
+            ViewBag.WaybillId=waybillId;
 
             /* bind shipment */
             var shipment = (from s in db.Shipments
@@ -106,9 +108,10 @@ namespace SinExWebApp20256461.Controllers
         {
             pickupView.Pickup.Type = pickupType;
 
+
             /* Add saved address functionality */
             var shipment = (from s in db.Shipments
-                            where s.WaybillId == pickupView.shipmentID
+                            where s.WaybillId == pickupView.WaybillId
                             select s).First();
             var shippingAccount = (from s in db.ShippingAccounts
                                    where s.UserName == User.Identity.Name
@@ -123,7 +126,8 @@ namespace SinExWebApp20256461.Controllers
                     City = r.City,
                     ProvinceCode = r.ProvinceCode,
                     PostalCode = r.PostalCode,
-                    Type = "recipient"
+                    Type = "recipient",
+                    ShippingAccountId = shippingAccount.ShippingAccountId
                 };
                 if (r.Building != null)
                 {
@@ -137,19 +141,28 @@ namespace SinExWebApp20256461.Controllers
                 SavedAddress helper_address = new SavedAddress
                 {
                     PickupLocation = pickupView.Pickup.Location,
-                    Type = "pickup"
+                    Type = "pickup",
+                    ShippingAccountId = shippingAccount.ShippingAccountId
                 };
                 shippingAccount.SavedAddresses.Add(helper_address);
                 db.SavedAddresses.Add(helper_address);
             }
 
-            db.SaveChanges();
-            return View(pickupView);
-            /*
-            db.Pickups.Add(pickup);
-            db.SaveChanges();
+            shipment.Pickup.Date = pickupView.Pickup.Date;
+            shipment.Pickup.Location = pickupView.PickupNickname;
+            shipment.Pickup.Type = pickupView.Pickup.Type;
+
+            /* need to add pickup */
+            db.Pickups.Add(pickupView.Pickup);
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbEntityValidationException e)
+            {
+                Console.WriteLine(e);
+            }
             return RedirectToAction("Index", "Shipments");
-            */
         }
 
         // GET: Pickups/Edit/5

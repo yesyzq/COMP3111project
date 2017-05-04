@@ -13,13 +13,10 @@ namespace SinExWebApp20256461.Models
         /*newly added attributes*/
         [StringLength(50)]
         public virtual string Building { get; set; }  //optional
-        [Required]
         [StringLength(35)]
         public virtual string Street { get; set; }
-        [Required]
         [StringLength(25)]
         public virtual string City { get; set; }
-        [Required]
         [StringLength(2, MinimumLength = 2)]
         [RegularExpression(@"^BJ|JL|HN|SC|CQ|JX|QH|GD|GZ|HI|NM|ZJ|HL|AH|NM|HK|NM|SD|XJ|YN|GS|XZ|MC|JX|JS|JX|HL|SH|LN|HE|TW|SX|HE|XJ|HB|SN|QH|NX|GS|HA$",
     ErrorMessage = "Please input valid Code")]

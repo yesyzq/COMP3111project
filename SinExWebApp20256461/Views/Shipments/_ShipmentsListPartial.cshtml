@@ -6,7 +6,7 @@
     <table class="table">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.WaybillId)
+                @Html.DisplayNameFor(model => model.WaybillNumber)
             </th>
             <th>
                 @Html.ActionLink("ServiceType", "GenerateHistoryReport", new{
@@ -59,7 +59,7 @@
         {
             <tr>
                 <th>
-                    @Html.DisplayFor(modelItem => item.WaybillId)
+                    @Html.ActionLink(item.WaybillNumber, "DisplayShipment", new { WaybillNumber = item.WaybillNumber })
                 </th>
                 <th>
                     @Html.DisplayFor(modelItem => item.ServiceType)

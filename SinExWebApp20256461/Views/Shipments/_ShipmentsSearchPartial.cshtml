@@ -13,7 +13,7 @@
             @Html.TextBoxFor(a => a.ShippedStartDate, htmlAttributes: new { @value = ViewBag.CurrentShippingStartDate, @type = "date", @class = "form-control" })
         </div>
         <div class="col-md-3">
-            @Html.TextBoxFor(a => a.ShippedEndDate, htmlAttributes: new { @value = ViewBag.CurrentShippingEndDate, @type = "date", @class = "form-control" })
+            @Html.TextBoxFor(a => a.ShippedEndDate, htmlAttributes: new { @value = ViewBag.CurrentShippingStartDate, @type = "date", @class = "form-control" })
         </div>
         <div class="col-md-1">
             <input type="submit" value="Search" class="form-control"/>

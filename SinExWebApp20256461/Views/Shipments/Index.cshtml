@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<SinExWebApp20256461.Models.Shipment>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Manage Shipments";
 }
 
 <h2>Manage Shipments</h2>
@@ -54,7 +54,7 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.WaybillNumber)
+                @Html.ActionLink(item.WaybillNumber, "DisplayShipment", new { WaybillNumber = item.WaybillNumber })
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ReferenceNumber)

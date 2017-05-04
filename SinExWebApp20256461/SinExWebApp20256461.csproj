@@ -427,6 +427,7 @@
     <Content Include="Views\Shipments\_InvoicesSearchPartial.cshtml" />
     <Content Include="Views\Shipments\EditCustomer.cshtml" />
     <Content Include="Views\Pickups\Create.cshtml" />
+    <Content Include="Views\Shipments\DisplayShipment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

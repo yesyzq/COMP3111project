@@ -9,6 +9,7 @@ namespace SinExWebApp20256461.Models
     public class SavedAddress
     {
         public virtual int SavedAddressID { get; set; }
+        [Required]
         public virtual string NickName { get; set; }
         /*newly added attributes*/
         [StringLength(50)]

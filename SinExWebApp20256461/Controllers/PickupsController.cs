@@ -140,6 +140,7 @@ namespace SinExWebApp20256461.Controllers
             {
                 SavedAddress helper_address = new SavedAddress
                 {
+                    NickName = pickupView.PickupNickname,
                     PickupLocation = pickupView.Pickup.Location,
                     Type = "pickup",
                     ShippingAccountId = shippingAccount.ShippingAccountId

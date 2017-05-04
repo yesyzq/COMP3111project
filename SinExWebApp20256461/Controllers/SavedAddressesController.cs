@@ -58,21 +58,25 @@ namespace SinExWebApp20256461.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "SavedAddressID,NickName,Building,Street,City,ProvinceCode,PostalCode,Type")] SavedAddress savedAddress)
+        public ActionResult Create(SavedAddress savedAddress)
         {
-            if (ModelState.IsValid)
-            {
-                var shippingAccount = (from s in db.ShippingAccounts
-                                       where s.UserName == User.Identity.Name
-                                       select s).First();
-                savedAddress.ShippingAccountId = shippingAccount.ShippingAccountId;
-                db.SavedAddresses.Add(savedAddress);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
             ViewBag.ShippingAccountId = new SelectList(db.ShippingAccounts, "ShippingAccountId", "ShippingAccountNumber", savedAddress.ShippingAccountId);
-            return View(savedAddress);
+            var shippingAccount = (from s in db.ShippingAccounts
+                                   where s.UserName == User.Identity.Name
+                                   select s).First();
+            bool isExist = (from s in db.SavedAddresses
+                            where s.ShippingAccountId == shippingAccount.ShippingAccountId
+                            && s.NickName == savedAddress.NickName
+                            select s).Any();
+            if (isExist)
+            {
+                ViewBag.errorMessage = "The nickname already exists! Please choose another one";
+                return View(savedAddress);
+            }
+            savedAddress.ShippingAccountId = shippingAccount.ShippingAccountId;
+            db.SavedAddresses.Add(savedAddress);
+            db.SaveChanges();
+            return RedirectToAction("Index");
         }
 
         // GET: SavedAddresses/Edit/5
@@ -96,7 +100,7 @@ namespace SinExWebApp20256461.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "SavedAddressID,NickName,Building,Street,City,ProvinceCode,PostalCode,Type")] SavedAddress savedAddress)
+        public ActionResult Edit(SavedAddress savedAddress)
         {
             var shippingAccount = (from s in db.ShippingAccounts
                                    where s.UserName == User.Identity.Name

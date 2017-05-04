@@ -12,3 +12,15 @@ $(".btn_click").click(function () {
     }
     console.log(count);
 });
+
+
+$(".btn_sa").click(function () {
+    console.log("enter");
+    if ($(this).val() == "recipient") {
+        $("#recipient").css("display", "block");
+        $("#pickup").css("display", "none");
+    } else {
+        $("#recipient").css("display", "none");
+        $("#pickup").css("display", "block");
+    }
+});

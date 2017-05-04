@@ -12,7 +12,9 @@ namespace SinExWebApp20256461.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Display(Name = "Currency Code")]
         public virtual string CurrencyCode { get; set; }
+        [Display(Name = "Exchange Rate")]
         public virtual double ExchangeRate { get; set; }
         public virtual ICollection<Destination> Destinations { get; set; }
 

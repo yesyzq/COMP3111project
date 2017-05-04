@@ -49,7 +49,7 @@ namespace SinExWebApp20256461.Models
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "User name")]
+        [Display(Name = "Username")]
         [StringLength(10)]
         public string UserName { get; set; }
 

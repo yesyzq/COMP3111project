@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using SinExWebApp20256461.Models;
 using SinExWebApp20256461.ViewModels;
+using System.Data.Entity.Validation;
 
 namespace SinExWebApp20256461.Controllers
 {
@@ -53,14 +54,17 @@ namespace SinExWebApp20256461.Controllers
         }
 
         // GET: Pickups/Create
-        public ActionResult Create(int? waybillId, string pickupType, string location, NewPickupViewModel pickupView = null)   //model binding
+        public ActionResult Create(int? waybillId, string pickupType, string location, NewPickupViewModel pickupView = null)
         {
             pickupView = new NewPickupViewModel();
-            pickupView.Pickup = new Pickup();
-            pickupView.Pickup.Date = DateTime.Now;
-            pickupView.Pickup.Type = pickupType;
-            ViewBag.WaybillId=waybillId;
+                 
+            pickupView.Pickup = new Pickup
+            {
+                Date = DateTime.Now,
+                Type = pickupType
+            };
 
+            ViewBag.WaybillId=waybillId;
 
             /* bind shipment */
             var shipment = (from s in db.Shipments
@@ -71,47 +75,93 @@ namespace SinExWebApp20256461.Controllers
             var cityInfo = shipment.ShippingAccount.City;
             var provinceCode = shipment.ShippingAccount.ProvinceCode;
             var postalCode = shipment.ShippingAccount.PostalCode;
-            var senderMailingAddress = buildingInfo + ":" + streetInfo + ":" + cityInfo + ":" + provinceCode + ":" + postalCode;
+            var senderMailingAddress = streetInfo + ", " + cityInfo + ", " + provinceCode + ", " + postalCode;
+            if (buildingInfo != null)
+            {
+                senderMailingAddress = buildingInfo + ", " + senderMailingAddress;
+            }
 
             /* bind savedAddress */
             var savedAddressNicknames = (from s in db.SavedAddresses
-                                         where s.ShippingAccountId == shipment.ShippingAccountId
+                                         where s.ShippingAccountId == shipment.ShippingAccountId && s.Type == "pickup"
                                          select s.NickName);
-            ViewBag.pickupLocations = savedAddressNicknames.Distinct().ToList();
-
+            if (savedAddressNicknames != null)
+            {
+                ViewBag.pickupLocations = savedAddressNicknames.Distinct().ToList();
+            }
+           
             if (location != null)
             {
-                ViewBag.Location = location;//Same, Diff
-                if(location == "Same")
+                ViewBag.Location = location; //Same, Diff
+                if (location == "Same")
                 {
                     pickupView.Pickup.Location = senderMailingAddress;
                 }
-
-                return View(pickupView);
             }
-
             return View(pickupView);
         }
 
-
-            // POST: Pickups/Create
-            // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-            // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Pickups/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]    
-        public ActionResult Create(int waybillId, string pickupType, NewPickupViewModel pickupView)   //model binding
+        // [ValidateAntiForgeryToken]    
+        public ActionResult Create(string submit, string pickupType, NewPickupViewModel pickupView)   //model binding
         {
-            /* bind shipment */
+            pickupView.Pickup.Type = pickupType;
+
+
+            /* Add saved address functionality */
             var shipment = (from s in db.Shipments
-                            where s.WaybillId == waybillId
+                            where s.WaybillId == pickupView.WaybillId
                             select s).First();
+            var shippingAccount = (from s in db.ShippingAccounts
+                                   where s.UserName == User.Identity.Name
+                                   select s).First();
+            if (pickupView.RecipientNickname != null)
+            {
+                var r = shipment.Recipient;
+                SavedAddress helper_address = new SavedAddress
+                {
+                    NickName = pickupView.RecipientNickname,
+                    Street = r.Street,
+                    City = r.City,
+                    ProvinceCode = r.ProvinceCode,
+                    PostalCode = r.PostalCode,
+                    Type = "recipient",
+                    ShippingAccountId = shippingAccount.ShippingAccountId
+                };
+                if (r.Building != null)
+                {
+                    helper_address.Building = r.Building;
+                }
+                shippingAccount.SavedAddresses.Add(helper_address);
+                db.SavedAddresses.Add(helper_address);
+            }
+            if (pickupView.PickupNickname != null)
+            {
+                SavedAddress helper_address = new SavedAddress
+                {
+                    PickupLocation = pickupView.Pickup.Location,
+                    Type = "pickup",
+                    ShippingAccountId = shippingAccount.ShippingAccountId
+                };
+                shippingAccount.SavedAddresses.Add(helper_address);
+                db.SavedAddresses.Add(helper_address);
+            }
 
             shipment.Pickup.Date = pickupView.Pickup.Date;
-            shipment.Pickup.Location = pickupView.PickupLocationNickname;
-            shipment.Pickup.Type = pickupView.Pickup.Type;         
-            
-            db.SaveChanges();
+            shipment.Pickup.Location = pickupView.PickupNickname;
+            shipment.Pickup.Type = pickupView.Pickup.Type;
 
+            /* need to add pickup */
+            db.Pickups.Add(pickupView.Pickup);
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbEntityValidationException e)
+            {
+                Console.WriteLine(e);
+            }
             return RedirectToAction("Index", "Shipments");
         }
 

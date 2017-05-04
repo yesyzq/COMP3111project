@@ -652,7 +652,11 @@ namespace SinExWebApp20256461.Controllers
                             select s;
                 return View(shipments.ToList());
             }
-            return View(shipments.ToList());
+            if (shipments != null)
+            {
+                View(shipments.ToList());
+            }
+            return View();
         }
 
         // GET: Shipments/Details/5
@@ -756,23 +760,6 @@ namespace SinExWebApp20256461.Controllers
                 shipment.Invoices.Add(shipmentInvoice);
                 shipment.Invoices.Add(taxInvoice);
                           
-                /* Add shipping account helper address 
-                if (shipmentView.Nickname != null)
-                {
-                    var r = shipmentView.Recipient;
-                    SavedAddress helper_address = new SavedAddress
-                    {
-                        NickName = shipmentView.Nickname,
-                        //Address = r.Street + ":" + r.City + ":" + r.ProvinceCode,
-                        Type = "recipient"
-                    };
-                    if (r.Building != null)
-                    {
-                        //helper_address.Address = r.Building + ":" + helper_address.Address;
-                    }
-                    shippingAccount.SavedAddresses.Add(helper_address);
-                    db.SavedAddresses.Add(helper_address);
-                } */
 
                 shipment.IfSendEmail = shipmentView.IfSendEmail == "Yes" ? true : false;
 
@@ -796,7 +783,8 @@ namespace SinExWebApp20256461.Controllers
 
                 ViewBag.waybillId = shipment.WaybillId;
 
-                return RedirectToAction("Create", "Pickups", new { waybillId = shipment.WaybillId });
+                return RedirectToAction("Index");
+                //return RedirectToAction("Create", "Pickups", new { waybillId = shipment.WaybillId });
             }
 
             return View(shipmentView);
@@ -927,11 +915,11 @@ namespace SinExWebApp20256461.Controllers
                 db.Entry(shipmentDB).State = EntityState.Modified;
                 db.SaveChanges();
 
-                if (submit == "Confirm") return RedirectToAction("Create", "Pickups", new { waybillId = id });
-                return RedirectToAction("Index");
-            }
-
-            if (submit == "Confirm") return RedirectToAction("Create", "Pickups", new { waybillId = id });
+                if (submit == "Confirm")
+                {
+                   return RedirectToAction("Create", "Pickups", new { waybillId = shipmentDB.WaybillId });
+                }
+            }        
             return RedirectToAction("Index");
         }
 

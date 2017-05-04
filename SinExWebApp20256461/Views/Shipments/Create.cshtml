@@ -184,18 +184,6 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.Nickname, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.EditorFor(model => model.Nickname, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Nickname, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-            </div>
-        </div>
-        <p>[Please enter a nickname for the recipient address if you want to save it for later use]</p>
 
         <hr />
         <h4>Payment Information</h4>

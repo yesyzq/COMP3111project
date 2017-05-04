@@ -192,21 +192,6 @@
             </div>
         </div>
 
-        @if (!string.IsNullOrWhiteSpace(Model.Nickname))
-        {
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.Nickname, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
-                            @Html.EditorFor(model => model.Nickname, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <p>[Nickname for the recipient address]</p>
-        }
-
         <hr />
         <h4>Payment Information</h4>
         <div class="form-group">

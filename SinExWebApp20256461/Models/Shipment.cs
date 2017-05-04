@@ -12,15 +12,22 @@ namespace SinExWebApp20256461.Models
     {
         [Key]
         public virtual int WaybillId { get; set; }
+        [Display(Name = "Waybill Number")]
         public virtual string WaybillNumber { get; set; }
+        [Display(Name = "Reference Number")]
         [StringLength(10)]
         [RegularExpression(@"^[a-zA-Z0-9]*$", ErrorMessage = "Please input valid Reference Number")]
         public virtual string ReferenceNumber { get; set; }
+        [Display(Name = "Service Type")]
         [Required]
         public virtual string ServiceType { get; set; }
+        [Display(Name = "Shipped Date")]
         public virtual DateTime ShippedDate { get; set; }
+        [Display(Name = "Delivered Date")]
         public virtual DateTime DeliveredDate { get; set; }
+        [Display(Name = "Recipient Name")]
         public virtual string RecipientName { get; set; } // what is dis ???
+        [Display(Name = "Number of Packages")]
         public virtual int NumberOfPackages { get; set; }
         [Required]
         [StringLength(2, MinimumLength = 2)]
@@ -39,6 +46,7 @@ namespace SinExWebApp20256461.Models
         public virtual Recipient Recipient { get; set; }
         //417
         [Required]
+        [Display(Name = "Email Notification?")]
         public virtual bool IfSendEmail { get; set; }
         public virtual ICollection<Invoice> Invoices { get; set; }
         public virtual ICollection<Package> Packages { get; set; }

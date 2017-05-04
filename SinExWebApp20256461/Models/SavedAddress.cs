@@ -9,6 +9,7 @@ namespace SinExWebApp20256461.Models
     public class SavedAddress
     {
         public virtual int SavedAddressID { get; set; }
+        [Display(Name = "Nickname")]
         public virtual string NickName { get; set; }
         /*newly added attributes*/
         [StringLength(50)]
@@ -17,13 +18,16 @@ namespace SinExWebApp20256461.Models
         public virtual string Street { get; set; }
         [StringLength(25)]
         public virtual string City { get; set; }
+        [Display(Name = "Province Code")]
         [StringLength(2, MinimumLength = 2)]
         [RegularExpression(@"^BJ|JL|HN|SC|CQ|JX|QH|GD|GZ|HI|NM|ZJ|HL|AH|NM|HK|NM|SD|XJ|YN|GS|XZ|MC|JX|JS|JX|HL|SH|LN|HE|TW|SX|HE|XJ|HB|SN|QH|NX|GS|HA$",
     ErrorMessage = "Please input valid Code")]
         public virtual string ProvinceCode { set; get; }
+        [Display(Name = "Postal Code")]
         [StringLength(6, MinimumLength = 5)]
         [RegularExpression(@"^[0-9]+$", ErrorMessage = "Please input number between 5-6 digits")]
         public virtual string PostalCode { get; set; }
+        [Display(Name = "Pickup Location")]
         public virtual string PickupLocation { get; set; }
         public virtual string Type { get; set; }
         public virtual int ShippingAccountId { get; set; }

@@ -59,9 +59,12 @@
         <td>
             @(item.MinimumFee * (decimal)ViewBag.TWD)
         </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id = item.ServicePackageFeeID })
-        </td>
+        @if (User.IsInRole("Employee"))
+        {
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ServicePackageFeeID })
+            </td>
+        }
     </tr>
 }
 

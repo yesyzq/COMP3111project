@@ -8,11 +8,22 @@
 
 @if (User.IsInRole("Customer"))
 {
-    <p>@Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-2default" })</p>
+    <p>@Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-default" })</p>
+}
+
+@if (User.IsInRole("Employee"))
+{
+    <div class="btn-toolbar">
+        @Html.ActionLink("Enter Actual Weight", "Index", new { EmployeeAction = "enter_weight" }, new { @class = "btn btn-default" })
+        @Html.ActionLink("Enter Tax & Duty", "Index", new { EmployeeAction = "enter_tax" }, new { @class = "btn btn-default" })
+    </div>
 }
 
 <table class="table">
     <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.WaybillNumber)
+        </th>
         <th>
             @Html.DisplayNameFor(model => model.ReferenceNumber)
         </th>
@@ -43,6 +54,9 @@
     {
         <tr>
             <td>
+                @Html.DisplayFor(modelItem => item.WaybillNumber)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.ReferenceNumber)
             </td>
             <td>
@@ -66,7 +80,7 @@
             <td>
                 @if (User.IsInRole("Employee"))
                 {
-                    if ((item.Status.Equals("confirmed") || item.Status.Equals("picked_up")))
+                    if ((item.Status == "confirmed" || item.Status == "picked_up"))
                     {
                         @Html.ActionLink("Edit", "EditEmployee", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm" })
                     }

@@ -183,9 +183,9 @@ namespace SinExWebApp20256461.Controllers
             SinExWebApp20256461.Models.Invoice dutyAndTaxInvoice = null;
             foreach (var invoice in shipment.Invoices)
             {
-                if (invoice.Type.Equals("shipment"))
+                if (invoice.Type == "shipment")
                     shipmentInvoice = invoice;
-                else if (invoice.Type.Equals("tax_duty"))
+                else if (invoice.Type == "tax_duty")
                     dutyAndTaxInvoice = invoice;
             }
 
@@ -193,8 +193,8 @@ namespace SinExWebApp20256461.Controllers
 
             // Shipment Invoice
             string shipmentPayerShippingAccountNumber = shipmentInvoice.ShippingAccountNumber;
-            var shipmentPayerShippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountNumber.Equals(shipmentPayerShippingAccountNumber));
-            string shipmentPayerCurrencyCode = db.Destinations.SingleOrDefault(s => s.ProvinceCode.Equals(shipmentPayerShippingAccount.ProvinceCode)).CurrencyCode;
+            var shipmentPayerShippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountNumber == shipmentPayerShippingAccountNumber);
+            string shipmentPayerCurrencyCode = db.Destinations.SingleOrDefault(s => s.ProvinceCode == shipmentPayerShippingAccount.ProvinceCode).CurrencyCode;
 
             // Shipment Payer Info
             string[] shipmentPayerInfo = new string[5];
@@ -324,8 +324,8 @@ namespace SinExWebApp20256461.Controllers
                 // Duty and Tax Invoice
                 // -------------------------------
                 string dutyAndTaxPayerShippingAccountNumber = dutyAndTaxInvoice.ShippingAccountNumber;
-                var dutyAndTaxPayerShippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountNumber.Equals(dutyAndTaxPayerShippingAccountNumber));
-                string dutyAndTaxPayerCurrencyCode = db.Destinations.SingleOrDefault(s => s.ProvinceCode.Equals(dutyAndTaxPayerShippingAccount.ProvinceCode)).CurrencyCode;
+                var dutyAndTaxPayerShippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountNumber == dutyAndTaxPayerShippingAccountNumber);
+                string dutyAndTaxPayerCurrencyCode = db.Destinations.SingleOrDefault(s => s.ProvinceCode == dutyAndTaxPayerShippingAccount.ProvinceCode).CurrencyCode;
 
                 // Duty and Tax Payer Info
                 string[] dutyAndTaxPayerInfo = new string[5];
@@ -484,7 +484,7 @@ namespace SinExWebApp20256461.Controllers
 
         public ActionResult DisplayInvoice(string WaybillNumber)
         {
-            var shipment = db.Shipments.SingleOrDefault(a => a.WaybillNumber.Equals(WaybillNumber));
+            var shipment = db.Shipments.SingleOrDefault(a => a.WaybillNumber == WaybillNumber);
             string invoiceFolder = Server.MapPath("~/Invoices");
             string invoicePath = Path.Combine(invoiceFolder, WaybillNumber + "_total.pdf");
             if (System.IO.File.Exists(invoicePath))
@@ -636,12 +636,12 @@ namespace SinExWebApp20256461.Controllers
         }
         // GET: Shipments
         [Authorize(Roles = "Employee, Customer")]
-        public ActionResult Index()
+        public ActionResult Index(string EmployeeAction)
         {
             var shipments = from s in db.Shipments select s;
             if (User.IsInRole("Customer"))
             {
-                var shippingAccount = db.ShippingAccounts.FirstOrDefault(s => s.UserName.Equals(User.Identity.Name));
+                var shippingAccount = db.ShippingAccounts.FirstOrDefault(s => s.UserName == User.Identity.Name);
                 var shippingAccountId = 0;
                 if (shippingAccount != null)
                 {
@@ -652,6 +652,24 @@ namespace SinExWebApp20256461.Controllers
                             select s;
                 return View(shipments.ToList());
             }
+
+            if (EmployeeAction == "enter_weight")
+            {
+                shipments = from s in shipments
+                            where s.Status == "confirmed" || s.Status == "picked_up"
+                            where s.Packages.Any(a => a.WeightActual.Equals(0))
+                            select s;
+            }
+
+            else if (EmployeeAction == "enter_tax")
+            {
+                shipments = from s in shipments
+                            where s.Status == "confirmed" || s.Status == "picked_up"
+                            where s.Invoices.FirstOrDefault(a => a.Type == "tax_duty").Duty.Equals(0) ||
+                                  s.Invoices.FirstOrDefault(a => a.Type == "tax_duty").Tax.Equals(0)
+                            select s;
+            }
+
             if (shipments != null)
             {
                 View(shipments.ToList());
@@ -800,20 +818,20 @@ namespace SinExWebApp20256461.Controllers
             }
             string shipmentPayer;
             string taxPayer;
-            int i_id1 = shipment.Invoices.SingleOrDefault(a => a.Type.Equals("shipment")).InvoiceID;
-            int i_id2 = shipment.Invoices.SingleOrDefault(a => a.Type.Equals("tax_duty")).InvoiceID;
+            int i_id1 = shipment.Invoices.SingleOrDefault(a => a.Type == "shipment").InvoiceID;
+            int i_id2 = shipment.Invoices.SingleOrDefault(a => a.Type == "tax_duty").InvoiceID;
             var shipmentInvoice = db.Invoices.Find(i_id1);
             var taxInvoice = db.Invoices.Find(i_id2);
             string shipmentShippingAccountNumber = db.ShippingAccounts.SingleOrDefault(a => a.ShippingAccountId == shipment.ShippingAccountId).ShippingAccountNumber;
             if (string.IsNullOrWhiteSpace(shipmentInvoice.ShippingAccountNumber))
                 shipmentPayer = "";
-            else if (shipmentInvoice.ShippingAccountNumber.Equals(shipmentShippingAccountNumber))
+            else if (shipmentInvoice.ShippingAccountNumber == shipmentShippingAccountNumber)
                 shipmentPayer = "Sender";
             else
                 shipmentPayer = "Recipient";
             if (string.IsNullOrWhiteSpace(taxInvoice.ShippingAccountNumber))
                 taxPayer = "";
-            else if (taxInvoice.ShippingAccountNumber.Equals(shipmentShippingAccountNumber))
+            else if (taxInvoice.ShippingAccountNumber == shipmentShippingAccountNumber)
                 taxPayer = "Sender";
             else
                 taxPayer = "Recipient";
@@ -934,20 +952,20 @@ namespace SinExWebApp20256461.Controllers
 
             string shipmentPayer;
             string taxPayer;
-            int i_id1 = shipment.Invoices.SingleOrDefault(a => a.Type.Equals("shipment")).InvoiceID;
-            int i_id2 = shipment.Invoices.SingleOrDefault(a => a.Type.Equals("tax_duty")).InvoiceID;
+            int i_id1 = shipment.Invoices.SingleOrDefault(a => a.Type == "shipment").InvoiceID;
+            int i_id2 = shipment.Invoices.SingleOrDefault(a => a.Type == "tax_duty").InvoiceID;
             var shipmentInvoice = db.Invoices.Find(i_id1);
             var taxInvoice = db.Invoices.Find(i_id2);
             string shipmentShippingAccountNumber = db.ShippingAccounts.SingleOrDefault(a => a.ShippingAccountId == shipment.ShippingAccountId).ShippingAccountNumber;
             if (string.IsNullOrWhiteSpace(shipmentInvoice.ShippingAccountNumber))
                 shipmentPayer = "";
-            else if (shipmentInvoice.ShippingAccountNumber.Equals(shipmentShippingAccountNumber))
+            else if (shipmentInvoice.ShippingAccountNumber == shipmentShippingAccountNumber)
                 shipmentPayer = "Sender";
             else
                 shipmentPayer = "Recipient";
             if (string.IsNullOrWhiteSpace(taxInvoice.ShippingAccountNumber))
                 taxPayer = "";
-            else if (taxInvoice.ShippingAccountNumber.Equals(shipmentShippingAccountNumber))
+            else if (taxInvoice.ShippingAccountNumber == shipmentShippingAccountNumber)
                 taxPayer = "Sender";
             else
                 taxPayer = "Recipient";
@@ -1022,13 +1040,13 @@ namespace SinExWebApp20256461.Controllers
                 shipmentDB.Status = shipmentView.Status;
 
                 /* Invoice */
-                int i_id1 = shipmentDB.Invoices.SingleOrDefault(a => a.Type.Equals("shipment")).InvoiceID;
-                int i_id2 = shipmentDB.Invoices.SingleOrDefault(a => a.Type.Equals("tax_duty")).InvoiceID;
+                int i_id1 = shipmentDB.Invoices.SingleOrDefault(a => a.Type == "shipment").InvoiceID;
+                int i_id2 = shipmentDB.Invoices.SingleOrDefault(a => a.Type == "tax_duty").InvoiceID;
                 var shipmentInvoice = db.Invoices.Find(i_id1);
                 var dutyAndTaxInvoice = db.Invoices.Find(i_id2);
 
 
-                if (shipmentInvoice.ShippingAccountNumber.Equals(dutyAndTaxInvoice.ShippingAccountNumber))
+                if (shipmentInvoice.ShippingAccountNumber == dutyAndTaxInvoice.ShippingAccountNumber)
                 {
                     if (string.IsNullOrWhiteSpace(shipmentView.ShipmentAuthorizationCode))
                     {
@@ -1045,7 +1063,7 @@ namespace SinExWebApp20256461.Controllers
                 }
 
                 // If not yet picked up, authorization codes will not be generated
-                if (shipmentView.Status.Equals("picked_up"))
+                if (shipmentView.Status == "picked_up")
                 {
                     shipmentInvoice.AuthenticationCode = shipmentView.ShipmentAuthorizationCode;
                     dutyAndTaxInvoice.AuthenticationCode = shipmentView.DutyAndTaxAuthorizationCode;
@@ -1058,13 +1076,15 @@ namespace SinExWebApp20256461.Controllers
                 if (shipmentView.DutyAmount.Equals(0) || shipmentView.TaxAmount.Equals(0))
                     sendInvoice = false;
 
+                if (sendInvoice)
+                    SendInvoice(id);
+
+                shipment.Status = "invoice_sent";
+
                 db.Entry(shipmentInvoice).State = EntityState.Modified;
                 db.Entry(dutyAndTaxInvoice).State = EntityState.Modified;
                 db.Entry(shipmentDB).State = EntityState.Modified;
                 db.SaveChanges();
-
-                if (sendInvoice)
-                    SendInvoice(id);
 
                 return RedirectToAction("Index");
             }

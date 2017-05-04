@@ -9,9 +9,9 @@ namespace SinExWebApp20256461.Models
     public class Recipient
     {
         public virtual int RecipientID { get; set; }
+        [Display(Name = "Full Name")]
         [Required]
         [StringLength(509)]
-        [Display(Name = "Name")]
         public virtual string FullName { get; set; }
         [Required]
         [StringLength(14, MinimumLength = 8)]
@@ -34,12 +34,14 @@ namespace SinExWebApp20256461.Models
         [Required]
         [StringLength(25)]
         public virtual string City { get; set; }
+        [Display(Name = "Province Code")]
         [Required]
         [StringLength(2, MinimumLength = 2)]
         [RegularExpression(@"^BJ|JL|HN|SC|CQ|JX|QH|GD|GZ|HI|NM|ZJ|HL|AH|NM|HK|NM|SD|XJ|YN|GS|XZ|MC|JX|JS|JX|HL|SH|LN|HE|TW|SX|HE|XJ|HB|SN|QH|NX|GS|HA$",
     ErrorMessage = "Please input valid Code")]
         public virtual string ProvinceCode { set; get; }
 
+        [Display(Name = "Postal Code")]
         [StringLength(6, MinimumLength = 5)]
         [RegularExpression(@"^[0-9]+$", ErrorMessage = "Please input number between 5-6 digits")]
         public virtual string PostalCode { get; set; }

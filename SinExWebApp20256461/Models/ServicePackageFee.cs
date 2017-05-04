@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
@@ -11,6 +12,7 @@ namespace SinExWebApp20256461.Models
     {
         public virtual int ServicePackageFeeID { get; set; }
         public virtual decimal Fee { get; set; }
+        [Display(Name = "Minimum Fee")]
         public virtual decimal MinimumFee { get; set; }
 
         public virtual int PackageTypeID { get; set; }

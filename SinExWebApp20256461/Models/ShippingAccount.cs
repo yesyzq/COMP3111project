@@ -13,7 +13,7 @@ namespace SinExWebApp20256461.Models
         // TODO: how to auto generate 12-digit shipping account
         public virtual int ShippingAccountId { get; set; }
         public virtual string ShippingAccountNumber { get; set; }
-        [Display(Name = "User Name")]
+        [Display(Name = "Username")]
         [StringLength(10)]
         public string UserName { get; set; }
         public virtual ICollection<Shipment> Shipments { get;set; }

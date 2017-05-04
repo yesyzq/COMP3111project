@@ -1,57 +1,74 @@
 ﻿@model SinExWebApp20256461.ViewModels.CreateShipmentViewModel
 
 @{
-    ViewBag.Title = "Edit Shipment";
+    ViewBag.Title = "Display Shipment";
 }
 
-<h2>Edit Shipment</h2>
+<h2>Display Shipment</h2>
 
-@using (Html.BeginForm("EditCustomer","Shipments"))
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <hr />
         <h4>Shipment Information</h4>
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
         <div class="form-group">
             @Html.LabelFor(model => model.Shipment.ReferenceNumber, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Shipment.ReferenceNumber, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Shipment.ReferenceNumber, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.Shipment.ReferenceNumber, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
             </div>
         </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.Shipment.Origin, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Shipment.Origin, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Shipment.Origin, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.Shipment.Origin, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
             </div>
         </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.Shipment.Destination, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Shipment.Destination, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Shipment.Destination, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.Shipment.Destination, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
             </div>
         </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.Shipment.ServiceType, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownListFor(model => model.Shipment.ServiceType, new SelectList(ViewBag.ServiceTypes), "please Select")
+                @Html.EditorFor(model => model.Shipment.ServiceType, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
             </div>
         </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.IfSendEmail, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                Yes @Html.RadioButtonFor(model => model.IfSendEmail, "Yes")
-                No @Html.RadioButtonFor(model => model.IfSendEmail, "No")
+                Yes @Html.RadioButtonFor(model => model.IfSendEmail, "Yes", new { @class = "btn_click", @disabled = "disabled" })
+                No @Html.RadioButtonFor(model => model.IfSendEmail, "No", new { @class = "btn_click", @disabled = "disabled" })
             </div>
         </div>
+
+        @if (Model.Status == "confirmed" || Model.Status == "picked_up")
+        {
+            <div class="form-group">
+                @Html.LabelFor(model => model.Shipment.Status, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.Shipment.Status, new SelectList(ViewBag.Statuses))
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                @Html.LabelFor(model => model.Shipment.Status, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Shipment.Status, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                </div>
+            </div>
+        }
 
         <hr />
         <h4>Package Information</h4>
@@ -59,34 +76,31 @@
         {
             string packageNum = "Package Number " + (i + 1);
             <h3>@Html.Label(packageNum)</h3>
-            @Html.ActionLink("delete", "Create", new { id = i }, new { @class = "btn btn-danger" })
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].PackageTypeSize, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.DropDownListFor(model => model.Packages[i].PackageTypeSize, new SelectList(ViewBag.PackageTypeSizes), "please Select")
+                    @Html.EditorFor(model => model.Packages[i].PackageTypeSize, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 </div>
             </div>
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].Description, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.Packages[i].Description, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Packages[i].Description, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.Packages[i].Description, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 </div>
             </div>
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].Value, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.Packages[i].Value, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Packages[i].Value, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.Packages[i].Value, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 </div>
             </div>
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].WeightEstimated, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.Packages[i].WeightEstimated, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Packages[i].WeightEstimated, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.Packages[i].WeightEstimated, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 </div>
             </div>
+
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].WeightActual, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
@@ -94,11 +108,6 @@
                 </div>
             </div>
         }
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" name="submit" value="add" class="btn btn-default" />
-            </div>
-        </div>
 
         <hr />
         <h4>Recipient Information</h4>
@@ -107,8 +116,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.Shipment.Recipient.FullName, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.EditorFor(model => model.Shipment.Recipient.FullName, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Shipment.Recipient.FullName, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.Shipment.Recipient.FullName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                     </div>
                 </div>
             </div>
@@ -116,8 +124,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.Shipment.Recipient.Building, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.EditorFor(model => model.Shipment.Recipient.Building, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Shipment.Recipient.Building, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.Shipment.Recipient.Building, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                     </div>
                 </div>
             </div>
@@ -127,8 +134,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.Shipment.Recipient.Street, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.EditorFor(model => model.Shipment.Recipient.Street, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Shipment.Recipient.Street, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.Shipment.Recipient.Street, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                     </div>
                 </div>
             </div>
@@ -136,8 +142,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.Shipment.Recipient.City, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.EditorFor(model => model.Shipment.Recipient.City, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Shipment.Recipient.City, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.Shipment.Recipient.City, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                     </div>
                 </div>
             </div>
@@ -147,8 +152,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.Shipment.Recipient.ProvinceCode, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.EditorFor(model => model.Shipment.Recipient.ProvinceCode, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Shipment.Recipient.ProvinceCode, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.Shipment.Recipient.ProvinceCode, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                     </div>
                 </div>
             </div>
@@ -156,8 +160,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.Shipment.Recipient.PostalCode, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.EditorFor(model => model.Shipment.Recipient.PostalCode, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Shipment.Recipient.PostalCode, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.Shipment.Recipient.PostalCode, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                     </div>
                 </div>
             </div>
@@ -167,8 +170,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.Shipment.Recipient.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.EditorFor(model => model.Shipment.Recipient.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Shipment.Recipient.PhoneNumber, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.Shipment.Recipient.PhoneNumber, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                     </div>
                 </div>
             </div>
@@ -176,13 +178,11 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.Shipment.Recipient.EmailAddress, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.EditorFor(model => model.Shipment.Recipient.EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Shipment.Recipient.EmailAddress, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.Shipment.Recipient.EmailAddress, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                     </div>
                 </div>
             </div>
         </div>
-
 
         <hr />
         <h4>Payment Information</h4>
@@ -192,7 +192,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.DutyAmount, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.DutyAmount, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                             @Html.EditorFor(model => model.DutyAmount, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                         </div>
                     </div>
                 </div>
@@ -200,7 +200,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.TaxAmount, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.TaxAmount, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                             @Html.EditorFor(model => model.TaxAmount, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                         </div>
                     </div>
                 </div>
@@ -209,8 +209,8 @@
                 Payer for shipment
             </div>
             <div class="col-md-10">
-                Sender @Html.RadioButtonFor(model => model.ShipmentPayer, "Sender", new { @class = "btn_click" })
-                Recipient @Html.RadioButtonFor(model => model.ShipmentPayer, "Recipient", new { @class = "btn_click" })
+                Sender @Html.RadioButtonFor(model => model.ShipmentPayer, "Sender", new { @class = "btn_click", @disabled = "disabled" })
+                Recipient @Html.RadioButtonFor(model => model.ShipmentPayer, "Recipient", new { @class = "btn_click", @disabled = "disabled" })
             </div>
         </div>
         <div class="form-group">
@@ -218,32 +218,57 @@
                 Payer for tax and duty
             </div>
             <div class="col-md-10">
-                Sender @Html.RadioButtonFor(model => model.TaxPayer, "Sender", new { @class = "btn_click" })
-                Recipient @Html.RadioButtonFor(model => model.TaxPayer, "Recipient", new { @class = "btn_click" })
+                Sender @Html.RadioButtonFor(model => model.TaxPayer, "Sender", new { @class = "btn_click", @disabled = "disabled" })
+                Recipient @Html.RadioButtonFor(model => model.TaxPayer, "Recipient", new { @class = "btn_click", @disabled = "disabled" })
             </div>
         </div>
         <div id="append" style="display: none">
             <div class="form-group">
                 <div class="col-md-10 col-md-offset-2">
-                    @Html.EditorFor(model => model.RecipientShippingAccountNumber, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.RecipientShippingAccountNumber, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.RecipientShippingAccountNumber, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 </div>
-                <p class="col-md-offset-2">Please provide Shipping Account Number of the recipient.</p>
+                <p class="col-md-offset-2">Shipping Account Number of the recipient.</p>
             </div>
         </div>
+
+        @if (Model.ShipmentPayer == Model.TaxPayer)
+        {
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ShipmentAuthorizationCode, "Authorization Code", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.ShipmentAuthorizationCode, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ShipmentAuthorizationCode, "Authorization Code", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.ShipmentAuthorizationCode, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DutyAndTaxAuthorizationCode, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.DutyAndTaxAuthorizationCode, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
 
         @Html.HiddenFor(model => model.Shipment.ShippingAccountId)
         @Html.HiddenFor(model => model.Shipment.Recipient.RecipientID)
 
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-2">
-                <input type="submit" name="submit" value="Save" class="btn btn-default" />
-            </div>
-            <div class="col-md-8">
-                <input type="submit" name="submit" value="Confirm" class="btn btn-default" />
-            </div>
-        </div>
     </div>
 }
 

@@ -1,14 +1,14 @@
 ﻿@model IEnumerable<SinExWebApp20256461.Models.Destination>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Cities Served";
 }
 
-<h2>Index</h2>
+<h2>Cities Served</h2>
 @if (User.IsInRole("Employee"))
 {
     <p>
-        @Html.ActionLink("Create New", "Create")
+        @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-default" })
     </p>
 }
 <table class="table">
@@ -29,9 +29,11 @@
         <td>
             @Html.DisplayFor(modelItem => item.ProvinceCode)
         </td>
-        <td>
-            @Html.ActionLink("Details", "Details", new { id = item.DestinationID })
-        </td>
+        <!--
+            <td>
+                @Html.ActionLink("Details", "Details", new { id = item.DestinationID })
+            </td>
+        -->
     </tr>
 }
 

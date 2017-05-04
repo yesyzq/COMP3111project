@@ -51,6 +51,12 @@ namespace SinExWebApp20256461.Controllers
                 //return View(shipmentSearch);
                 //}
             }
+
+            //if (ShippedStartDate == null)
+            //    ShippedStartDate = DateTime.Now.Date;
+            //if (ShippedEndDate == null)
+            //    ShippedEndDate = DateTime.Now.Date;
+
             ViewBag.CurrentShippingAccountNumber = ShippingAccountNumber;
             ViewBag.CurrentShippingStartDate = ShippedStartDate;
             ViewBag.CurrentShippingEndDate = ShippedEndDate;
@@ -58,7 +64,7 @@ namespace SinExWebApp20256461.Controllers
             var shipmentQuery = from s in db.Shipments
                                 select new ShipmentsListViewModel
                                 {
-                                    WaybillId = s.WaybillId,
+                                    WaybillNumber = db.Shipments.FirstOrDefault(a => a.WaybillId == s.WaybillId).WaybillNumber,
                                     ServiceType = s.ServiceType,
                                     ShippedDate = s.ShippedDate,
                                     DeliveredDate = s.DeliveredDate,
@@ -75,7 +81,7 @@ namespace SinExWebApp20256461.Controllers
                                 where s.ShippingAccount.UserName == userName
                                 select new ShipmentsListViewModel
                                 {
-                                    WaybillId = s.WaybillId,
+                                    WaybillNumber = db.Shipments.FirstOrDefault(a => a.WaybillId == s.WaybillId).WaybillNumber,
                                     ServiceType = s.ServiceType,
                                     ShippedDate = s.ShippedDate,
                                     DeliveredDate = s.DeliveredDate,
@@ -105,12 +111,11 @@ namespace SinExWebApp20256461.Controllers
                 // page = 1;
             }
 
-            if (ShippedStartDate != null && ShippedEndDate != null)
-            {
-                shipmentQuery = from s in shipmentQuery
-                                where s.ShippedDate >= ShippedStartDate && s.ShippedDate <= ShippedEndDate
-                                select s;
-            }
+            if (ShippedStartDate != null)
+                shipmentQuery = shipmentQuery.Where(a => a.ShippedDate >= ShippedStartDate);
+            if (ShippedEndDate != null)
+                shipmentQuery = shipmentQuery.Where(a => a.ShippedDate <= ShippedEndDate);
+
             ViewBag.ServiceTypeSortParm = sortOrder == "ServiceType" ? "ServiceType_desc" : "ServiceType";
             ViewBag.ShippedDateSortParm = sortOrder == "ShippedDate" ? "ShippedDate_desc" : "ShippedDate";
             ViewBag.DeliveredDateSortParm = sortOrder == "DeliveredDate" ? "DeliveredDate_desc" : "DeliveredDate";
@@ -163,12 +168,122 @@ namespace SinExWebApp20256461.Controllers
                     shipmentQuery = shipmentQuery.OrderByDescending(s => s.ShippingAccountNumber);
                     break;
                 default:
-                    shipmentQuery = shipmentQuery.OrderBy(s => s.WaybillId);
+                    shipmentQuery = shipmentQuery.OrderBy(s => s.WaybillNumber);
                     break;
             }
             shipmentSearch.Shipments = shipmentQuery.ToPagedList(pageNumber, pageSize);
             ViewBag.msg = sortOrder;
             return View(shipmentSearch);
+        }
+
+        public ActionResult GenerateInvoiceReport(string ShippingAccountNumber, string sortOrder, int? page, DateTime? ShippedStartDate, DateTime? ShippedEndDate)
+        {
+            // Instantiate an instance of the ShipmentsReportViewModel and the ShipmentsSearchViewModel.
+            var invoiceSearch = new InvoicesReportViewModel();
+            invoiceSearch.Invoice = new InvoicesSearchViewModel();
+            ViewBag.CurrentSort = sortOrder;
+            int pageSize = 5;
+            int pageNumber = (page ?? 1);
+            // Populate the ShippingAccountNumber dropdown list.
+            invoiceSearch.Invoice.ShippingAccounts = PopulateShippingAccountsDropdownList().ToList();
+            if (User.IsInRole("Customer"))
+            {
+                invoiceSearch.Invoice.ShippingAccounts = PopulateCustomerShippingAccountsDropdownList().ToList();
+            }
+            ViewBag.CurrentShippingAccountNumber = ShippingAccountNumber;
+            ViewBag.CurrentShippingStartDate = ShippedStartDate;
+            // Initialize the query to retrieve shipments using the ShipmentsListViewModel.
+            var invoiceQuery = from s in db.Invoices
+                               where s.ShippingAccountNumber == ShippingAccountNumber
+                               select new InvoicesListViewModel
+                               {
+                                   WaybillNumber = db.Shipments.FirstOrDefault(a => a.WaybillId == s.WaybillId).WaybillNumber,
+                                   ServiceType = s.Shipment.ServiceType,
+                                   ShippedDate = s.Shipment.ShippedDate,
+                                   RecipientName = s.Shipment.RecipientName,
+                                   TotalAmountPayable = s.TotalAmountPayable,
+                                   Origin = s.Shipment.Origin,
+                                   Destination = s.Shipment.Destination,
+                                   ShippingAccountNumber = s.ShippingAccountNumber,
+                                   Type = s.Type
+                               };
+            if (User.IsInRole("Customer"))
+            {
+                string userName = System.Web.HttpContext.Current.User.Identity.Name;
+                string shippingAccountNumber = db.ShippingAccounts.SingleOrDefault(s => s.UserName == userName).ShippingAccountNumber;
+                invoiceQuery = from s in db.Invoices
+                               where s.ShippingAccountNumber == shippingAccountNumber
+                               select new InvoicesListViewModel
+                               {
+                                   WaybillNumber = db.Shipments.FirstOrDefault(a => a.WaybillId == s.WaybillId).WaybillNumber,
+                                   ServiceType = s.Shipment.ServiceType,
+                                   ShippedDate = s.Shipment.ShippedDate,
+                                   RecipientName = s.Shipment.RecipientName,
+                                   TotalAmountPayable = s.TotalAmountPayable,
+                                   Origin = s.Shipment.Origin,
+                                   Destination = s.Shipment.Destination,
+                                   ShippingAccountNumber = s.ShippingAccountNumber,
+                                   Type = s.Type
+                               };
+            }
+
+            if (ShippedStartDate != null)
+                invoiceQuery = invoiceQuery.Where(a => a.ShippedDate >= ShippedStartDate);
+            if (ShippedEndDate != null)
+                invoiceQuery = invoiceQuery.Where(a => a.ShippedDate <= ShippedEndDate);
+
+            ViewBag.ServiceTypeSortParm = (sortOrder == "serviceType") ? "serviceType_desc" : "serviceType";
+            ViewBag.ShippedDateSortParm = (sortOrder == "shippedDate") ? "shippedDate_desc" : "shippedDate";
+            ViewBag.RecipientNameSortParm = (sortOrder == "recipientName") ? "recipientName_desc" : "recipientName";
+            ViewBag.OriginSortParm = (sortOrder == "origin") ? "origin_desc" : "origin";
+            ViewBag.DestinationSortParm = (sortOrder == "destination") ? "destination_desc" : "destination";
+            ViewBag.ToalInvoiceAmountSortParm = (sortOrder == "toalInvoiceAmount") ? "toalInvoiceAmount_desc" : "toalInvoiceAmount";
+
+            switch (sortOrder)
+            {
+                case "serviceType":
+                    invoiceQuery = invoiceQuery.OrderBy(s => s.ServiceType);
+                    break;
+                case "serviceType_desc":
+                    invoiceQuery = invoiceQuery.OrderByDescending(s => s.ServiceType);
+                    break;
+                case "shippedDate":
+                    invoiceQuery = invoiceQuery.OrderBy(s => s.ShippedDate);
+                    break;
+                case "shippedDate_desc":
+                    invoiceQuery = invoiceQuery.OrderByDescending(s => s.ShippedDate);
+                    break;
+                case "recipientName":
+                    invoiceQuery = invoiceQuery.OrderBy(s => s.RecipientName);
+                    break;
+                case "recipientName_desc":
+                    invoiceQuery = invoiceQuery.OrderByDescending(s => s.RecipientName);
+                    break;
+                case "origin":
+                    invoiceQuery = invoiceQuery.OrderBy(s => s.RecipientName);
+                    break;
+                case "origin_desc":
+                    invoiceQuery = invoiceQuery.OrderByDescending(s => s.RecipientName);
+                    break;
+                case "destination":
+                    invoiceQuery = invoiceQuery.OrderBy(s => s.Origin);
+                    break;
+                case "destination_desc":
+                    invoiceQuery = invoiceQuery.OrderByDescending(s => s.Origin);
+                    break;
+                case "toalInvoiceAmount":
+                    invoiceQuery = invoiceQuery.OrderBy(s => s.Destination);
+                    break;
+                case "toalInvoiceAmount_desc":
+                    invoiceQuery = invoiceQuery.OrderByDescending(s => s.Destination);
+                    break;
+                default:
+                    invoiceQuery = invoiceQuery.OrderBy(s => s.WaybillNumber);
+                    break;
+            }
+
+            invoiceSearch.Invoices = invoiceQuery.ToPagedList(pageNumber, pageSize);
+            return View(invoiceSearch);
         }
 
         public void SendInvoice(int? WaybillId)
@@ -493,7 +608,7 @@ namespace SinExWebApp20256461.Controllers
             }
             else
             {
-                return new EmptyResult();
+                return RedirectToAction("Index");
             }
         }
 
@@ -806,6 +921,12 @@ namespace SinExWebApp20256461.Controllers
             }
 
             return View(shipmentView);
+        }
+
+        // GET: Shipments/Edit
+        public ActionResult DisplayShipment(string WaybillNumber)
+        {
+            return EditCustomer(db.Shipments.SingleOrDefault(a => a.WaybillNumber == WaybillNumber).WaybillId);
         }
 
         // GET: Shipments/Edit

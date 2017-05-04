@@ -6,6 +6,7 @@
     @Html.ActionLink("Create New", "Create")
 </p>
 
+<h4>Saved Recipient Address</h4>
 <table class="table">
     <tr>
         <th>
@@ -33,32 +34,72 @@
     </tr>
 
 @foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.NickName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Building)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Street)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.City)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ProvinceCode)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PostalCode)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Type)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.SavedAddressID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.SavedAddressID })
-        </td>
-    </tr>
+    if (item.Type == "recipient")
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.NickName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Building)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Street)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.City)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProvinceCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PostalCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.SavedAddressID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.SavedAddressID })
+            </td>
+        </tr>
+    }
 }  
+</table>
+
+<h4>Saved Pickup Address</h4>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.NickName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PickupLocation)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Type)
+        </th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        if (item.Type == "pickup")
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NickName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PickupLocation)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.SavedAddressID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.SavedAddressID })
+                </td>
+            </tr>
+        }
+    }
 </table>

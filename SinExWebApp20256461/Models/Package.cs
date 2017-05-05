@@ -16,8 +16,10 @@ namespace SinExWebApp20256461.Models
         public virtual string ShippingAccountNumber { get; set; }
         public virtual string Description { get; set; }
         public virtual double Value { get; set; }
+        [Required]
         public virtual string Currency { get; set; }
         [Display(Name = "Estimated Weight")]
+        [Required]
         public virtual double WeightEstimated { get; set; }
         [Display(Name = "Actual Weight")]
         public virtual double WeightActual { get; set; }

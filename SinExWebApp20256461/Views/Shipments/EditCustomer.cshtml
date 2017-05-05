@@ -245,6 +245,9 @@
 
         @Html.HiddenFor(model => model.Shipment.ShippingAccountId)
         @Html.HiddenFor(model => model.Shipment.Recipient.RecipientID)
+        @Html.HiddenFor(model => model.IfSendEmail)
+        @Html.HiddenFor(model => model.ShipmentPayer)
+        @Html.HiddenFor(model => model.TaxPayer)
 
 
         <div class="form-group">

@@ -9,6 +9,8 @@ namespace SinExWebApp20256461.Models
     public class Invoice
     {
         public virtual int InvoiceID {get;set;}
+        [StringLength(4, MinimumLength = 4)]
+        [RegularExpression(@"^[0-9]+$", ErrorMessage = "Please input a 4-digit number")]
         [Display(Name = "Authorization Code")]
         public virtual string AuthenticationCode { get; set; }
         public virtual string Type { get; set; }

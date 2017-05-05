@@ -881,7 +881,8 @@ namespace SinExWebApp20256461.Controllers
                                           select s).FirstOrDefault();
                     if (recipientPayer == null)
                     {
-                        ModelState.AddModelError("recipientPayer", "recipient not found");
+                        ViewBag.errorMessage = "recipient number not found!";
+                        // ModelState.AddModelError("recipientPayer", "recipient not found");
                         return View(shipmentView);
                     }
                 }
@@ -965,6 +966,18 @@ namespace SinExWebApp20256461.Controllers
                 ShipmentPayer = shipmentPayer,
                 TaxPayer = taxPayer,
             };
+            /* display the estimated fee */
+            var feeArray = new decimal[shipment.NumberOfPackages];
+            decimal totalEstimatedCost = 0;
+            for (int num = 0; num < shipment.NumberOfPackages; num++)
+            {
+                var fee = Calculate(shipment.ServiceType, shipment.Packages.ToList()[num].PackageTypeSize, (decimal)shipment.Packages.ToList()[num].WeightEstimated);
+                feeArray[num] = fee[shipment.Packages.ToList()[num].Currency];
+                totalEstimatedCost += feeArray[num];
+            }
+
+            ViewBag.FeeCollection = feeArray;
+            ViewBag.TotalEstimatedFee = totalEstimatedCost;
             ViewBag.ServiceTypes = db.ServiceTypes.Select(a => a.Type).Distinct().ToList();
             ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(a => a.size).Distinct().ToList();
             ViewBag.PackageCurrency = db.Currencies.Select(a => a.CurrencyCode).Distinct().ToList();
@@ -992,6 +1005,15 @@ namespace SinExWebApp20256461.Controllers
                 {
                     var new_package = new Package();
                     shipmentView.Packages.Add(new_package);
+                    return View(shipmentView);
+                }
+                else if (submit.Contains("delete"))
+                {
+                    if (shipmentView.Packages.Count > 1)
+                    {
+                        int _id = Int32.Parse(submit.Split(' ')[1]) - 1;
+                        shipmentView.Packages.Remove(shipmentView.Packages[_id]);
+                    }
                     return View(shipmentView);
                 }
 

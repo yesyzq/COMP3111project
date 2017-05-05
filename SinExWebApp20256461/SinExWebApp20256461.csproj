@@ -381,7 +381,7 @@
     <Content Include="Views\Shipments\Create.cshtml" />
     <Content Include="Views\Shipments\Delete.cshtml" />
     <Content Include="Views\Shipments\Details.cshtml" />
-    <Content Include="Views\Shipments\EditEmployee.cshtml" />
+    <Content Include="Views\Shipments\EnterWeight.cshtml" />
     <Content Include="Views\Shipments\Index.cshtml" />
     <Content Include="Views\Shipments\GenerateHistoryReport.cshtml" />
     <Content Include="Views\Shipments\_ShipmentsSearchPartial.cshtml" />
@@ -428,6 +428,8 @@
     <Content Include="Views\Shipments\EditCustomer.cshtml" />
     <Content Include="Views\Pickups\Create.cshtml" />
     <Content Include="Views\Shipments\DisplayShipment.cshtml" />
+    <Content Include="Views\Shipments\EnterAuthorization.cshtml" />
+    <Content Include="Views\Shipments\EnterTax.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

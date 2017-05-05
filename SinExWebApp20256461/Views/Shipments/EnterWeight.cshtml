@@ -1,10 +1,10 @@
 ﻿@model SinExWebApp20256461.ViewModels.CreateShipmentViewModel
 
 @{
-    ViewBag.Title = "Display Shipment";
+    ViewBag.Title = "Enter Weights";
 }
 
-<h2>Display Shipment</h2>
+<h2>Enter Weights</h2>
 
 @using (Html.BeginForm())
 {
@@ -92,7 +92,15 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].WeightActual, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.Packages[i].WeightActual, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                    @if (Model.Shipment.Status == "picked_up")
+                    {
+                        @Html.EditorFor(model => model.Packages[i].WeightActual, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Packages[i].WeightActual, "", new { @class = "text-danger" })
+                    }
+                    else
+                    {
+                        @Html.EditorFor(model => model.Packages[i].WeightActual, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                    }
                 </div>
             </div>
         }
@@ -180,7 +188,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.DutyAmount, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                             @Html.EditorFor(model => model.DutyAmount, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                            @Html.EditorFor(model => model.DutyAmount, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                         </div>
                     </div>
                 </div>
@@ -188,7 +196,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.TaxAmount, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                             @Html.EditorFor(model => model.TaxAmount, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                            @Html.EditorFor(model => model.TaxAmount, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                         </div>
                     </div>
                 </div>
@@ -257,6 +265,12 @@
         @Html.HiddenFor(model => model.Shipment.ShippingAccountId)
         @Html.HiddenFor(model => model.Shipment.Recipient.RecipientID)
 
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-2">
+                <input type="submit" name="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
     </div>
 }
 

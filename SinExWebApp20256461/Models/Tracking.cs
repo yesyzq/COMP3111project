@@ -17,6 +17,9 @@ namespace SinExWebApp20256461.Models
         public virtual DateTime DateTime { get; set; }
         public virtual string Description { get; set; }
         public virtual string Location { get; set; }
-        public virtual string Remarks { get; set; }                                                                     
+        public virtual string Remarks { get; set; }   
+        public virtual string Type { get; set; }
+        public virtual string DeliveredTo { get; set; }
+        public virtual string DeliveredAt { get; set; }                   
     }
 }

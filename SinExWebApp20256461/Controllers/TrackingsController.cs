@@ -42,7 +42,8 @@ namespace SinExWebApp20256461.Controllers
         public ActionResult Create()
         {
             ViewBag.currTime = DateTime.Now.ToString("yyyyMMddHHmmss");
-            ViewBag.WaybillNumbers = new SelectList(db.Shipments.Select(a => a.WaybillNumber).Distinct());
+            ViewBag.page = 1;
+            // ViewBag.WaybillNumbers = new SelectList(db.Shipments.Select(a => a.WaybillNumber).Distinct());
             return View();
         }
 
@@ -51,16 +52,63 @@ namespace SinExWebApp20256461.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "TrackingID,WaybillNumber,DateTime,Description,Location,Remarks")] Tracking tracking)
+        public ActionResult Create([Bind(Include = "TrackingID,WaybillNumber,DateTime,Description,Location,Remarks, Type, DeliveredTo, DeliveredAt")] Tracking tracking, string submit)
         {
-            //if (ModelState.IsValid)
-            //{
-                string WaybillNumber = tracking.WaybillNumber;
-                tracking.WaybillId = db.Shipments.SingleOrDefault(a => a.WaybillNumber == WaybillNumber).WaybillId;
-                db.Trackings.Add(tracking);
-                db.SaveChanges();
-                return RedirectToAction("Create");
-            //}
+            if (submit == "select waybill")
+            {
+                Shipment shipment = db.Shipments.SingleOrDefault(a => a.WaybillNumber == tracking.WaybillNumber);
+                string status = shipment.Status;
+                if (status == "pending" || status == "delivered" || status == "lost" || status == "cancelled")
+                {
+                    ViewBag.msg = "This shipment is not avaliable for tracking";
+                    ViewBag.page = 1;
+                    return View();
+                }
+                else if (status == "confirmed")
+                {
+                    ViewBag.Types = new string[1];
+                    ViewBag.Types[0] = "picked_up";
+                    ViewBag.page = 2;
+                    return View(tracking);
+                }
+                else if (status == "picked_up" || status == "invoice_sent")
+                {
+                    ViewBag.Types = new string[3];
+                    ViewBag.Types[0] = "delivered";
+                    ViewBag.Types[1] = "lost";
+                    ViewBag.Types[2] = "other";
+                    ViewBag.page = 2;
+                    return View(tracking);
+                }
+            }
+            else if (submit == "select type")
+            {
+                if (tracking.Type == "delivered")
+                {
+                    ViewBag.page = 3;
+                }
+                else
+                {
+                    ViewBag.page = 4;
+                }
+                return View(tracking);
+            }
+            else if (submit == "save")
+            {
+                if (ModelState.IsValid)
+                {
+                    string WaybillNumber = tracking.WaybillNumber;
+                    tracking.WaybillId = db.Shipments.SingleOrDefault(a => a.WaybillNumber == WaybillNumber).WaybillId;
+                    if (tracking.Type == "delivered" || tracking.Type == "lost" || tracking.Type == "picked_up")
+                    {
+                        Shipment shipment = db.Shipments.SingleOrDefault(a => a.WaybillNumber == WaybillNumber);
+                        shipment.Status = tracking.Type;
+                    }
+                    db.Trackings.Add(tracking);
+                    db.SaveChanges();
+                    return RedirectToAction("Index", "Home");
+                }
+            }
 
             // ViewBag.WaybillId = new SelectList(db.Shipments, "WaybillId", "ReferenceNumber", tracking.WaybillId);
             return View(tracking);

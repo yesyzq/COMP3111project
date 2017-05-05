@@ -208,7 +208,14 @@ namespace SinExWebApp20256461.Controllers
             }
 
             // If we got this far, something failed, redisplay form
-            return View(model);
+            if (model.PersonalInformation != null)
+            {
+                return RedirectToAction("Register", "Account", new { accountType = "Personal" });
+            }
+            else // AccountType = "Business"
+            {
+                return RedirectToAction("Register", "Account", new { accountType = "Business" });
+            }
         }
 
         //

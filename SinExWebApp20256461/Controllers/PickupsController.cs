@@ -157,6 +157,7 @@ namespace SinExWebApp20256461.Controllers
             db.Pickups.Add(pickupView.Pickup);
             try
             {
+                shipment.Status = "confirmed";
                 db.SaveChanges();
             }
             catch (DbEntityValidationException e)

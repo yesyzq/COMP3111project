@@ -68,7 +68,7 @@ namespace SinExWebApp20256461.Controllers
                                     ServiceType = s.ServiceType,
                                     ShippedDate = s.ShippedDate,
                                     DeliveredDate = s.DeliveredDate,
-                                    RecipientName = s.RecipientName,
+                                    RecipientName = s.Recipient.FullName,
                                     NumberOfPackages = s.NumberOfPackages,
                                     Origin = s.Origin,
                                     Destination = s.Destination,
@@ -85,7 +85,7 @@ namespace SinExWebApp20256461.Controllers
                                     ServiceType = s.ServiceType,
                                     ShippedDate = s.ShippedDate,
                                     DeliveredDate = s.DeliveredDate,
-                                    RecipientName = s.RecipientName,
+                                    RecipientName = s.Recipient.FullName,
                                     NumberOfPackages = s.NumberOfPackages,
                                     Origin = s.Origin,
                                     Destination = s.Destination,
@@ -200,7 +200,7 @@ namespace SinExWebApp20256461.Controllers
                                    WaybillNumber = db.Shipments.FirstOrDefault(a => a.WaybillId == s.WaybillId).WaybillNumber,
                                    ServiceType = s.Shipment.ServiceType,
                                    ShippedDate = s.Shipment.ShippedDate,
-                                   RecipientName = s.Shipment.RecipientName,
+                                   RecipientName = s.Shipment.Recipient.FullName,
                                    TotalAmountPayable = s.TotalAmountPayable,
                                    Origin = s.Shipment.Origin,
                                    Destination = s.Shipment.Destination,
@@ -218,7 +218,7 @@ namespace SinExWebApp20256461.Controllers
                                    WaybillNumber = db.Shipments.FirstOrDefault(a => a.WaybillId == s.WaybillId).WaybillNumber,
                                    ServiceType = s.Shipment.ServiceType,
                                    ShippedDate = s.Shipment.ShippedDate,
-                                   RecipientName = s.Shipment.RecipientName,
+                                   RecipientName = s.Shipment.Recipient.FullName,
                                    TotalAmountPayable = s.TotalAmountPayable,
                                    Origin = s.Shipment.Origin,
                                    Destination = s.Shipment.Destination,
@@ -1046,15 +1046,15 @@ namespace SinExWebApp20256461.Controllers
                 shipmentDB.IfSendEmail = IfSendEmail == "Yes" ? true : false;
 
 
-                shipmentDB.Status = submit == "Confirm" ? "confirmed" : "pending";
-
+                // shipmentDB.Status = submit == "Confirm" ? "confirmed" : "pending";
+                
                 db.Entry(_invoice1).State = EntityState.Modified;
                 db.Entry(_invoice2).State = EntityState.Modified;
                 db.Entry(_recipient).State = EntityState.Modified;
                 db.Entry(shipmentDB).State = EntityState.Modified;
                 db.SaveChanges();
 
-                if (submit == "Confirm")
+                if (submit == "Continue")
                 {
                    return RedirectToAction("Create", "Pickups", new { waybillId = shipmentDB.WaybillId });
                 }

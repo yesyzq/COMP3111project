@@ -22,6 +22,7 @@
             <dd>
                 @Html.DisplayFor(Model => Model.Shipment.ServiceType)
             </dd>
+            <!--
             <dt>Package Type</dt>
             @foreach (var package in Model.Shipment.Packages)
             {
@@ -29,6 +30,7 @@
                     @Html.DisplayFor(modelitem => package.PackageTypeSize)
                 </dd>
             }
+            -->
             <dt>Weight</dt>
             @foreach (var package in Model.Shipment.Packages)
             {

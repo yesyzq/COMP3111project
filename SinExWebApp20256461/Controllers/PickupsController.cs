@@ -54,7 +54,7 @@ namespace SinExWebApp20256461.Controllers
         }
 
         // GET: Pickups/Create
-        public ActionResult Create(int? waybillId, string pickupType, string location, NewPickupViewModel pickupView = null)
+        public ActionResult Create(int? waybillId, string pickupType, string location,string validDate, NewPickupViewModel pickupView = null)
         {
             pickupView = new NewPickupViewModel();
                  
@@ -63,9 +63,15 @@ namespace SinExWebApp20256461.Controllers
                 Date = DateTime.Now,
                 Type = pickupType
             };
+            ViewBag.WaybillId = waybillId;
 
-            ViewBag.WaybillId=waybillId;
+            if (validDate == "false")
+            {
+                ViewBag.msg = "You can prearranged your pickup up to 5 days, please try another date";
+                return View(pickupView);
+            }
 
+          
             /* bind shipment */
             var shipment = (from s in db.Shipments
                             where s.WaybillId == waybillId
@@ -103,10 +109,18 @@ namespace SinExWebApp20256461.Controllers
 
         // POST: Pickups/Create
         [HttpPost]
-        // [ValidateAntiForgeryToken]    
+        [ValidateAntiForgeryToken]    
         public ActionResult Create(string submit, string pickupType, NewPickupViewModel pickupView)   //model binding
         {
             pickupView.Pickup.Type = pickupType;
+
+            DateTime endDate = DateTime.Now.AddDays(5);
+            if (pickupView.Pickup.Date > endDate)
+            {
+                return RedirectToAction("Create", "Pickups", new { waybillId = pickupView.WaybillId, validDate = "false"});
+            }
+
+
 
 
             /* Add saved address functionality */
@@ -154,7 +168,7 @@ namespace SinExWebApp20256461.Controllers
             shipment.Pickup.Type = pickupView.Pickup.Type;
 
             /* need to add pickup */
-            db.Pickups.Add(pickupView.Pickup);
+          //  db.Pickups.Add(pickupView.Pickup);
             try
             {
                 shipment.Status = "confirmed";

@@ -11,6 +11,7 @@ using Microsoft.Owin.Security;
 using SinExWebApp20256461.Models;
 using SinExWebApp20256461.ViewModels;
 using System.Net;
+using System.Data.Entity.Validation;
 
 namespace SinExWebApp20256461.Controllers
 {
@@ -246,10 +247,19 @@ namespace SinExWebApp20256461.Controllers
                         {
                             db.SaveChanges();
                         }
-                        catch (Exception e)
+                        catch (DbEntityValidationException e)
                         {
-                            Console.WriteLine(e);
-                            return View();
+                            foreach (var eve in e.EntityValidationErrors)
+                            {
+                                Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+                                    eve.Entry.Entity.GetType().Name, eve.Entry.State);
+                                foreach (var ve in eve.ValidationErrors)
+                                {
+                                    Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
+                                        ve.PropertyName, ve.ErrorMessage);
+                                }
+                            }
+                            throw;
                         }
                         await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 

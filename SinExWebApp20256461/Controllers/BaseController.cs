@@ -16,7 +16,7 @@ namespace SinExWebApp20256461.Controllers
         {
             if (Session[currency] == null)
             {
-                Session[currency] = db.Currencies.SingleOrDefault(s => s.CurrencyCode == currency).ExchangeRate;
+                Session[currency] = db.Currencies.FirstOrDefault(s => s.CurrencyCode == currency).ExchangeRate;
 
             }
             return decimal.Parse(Session[currency].ToString()) * value;
@@ -24,10 +24,10 @@ namespace SinExWebApp20256461.Controllers
         public Dictionary<string, decimal> Calculate(string ServiceType, string PackageTypeSize, decimal weight)
         {
             Dictionary<string, decimal> result = new Dictionary<string, decimal>();
-            ServiceType CostServiceType = db.ServiceTypes.SingleOrDefault(a => a.Type == ServiceType);
-            PakageTypeSize CostPackageTypeSize = db.PakageTypeSizes.SingleOrDefault(a => a.size == PackageTypeSize);
-            ServicePackageFee CostFee = db.ServicePackageFees.SingleOrDefault(a => a.PackageTypeID == CostPackageTypeSize.PackageType.PackageTypeID && a.ServiceTypeID == CostServiceType.ServiceTypeID);
-            decimal penaltyFee = db.PenaltyFees.SingleOrDefault(a => a.PenaltyFeeID == 1).Fee;
+            ServiceType CostServiceType = db.ServiceTypes.FirstOrDefault(a => a.Type == ServiceType);
+            PakageTypeSize CostPackageTypeSize = db.PakageTypeSizes.FirstOrDefault(a => a.size == PackageTypeSize);
+            ServicePackageFee CostFee = db.ServicePackageFees.FirstOrDefault(a => a.PackageTypeID == CostPackageTypeSize.PackageType.PackageTypeID && a.ServiceTypeID == CostServiceType.ServiceTypeID);
+            decimal penaltyFee = db.PenaltyFees.FirstOrDefault(a => a.PenaltyFeeID == 1).Fee;
             string WeightLimit = CostPackageTypeSize.weightLimit;
             decimal Fee = CostFee.Fee;
             decimal MinimumFee = CostFee.MinimumFee;

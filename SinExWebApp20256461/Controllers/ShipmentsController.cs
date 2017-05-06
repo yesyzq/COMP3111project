@@ -27,7 +27,7 @@ namespace SinExWebApp20256461.Controllers
         private SinExWebApp20256461Context db = new SinExWebApp20256461Context();
         // GET: Shipments/GenerateHistoryReport
         [Authorize(Roles = "Employee, Customer")]
-        public ActionResult GenerateHistoryReport(string ShippingAccountNumber, string sortOrder, int? page, string ShippedStartDate, string ShippedEndDate)
+        public ActionResult GenerateHistoryReport(string ShippingAccountNumber, string sortOrder, int? page, string ShippedStartDate, string ShippedEndDate, int? FirstClick)
         {
             // Instantiate an instance of the ShipmentsReportViewModel and the ShipmentsSearchViewModel.
             var shipmentSearch = new ShipmentsReportViewModel();
@@ -37,12 +37,9 @@ namespace SinExWebApp20256461.Controllers
 
             shipmentSearch.Shipment.ShippingAccounts = PopulateShippingAccountsDropdownList().ToList();
             
-            if (ShippedStartDate == null)
+            if (FirstClick == 1)
             {
                 ShippedStartDate = DateTime.Today.ToString("yyyy-MM-dd");
-            }
-            if (ShippedEndDate == null)
-            {
                 ShippedEndDate = DateTime.Today.ToString("yyyy-MM-dd");
             }
 
@@ -162,7 +159,7 @@ namespace SinExWebApp20256461.Controllers
         }
 
         [Authorize(Roles = "Employee, Customer")]
-        public ActionResult GenerateInvoiceReport(string ShippingAccountNumber, string sortOrder, int? page, string ShippedStartDate, string ShippedEndDate)
+        public ActionResult GenerateInvoiceReport(string ShippingAccountNumber, string sortOrder, int? page, string ShippedStartDate, string ShippedEndDate, int? FirstClick)
         {
             // Instantiate an instance of the ShipmentsReportViewModel and the ShipmentsSearchViewModel.
             var invoiceSearch = new InvoicesReportViewModel();
@@ -173,12 +170,9 @@ namespace SinExWebApp20256461.Controllers
             // Populate the ShippingAccountNumber dropdown list.
             invoiceSearch.Invoice.ShippingAccounts = PopulateShippingAccountsDropdownList().ToList();
 
-            if (ShippedStartDate == null)
+            if (FirstClick == 1)
             {
                 ShippedStartDate = DateTime.Today.ToString("yyyy-MM-dd");
-            }
-            if (ShippedEndDate == null)
-            {
                 ShippedEndDate = DateTime.Today.ToString("yyyy-MM-dd");
             }
 
@@ -300,7 +294,7 @@ namespace SinExWebApp20256461.Controllers
 
         public bool SendInvoice(int? WaybillId)
         {
-            var shipment = db.Shipments.SingleOrDefault(s => s.WaybillId == WaybillId);
+            var shipment = db.Shipments.FirstOrDefault(s => s.WaybillId == WaybillId);
             if (shipment == null)
             {
                 return false;
@@ -337,8 +331,8 @@ namespace SinExWebApp20256461.Controllers
 
             // Shipment Invoice
             string shipmentPayerShippingAccountNumber = shipmentInvoice.ShippingAccountNumber;
-            var shipmentPayerShippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountNumber == shipmentPayerShippingAccountNumber);
-            string shipmentPayerCurrencyCode = db.Destinations.SingleOrDefault(s => s.ProvinceCode == shipmentPayerShippingAccount.ProvinceCode).CurrencyCode;
+            var shipmentPayerShippingAccount = db.ShippingAccounts.FirstOrDefault(s => s.ShippingAccountNumber == shipmentPayerShippingAccountNumber);
+            string shipmentPayerCurrencyCode = db.Destinations.FirstOrDefault(s => s.ProvinceCode == shipmentPayerShippingAccount.ProvinceCode).CurrencyCode;
 
             // calculate package costs
             int i = 0;
@@ -478,8 +472,8 @@ namespace SinExWebApp20256461.Controllers
                 // Duty and Tax Invoice
                 // -------------------------------
                 string dutyAndTaxPayerShippingAccountNumber = dutyAndTaxInvoice.ShippingAccountNumber;
-                var dutyAndTaxPayerShippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountNumber == dutyAndTaxPayerShippingAccountNumber);
-                string dutyAndTaxPayerCurrencyCode = db.Destinations.SingleOrDefault(s => s.ProvinceCode == dutyAndTaxPayerShippingAccount.ProvinceCode).CurrencyCode;
+                var dutyAndTaxPayerShippingAccount = db.ShippingAccounts.FirstOrDefault(s => s.ShippingAccountNumber == dutyAndTaxPayerShippingAccountNumber);
+                string dutyAndTaxPayerCurrencyCode = db.Destinations.FirstOrDefault(s => s.ProvinceCode == dutyAndTaxPayerShippingAccount.ProvinceCode).CurrencyCode;
 
                 // Duty and Tax Payer Info
                 string[] dutyAndTaxPayerInfo = new string[5];
@@ -650,7 +644,7 @@ namespace SinExWebApp20256461.Controllers
 
         public ActionResult DisplayInvoice(string WaybillNumber)
         {
-            var shipment = db.Shipments.SingleOrDefault(a => a.WaybillNumber == WaybillNumber);
+            var shipment = db.Shipments.FirstOrDefault(a => a.WaybillNumber == WaybillNumber);
             string invoiceFolder = Server.MapPath("~/Invoices");
             string invoicePath = Path.Combine(invoiceFolder, WaybillNumber + "_total.pdf");
             if (System.IO.File.Exists(invoicePath))
@@ -673,8 +667,8 @@ namespace SinExWebApp20256461.Controllers
             cost.Origins = db.Destinations.Select(a => a.City).Distinct().ToList();
             cost.Destinations = db.Destinations.Select(a => a.City).Distinct().ToList();
             cost.Sizes = db.PakageTypeSizes.Select(a => a.size).Distinct().ToList();
-            // int serviceTypeID = db.ServiceTypes.SingleOrDefault(s => s.Type == ServiceType).ServiceTypeID;
-            // int packageTypeID = db.PackageTypes.SingleOrDefault(s => s.Type == PackageType).PackageTypeID;
+            // int serviceTypeID = db.ServiceTypes.FirstOrDefault(s => s.Type == ServiceType).ServiceTypeID;
+            // int packageTypeID = db.PackageTypes.FirstOrDefault(s => s.Type == PackageType).PackageTypeID;
             IEnumerable<ServicePackageFee> Fees = db.ServicePackageFees.Include(c => c.PackageType).Include(c => c.ServiceType);
             IEnumerable<PakageTypeSize> Sizes = db.PakageTypeSizes.Include(c => PackageType);
             double minimumFee = 0;
@@ -687,9 +681,9 @@ namespace SinExWebApp20256461.Controllers
                     Fee = (double)fee.Fee;
                 }
             }
-            double HKDRate = db.Currencies.SingleOrDefault(s => s.CurrencyCode == "HKD").ExchangeRate;
-            double MOPRate = db.Currencies.SingleOrDefault(s => s.CurrencyCode == "MOP").ExchangeRate;
-            double TWDRate = db.Currencies.SingleOrDefault(s => s.CurrencyCode == "TWD").ExchangeRate;
+            double HKDRate = db.Currencies.FirstOrDefault(s => s.CurrencyCode == "HKD").ExchangeRate;
+            double MOPRate = db.Currencies.FirstOrDefault(s => s.CurrencyCode == "MOP").ExchangeRate;
+            double TWDRate = db.Currencies.FirstOrDefault(s => s.CurrencyCode == "TWD").ExchangeRate;
             cost.Origin = Origin;
             cost.Destination = Destination;
             cost.ServiceType = ServiceType;
@@ -978,7 +972,7 @@ namespace SinExWebApp20256461.Controllers
         // GET: Shipments/Edit
         public ActionResult DisplayShipment(string WaybillNumber)
         {
-            return EditCustomer(db.Shipments.SingleOrDefault(a => a.WaybillNumber == WaybillNumber).WaybillId);
+            return EditCustomer(db.Shipments.FirstOrDefault(a => a.WaybillNumber == WaybillNumber).WaybillId);
         }
 
         // GET: Shipments/Edit
@@ -991,11 +985,11 @@ namespace SinExWebApp20256461.Controllers
             }
             string shipmentPayer;
             string taxPayer;
-            int i_id1 = shipment.Invoices.SingleOrDefault(a => a.Type == "shipment").InvoiceID;
-            int i_id2 = shipment.Invoices.SingleOrDefault(a => a.Type == "tax_duty").InvoiceID;
+            int i_id1 = shipment.Invoices.FirstOrDefault(a => a.Type == "shipment").InvoiceID;
+            int i_id2 = shipment.Invoices.FirstOrDefault(a => a.Type == "tax_duty").InvoiceID;
             var shipmentInvoice = db.Invoices.Find(i_id1);
             var taxInvoice = db.Invoices.Find(i_id2);
-            string shipmentShippingAccountNumber = db.ShippingAccounts.SingleOrDefault(a => a.ShippingAccountId == shipment.ShippingAccountId).ShippingAccountNumber;
+            string shipmentShippingAccountNumber = db.ShippingAccounts.FirstOrDefault(a => a.ShippingAccountId == shipment.ShippingAccountId).ShippingAccountNumber;
             if (string.IsNullOrWhiteSpace(shipmentInvoice.ShippingAccountNumber))
                 shipmentPayer = "";
             else if (shipmentInvoice.ShippingAccountNumber == shipmentShippingAccountNumber)
@@ -1016,8 +1010,8 @@ namespace SinExWebApp20256461.Controllers
                 IfSendEmail = (shipment.IfSendEmail) ? "Yes" : "No",
                 ShipmentPayer = shipmentPayer,
                 TaxPayer = taxPayer,
-                ShipmentAuthorizationCode = shipment.Invoices.SingleOrDefault(a => a.Type == "shipment").AuthenticationCode,
-                DutyAndTaxAuthorizationCode = shipment.Invoices.SingleOrDefault(a => a.Type == "tax_duty").AuthenticationCode,
+                ShipmentAuthorizationCode = shipment.Invoices.FirstOrDefault(a => a.Type == "shipment").AuthenticationCode,
+                DutyAndTaxAuthorizationCode = shipment.Invoices.FirstOrDefault(a => a.Type == "tax_duty").AuthenticationCode,
             };
 
             /* display the estimated fee */
@@ -1228,7 +1222,7 @@ namespace SinExWebApp20256461.Controllers
                 var shipmentDB = db.Shipments.Find(id);
 
                 /* Invoice */
-                int i_id2 = shipmentDB.Invoices.SingleOrDefault(a => a.Type == "tax_duty").InvoiceID;
+                int i_id2 = shipmentDB.Invoices.FirstOrDefault(a => a.Type == "tax_duty").InvoiceID;
                 var dutyAndTaxInvoice = db.Invoices.Find(i_id2);
 
                 // shipment costs to be determined when sending shipment invoice
@@ -1273,8 +1267,8 @@ namespace SinExWebApp20256461.Controllers
                 var shipmentDB = db.Shipments.Find(id);
 
                 /* Invoice */
-                int i_id1 = shipmentDB.Invoices.SingleOrDefault(a => a.Type == "shipment").InvoiceID;
-                int i_id2 = shipmentDB.Invoices.SingleOrDefault(a => a.Type == "tax_duty").InvoiceID;
+                int i_id1 = shipmentDB.Invoices.FirstOrDefault(a => a.Type == "shipment").InvoiceID;
+                int i_id2 = shipmentDB.Invoices.FirstOrDefault(a => a.Type == "tax_duty").InvoiceID;
                 var shipmentInvoice = db.Invoices.Find(i_id1);
                 var dutyAndTaxInvoice = db.Invoices.Find(i_id2);
 

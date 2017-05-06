@@ -57,7 +57,7 @@ namespace SinExWebApp20256461.Controllers
         {
             if (submit == "select waybill")
             {
-                Shipment shipment = db.Shipments.SingleOrDefault(a => a.WaybillNumber == tracking.WaybillNumber);
+                Shipment shipment = db.Shipments.FirstOrDefault(a => a.WaybillNumber == tracking.WaybillNumber);
                 string status = shipment.Status;
                 if (status == "pending" || status == "delivered" || status == "lost" || status == "cancelled")
                 {
@@ -99,10 +99,10 @@ namespace SinExWebApp20256461.Controllers
                 if (ModelState.IsValid)
                 {
                     string WaybillNumber = tracking.WaybillNumber;
-                    tracking.WaybillId = db.Shipments.SingleOrDefault(a => a.WaybillNumber == WaybillNumber).WaybillId;
+                    tracking.WaybillId = db.Shipments.FirstOrDefault(a => a.WaybillNumber == WaybillNumber).WaybillId;
                     if (tracking.Type == "delivered" || tracking.Type == "lost" || tracking.Type == "picked_up")
                     {
-                        Shipment shipment = db.Shipments.SingleOrDefault(a => a.WaybillNumber == WaybillNumber);
+                        Shipment shipment = db.Shipments.FirstOrDefault(a => a.WaybillNumber == WaybillNumber);
                         shipment.Status = tracking.Type;
                         if (shipment.IfSendEmail == true)
                         {
@@ -266,7 +266,7 @@ namespace SinExWebApp20256461.Controllers
                 return View(TrackingView);
             }
             TrackingView.Trackings = db.Trackings.Where(a => a.Shipment.WaybillNumber == WaybillNumber).OrderBy(a => a.DateTime).ToList();
-            TrackingView.Shipment = db.Shipments.SingleOrDefault(a => a.WaybillNumber == WaybillNumber);
+            TrackingView.Shipment = db.Shipments.FirstOrDefault(a => a.WaybillNumber == WaybillNumber);
             return View(TrackingView);
         }
         // POST: Trackings/Delete/5

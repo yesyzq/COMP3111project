@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using SinExWebApp20256461.Models;
 using SinExWebApp20256461.ViewModels;
+using System.Data.Entity.Validation;
 
 namespace SinExWebApp20256461.Controllers
 {
@@ -99,7 +100,16 @@ namespace SinExWebApp20256461.Controllers
             }
             savedAddress.ShippingAccountId = shippingAccount.ShippingAccountId;
             db.SavedAddresses.Add(savedAddress);
-            db.SaveChanges();
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbEntityValidationException e)
+            {
+                Console.WriteLine(e);
+            }
+            
 
             if(type_post == "CreateAndReturnToPickup")
             {
@@ -140,7 +150,14 @@ namespace SinExWebApp20256461.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(savedAddress).State = EntityState.Modified;
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (DbEntityValidationException e)
+                {
+                    Console.WriteLine(e);
+                }
                 return RedirectToAction("Index");
             }
             ViewBag.ShippingAccountId = new SelectList(db.ShippingAccounts, "ShippingAccountId", "ShippingAccountNumber", savedAddress.ShippingAccountId);
@@ -169,7 +186,14 @@ namespace SinExWebApp20256461.Controllers
         {
             SavedAddress savedAddress = db.SavedAddresses.Find(id);
             db.SavedAddresses.Remove(savedAddress);
-            db.SaveChanges();
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbEntityValidationException e)
+            {
+                Console.WriteLine(e);
+            }
             return RedirectToAction("Index");
         }
 

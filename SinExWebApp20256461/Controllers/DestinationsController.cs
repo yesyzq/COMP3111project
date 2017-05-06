@@ -38,6 +38,7 @@ namespace SinExWebApp20256461.Controllers
         // GET: Destinations/Create
         public ActionResult Create()
         {
+            ViewBag.ProvinceCodes = db.Destinations.Select(a => a.ProvinceCode).Distinct().OrderBy(c => c).ToList();
             return View();
         }
 

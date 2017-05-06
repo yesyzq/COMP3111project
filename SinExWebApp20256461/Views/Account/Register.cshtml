@@ -5,6 +5,14 @@
 
 <h2>@ViewBag.Title.</h2>
 
+
+@if (@ViewBag.errorMessage != null)
+{
+    <div class="col-lg-offset-3">
+        <p style="color: indianred">@ViewBag.errorMessage</p>
+    </div>
+}
+
 @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()

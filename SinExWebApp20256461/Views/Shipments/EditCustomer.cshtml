@@ -88,7 +88,7 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].Currency, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.DropDownListFor(model => model.Packages[i].Currency, new SelectList(ViewBag.PackageCurrency), "please Select")
+                    @Html.DropDownListFor(model => model.Packages[i].Currency, new SelectList(ViewBag.PackageCurrency), new { @value = Model.Packages[i].Currency })
                 </div>
             </div>
             <div class="form-group">
@@ -169,6 +169,24 @@
                     <div class="col-md-10">
                         @Html.EditorFor(model => model.Shipment.Recipient.PostalCode, new { htmlAttributes = new { @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.Shipment.Recipient.PostalCode, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Shipment.Recipient.CompanyName, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Shipment.Recipient.CompanyName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Shipment.Recipient.CompanyName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Shipment.Recipient.DeptName, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Shipment.Recipient.DeptName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Shipment.Recipient.DeptName, "", new { @class = "text-danger" })
                     </div>
                 </div>
             </div>

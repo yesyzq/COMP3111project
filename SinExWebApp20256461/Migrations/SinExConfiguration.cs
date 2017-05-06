@@ -88,6 +88,7 @@ namespace SinExWebApp20256461.Migrations
                 new Currency { CurrencyCode = "TWD", ExchangeRate = 4.56}
                 );
             // Add size data.
+            /*
             context.PakageTypeSizes.AddOrUpdate(
                 p => p.PakageTypeSizeID,
                 new PakageTypeSize { size = "Envenlope-250x350mm", weightLimit = "Not applicable", PackageTypeID = 1 },
@@ -98,6 +99,7 @@ namespace SinExWebApp20256461.Migrations
                 new PakageTypeSize { size = "Box-medium - 400x350x250mm", weightLimit = "20kg", PackageTypeID = 4 },
                 new PakageTypeSize { size = "Box-large - 500x450x350mm", weightLimit = "30kg", PackageTypeID = 4 }
                 );
+            */
             context.PenaltyFees.AddOrUpdate(
                 p => p.PenaltyFeeID,
                 new PenaltyFee { PenaltyFeeID = 1, Fee = 500}

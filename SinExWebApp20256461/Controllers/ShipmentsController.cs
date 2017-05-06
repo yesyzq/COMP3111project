@@ -1044,13 +1044,12 @@ namespace SinExWebApp20256461.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult EditCustomer(int? id, CreateShipmentViewModel shipmentView, string submit, string IfSendEmail, string ShipmentPayer, string TaxPayer)
-        {   
+        {
+            ViewBag.PackageCurrency = db.Currencies.Select(m => m.CurrencyCode).Distinct().ToList();
+            ViewBag.ServiceTypes = db.ServiceTypes.Select(m => m.Type).Distinct().ToList();
+            ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(m => m.size).Distinct().ToList();
             if (ModelState.IsValid)
             {
-                ViewBag.PackageCurrency = db.Currencies.Select(m => m.CurrencyCode).Distinct().ToList();
-                ViewBag.ServiceTypes = db.ServiceTypes.Select(m => m.Type).Distinct().ToList();
-                ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(m => m.size).Distinct().ToList();
-
                 var shipment = shipmentView.Shipment;
                 var shipmentDB = db.Shipments.Find(id);
 
@@ -1099,6 +1098,8 @@ namespace SinExWebApp20256461.Controllers
                 _recipient.PostalCode = shipment.Recipient.PostalCode;
                 _recipient.PhoneNumber = shipment.Recipient.PhoneNumber;
                 _recipient.EmailAddress = shipment.Recipient.EmailAddress;
+                _recipient.CompanyName = shipment.Recipient.CompanyName;
+                _recipient.DeptName = shipment.Recipient.DeptName;
 
                 /* Update packages */
                 var old_packages = from s in db.Packages

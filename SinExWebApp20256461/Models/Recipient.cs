@@ -45,6 +45,10 @@ namespace SinExWebApp20256461.Models
         [StringLength(6, MinimumLength = 5)]
         [RegularExpression(@"^[0-9]+$", ErrorMessage = "Please input number between 5-6 digits")]
         public virtual string PostalCode { get; set; }
+        [Display(Name = "Company")]
+        public virtual string CompanyName { get; set; }
+        [Display(Name = "Department")]
+        public virtual string DeptName { get; set; }
         // Princeple end Problem
         // public virtual int WaybillId { get; set; }
         // public virtual Shipment Shipment { get; set; }

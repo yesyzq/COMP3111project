@@ -1019,16 +1019,19 @@ namespace SinExWebApp20256461.Controllers
                 ShipmentAuthorizationCode = shipment.Invoices.SingleOrDefault(a => a.Type == "shipment").AuthenticationCode,
                 DutyAndTaxAuthorizationCode = shipment.Invoices.SingleOrDefault(a => a.Type == "tax_duty").AuthenticationCode,
             };
+
             /* display the estimated fee */
+            string currencyCode = db.Destinations.FirstOrDefault(a => a.ProvinceCode == shipment.ShippingAccount.ProvinceCode).CurrencyCode;
             var feeArray = new decimal[shipment.NumberOfPackages];
             decimal totalEstimatedCost = 0;
             for (int num = 0; num < shipment.NumberOfPackages; num++)
             {
                 var fee = Calculate(shipment.ServiceType, shipment.Packages.ToList()[num].PackageTypeSize, (decimal)shipment.Packages.ToList()[num].WeightEstimated);
-                feeArray[num] = fee[shipment.Packages.ToList()[num].Currency];
+                feeArray[num] = fee[currencyCode];
                 totalEstimatedCost += feeArray[num];
             }
 
+            ViewBag.CurrencyCode = currencyCode;
             ViewBag.FeeCollection = feeArray;
             ViewBag.TotalEstimatedFee = totalEstimatedCost;
             ViewBag.ServiceTypes = db.ServiceTypes.Select(a => a.Type).Distinct().ToList();

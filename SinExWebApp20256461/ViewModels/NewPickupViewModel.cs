@@ -14,5 +14,7 @@ namespace SinExWebApp20256461.ViewModels
         public virtual String PickupLocationNickname { get; set; }
         //For now, we implement 1..1 relationship between Shipment and Pickup
         public int WaybillId { get; set; }
+
+        public virtual string locationIsSame { get; set; }
     }
 }

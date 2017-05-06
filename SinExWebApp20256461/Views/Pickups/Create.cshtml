@@ -12,6 +12,7 @@
     @Html.AntiForgeryToken()
     @Html.HiddenFor(model => model.Pickup.Type)
     @Html.HiddenFor(model => model.WaybillId)
+    @Html.HiddenFor(model => model.locationIsSame)
 
     <div class="btn-group" style="margin:5px 0 10px 0;">
         @Html.ActionLink("Immediate", "Create", new {waybillId= ViewBag.WaybillId, pickupType = "Immediate", location = ViewBag.Location }, new { @class = "btn btn-primary btn-large" })
@@ -30,13 +31,16 @@
         <div class="form-group">
             @Html.TextBoxFor(model => model.Pickup.Date, htmlAttributes: new { @Value = @DateTime.Now, @type = "datetime", @class = "form-control" })
         </div>
+      
         <div>You can prearranged your pickup up to 5 days, specify both date and time</div>
     }
+
+    <div style="color:#f44542"> @ViewBag.msg </div>
 
 <h2>The pickup Location  :</h2>
     <div class="btn-group" style="margin:5px 0 10px 0;">
         @Html.ActionLink("Same", "Create", new { waybillId = ViewBag.WaybillId, pickupType = Model.Pickup.Type, location = "Same" }, new { @class = "btn btn-success btn-large" })
-        @Html.ActionLink("Diff", "Create", new { waybillId = ViewBag.WaybillId, pickupType = Model.Pickup.Type, location = "Diff" }, new { @class = "btn btn-warning btn-large" })
+        @Html.ActionLink("Different", "Create", new { waybillId = ViewBag.WaybillId, pickupType = Model.Pickup.Type, location = "Diff" }, new { @class = "btn btn-warning btn-large" })
     </div>
 
     <div>
@@ -48,11 +52,15 @@
         @if (ViewBag.location == "Diff")
         {
             @Html.DropDownListFor(model => model.PickupLocationNickname, new SelectList(ViewBag.pickupLocations), "Please select another pickup location", new {@class = "form-control" })
-        }
-    </div>
+            <div class="btn-group" style="margin:5px 0 10px 0;">
+                @Html.ActionLink("Edit my pickup locations", "Index", "SavedAddresses",null, new { @class = "btn btn-info btn-large"  })
+                @Html.ActionLink("Create a new pickup location", "Create", "SavedAddresses", new { type = "pickup" }, new { @class = "btn btn-primary btn-large" })
+            </div>
+                }
+            </div>
 
 <br />
 <div class="form-group">
-    <button type="submit" value="Confirm" class="btn btn-primary">Confirm</button>
+    <button type="submit" name="submit" value="Confirm" class="btn btn-primary">Confirm</button>
 </div>
 }

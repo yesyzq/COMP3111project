@@ -103,24 +103,28 @@ namespace SinExWebApp20256461.Controllers
                 {
                     pickupView.Pickup.Location = senderMailingAddress;
                 }
+
+                if (location == "Diff")
+                {
+                    //search the address by the nickname
+                    //TODO
+                    pickupView.Pickup.Location = pickupView.PickupLocationNickname;
+                }
             }
             return View(pickupView);
         }
 
         // POST: Pickups/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]    
-        public ActionResult Create(string submit, string pickupType, NewPickupViewModel pickupView)   //model binding
+      //  [ValidateAntiForgeryToken]    
+        public ActionResult Create(string submit, NewPickupViewModel pickupView)   //model binding
         {
-            pickupView.Pickup.Type = pickupType;
-
+            
             DateTime endDate = DateTime.Now.AddDays(5);
             if (pickupView.Pickup.Date > endDate)
             {
                 return RedirectToAction("Create", "Pickups", new { waybillId = pickupView.WaybillId, validDate = "false"});
             }
-
-
 
 
             /* Add saved address functionality */
@@ -164,7 +168,7 @@ namespace SinExWebApp20256461.Controllers
             }
 
             shipment.Pickup.Date = pickupView.Pickup.Date;
-            shipment.Pickup.Location = pickupView.PickupNickname;
+            shipment.Pickup.Location = pickupView.Pickup.Location;
             shipment.Pickup.Type = pickupView.Pickup.Type;
 
             /* need to add pickup */

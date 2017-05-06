@@ -12,6 +12,7 @@
     @Html.AntiForgeryToken()
     @Html.HiddenFor(model => model.Pickup.Type)
     @Html.HiddenFor(model => model.WaybillId)
+    @Html.HiddenFor(model => model.locationIsSame)
 
     <div class="btn-group" style="margin:5px 0 10px 0;">
         @Html.ActionLink("Immediate", "Create", new {waybillId= ViewBag.WaybillId, pickupType = "Immediate", location = ViewBag.Location }, new { @class = "btn btn-primary btn-large" })
@@ -83,6 +84,6 @@
 <p> [Please enter a nickname for the pickup address if you want to save it for later use]</p>
 <br />
 <div class="form-group">
-    <button type="submit" value="Confirm" class="btn btn-primary">Confirm</button>
+    <button type="submit" name="submit" value="Confirm" class="btn btn-primary">Confirm</button>
 </div>
 }

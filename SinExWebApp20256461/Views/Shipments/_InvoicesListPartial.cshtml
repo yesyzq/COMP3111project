@@ -9,53 +9,61 @@
                 @Html.DisplayNameFor(model => model.WaybillNumber)
             </th>
             <th>
-                @Html.ActionLink("ServiceType", "GenerateInvoiceReport", new
+                @Html.ActionLink("Service Type", "GenerateInvoiceReport", new
            {
                sortOrder = ViewBag.ServiceTypeSortParm,
-               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
+               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber,
+               ShippedStartDate = ViewBag.CurrentShippedStartDate,
+               ShippedEndDate = ViewBag.CurrentShippedEndDate,
            })
             </th>
             <th>
-                @Html.ActionLink("ShippedDate", "GenerateInvoiceReport", new
+                @Html.ActionLink("Shipped Date", "GenerateInvoiceReport", new
            {
                sortOrder = ViewBag.ShippedDateSortParm,
-               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
+               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber,
+               ShippedStartDate = ViewBag.CurrentShippedStartDate,
+               ShippedEndDate = ViewBag.CurrentShippedEndDate,
            })
             </th>
             <th>
-                @Html.ActionLink("RecipientName", "GenerateInvoiceReport", new
+                @Html.ActionLink("Recipient Name", "GenerateInvoiceReport", new
            {
                sortOrder = ViewBag.RecipientNameSortParm,
-               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
+               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber,
+               ShippedStartDate = ViewBag.CurrentShippedStartDate,
+               ShippedEndDate = ViewBag.CurrentShippedEndDate,
            })
             </th>
             <th>
-                @Html.ActionLink("TotalInvoiceAmount", "GenerateInvoiceReport", new
+                @Html.ActionLink("Total Invoice Amount", "GenerateInvoiceReport", new
            {
-               sortOrder = ViewBag.TotalAmountPayableSortParm,
-               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
+               sortOrder = ViewBag.ToalInvoiceAmountSortParm,
+               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber,
+               ShippedStartDate = ViewBag.CurrentShippedStartDate,
+               ShippedEndDate = ViewBag.CurrentShippedEndDate,
            })
             </th>
             <th>
                 @Html.ActionLink("Origin", "GenerateInvoiceReport", new
            {
                sortOrder = ViewBag.OriginSortParm,
-               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
+               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber,
+               ShippedStartDate = ViewBag.CurrentShippedStartDate,
+               ShippedEndDate = ViewBag.CurrentShippedEndDate,
            })
             </th>
             <th>
                 @Html.ActionLink("Destination", "GenerateInvoiceReport", new
            {
                sortOrder = ViewBag.DestinationSortParm,
-               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
+               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber,
+               ShippedStartDate = ViewBag.CurrentShippedStartDate,
+               ShippedEndDate = ViewBag.CurrentShippedEndDate,
            })
             </th>
             <th>
-                @Html.ActionLink("ShippingAccountNumber", "GenerateInvoiceReport", new
-           {
-               sortOrder = ViewBag.ShippingAccountIdSortParm,
-               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
-           })
+                @Html.DisplayNameFor(model => model.ShippingAccountNumber)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Type)

@@ -9,29 +9,37 @@
                 @Html.DisplayNameFor(model => model.WaybillNumber)
             </th>
             <th>
-                @Html.ActionLink("ServiceType", "GenerateHistoryReport", new{
+                @Html.ActionLink("Service Type", "GenerateHistoryReport", new{
                sortOrder = ViewBag.ServiceTypeSortParm,
-               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
-           })
+               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber,
+               ShippedStartDate = ViewBag.CurrentShippedStartDate,
+               ShippedEndDate = ViewBag.CurrentShippedEndDate,
+                })
             </th>
             <th>
-                @Html.ActionLink("ShippedDate", "GenerateHistoryReport", new{
+                @Html.ActionLink("Shipped Date", "GenerateHistoryReport", new{
                sortOrder = ViewBag.ShippedDateSortParm,
-               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
+               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber,
+               ShippedStartDate = ViewBag.CurrentShippedStartDate,
+               ShippedEndDate = ViewBag.CurrentShippedEndDate,
            })
             </th>
             <th>
-                @Html.ActionLink("DeliveredDate", "GenerateHistoryReport", new
+                @Html.ActionLink("Delivered Date", "GenerateHistoryReport", new
            {
                sortOrder = ViewBag.DeliveredDateSortParm,
-               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
+               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber,
+               ShippedStartDate = ViewBag.CurrentShippedStartDate,
+               ShippedEndDate = ViewBag.CurrentShippedEndDate,
            })
             </th>
             <th>
-                @Html.ActionLink("RecipientName", "GenerateHistoryReport", new
+                @Html.ActionLink("Recipient Name", "GenerateHistoryReport", new
            {
                sortOrder = ViewBag.RecipientNameSortParm,
-               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
+               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber,
+               ShippedStartDate = ViewBag.CurrentShippedStartDate,
+               ShippedEndDate = ViewBag.CurrentShippedEndDate,
            })
             </th>
             <th>
@@ -41,19 +49,29 @@
                 @Html.ActionLink("Origin", "GenerateHistoryReport", new
            {
                sortOrder = ViewBag.OriginSortParm,
-               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
+               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber,
+               ShippedStartDate = ViewBag.CurrentShippedStartDate,
+               ShippedEndDate = ViewBag.CurrentShippedEndDate,
            })
             </th>
             <th>
                 @Html.ActionLink("Destination", "GenerateHistoryReport", new
            {
                sortOrder = ViewBag.DestinationSortParm,
-               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber
+               ShippingAccountNumber = ViewBag.CurrentShippingAccountNumber,
+               ShippedStartDate = ViewBag.CurrentShippedStartDate,
+               ShippedEndDate = ViewBag.CurrentShippedEndDate,
            })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ShippingAccountNumber)
+                @Html.DisplayNameFor(model => model.Status)
             </th>
+            @if (User.IsInRole("Employee"))
+            {
+                <th>
+                    @Html.DisplayNameFor(model => model.ShippingAccountNumber)
+                </th>
+            }
         </tr>
         @foreach(var item in Model)
         {
@@ -83,8 +101,14 @@
                     @Html.DisplayFor(modelItem => item.Destination)
                 </th>
                 <th>
-                    @Html.DisplayFor(modelItem => item.ShippingAccountNumber)
+                    @Html.DisplayFor(modelItem => item.Status)
                 </th>
+                @if (User.IsInRole("Employee"))
+                {
+                    <th>
+                        @Html.DisplayFor(modelItem => item.ShippingAccountNumber)
+                    </th>
+                }
             </tr>
         }
     </table>

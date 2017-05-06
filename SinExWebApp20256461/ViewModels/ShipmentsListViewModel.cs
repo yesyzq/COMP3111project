@@ -25,5 +25,6 @@ namespace SinExWebApp20256461.ViewModels
         public virtual string Destination { get; set; }
         [Display(Name = "Shipping Account Number")]
         public virtual string ShippingAccountNumber { get; set; }
+        public virtual string Status { get; set; }
     }
 }

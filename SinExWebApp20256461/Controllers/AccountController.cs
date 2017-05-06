@@ -242,7 +242,15 @@ namespace SinExWebApp20256461.Controllers
                             model.BusinessInformation.ShippingAccountId = id;
                             db.ShippingAccounts.Add(model.BusinessInformation);
                         }
-                        db.SaveChanges();
+                        try
+                        {
+                            db.SaveChanges();
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                            return View();
+                        }
                         await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
                         // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771

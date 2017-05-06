@@ -13,9 +13,13 @@
 
 @if (User.IsInRole("Employee"))
 {
-    <div class="btn-toolbar">
-        @Html.ActionLink("Enter Actual Weight", "Index", new { EmployeeAction = "enter_weight" }, new { @class = "btn btn-default" })
-        @Html.ActionLink("Enter Duty & Tax", "Index", new { EmployeeAction = "enter_tax" }, new { @class = "btn btn-default" })
+    <div class="row">
+        <div class="col-md-4">
+            <div class="btn-toolbar">
+                @Html.ActionLink("Enter Actual Weight", "Index", new { EmployeeAction = "enter_weight" }, new { @class = "btn btn-default" })
+                @Html.ActionLink("Enter Duty & Tax", "Index", new { EmployeeAction = "enter_tax" }, new { @class = "btn btn-default" })
+            </div>
+        </div>
     </div>
 }
 
@@ -45,7 +49,7 @@
         <th>
             @Html.DisplayNameFor(model => model.Status)
         </th>
-        <th></th>
+        <th>Enter</th>
     </tr>
 
 @foreach (var item in Model)

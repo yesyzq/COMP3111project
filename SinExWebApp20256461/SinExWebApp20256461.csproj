@@ -430,6 +430,7 @@
     <Content Include="Views\Shipments\DisplayShipment.cshtml" />
     <Content Include="Views\Shipments\EnterAuthorization.cshtml" />
     <Content Include="Views\Shipments\EnterTax.cshtml" />
+    <Content Include="Views\Shipments\_ManageShipmentsSearchPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

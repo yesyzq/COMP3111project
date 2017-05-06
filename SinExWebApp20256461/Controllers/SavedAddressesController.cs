@@ -21,6 +21,7 @@ namespace SinExWebApp20256461.Controllers
         // GET: SavedAddresses
         public ActionResult Index(string waybillId)
         {
+
             ViewBag.WaybillId = waybillId;
             var shippingAccount = (from s in db.ShippingAccounts
                                    where s.UserName == User.Identity.Name
@@ -74,15 +75,20 @@ namespace SinExWebApp20256461.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(string type_post,SavedAddressViewModel savedAddressViewModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(savedAddressViewModel);
+            }
             SavedAddress savedAddress = new SavedAddress();
             savedAddress = savedAddressViewModel.SavedAddress;
 
             /*Empty entry exception */
-            if(savedAddressViewModel.SavedAddress.NickName == null)
+            if(savedAddressViewModel.SavedAddress.NickName == null )
             {
                 ViewBag.errorMessage = "You are required to assign a nickname to the location";
                 return View(savedAddressViewModel);
             }
+
 
 
             ViewBag.ShippingAccountId = new SelectList(db.ShippingAccounts, "ShippingAccountId", "ShippingAccountNumber", savedAddress.ShippingAccountId);
@@ -98,6 +104,14 @@ namespace SinExWebApp20256461.Controllers
                 ViewBag.errorMessage = "The nickname already exists! Please choose another one";
                 return View(savedAddressViewModel);
             }
+
+            /*Empty entry exception */
+            if (savedAddressViewModel.SavedAddress.PickupLocation == null)
+            {
+                ViewBag.errorMessage2 = "Please enter a pickup location";
+                return View(savedAddressViewModel);
+            }
+
             savedAddress.ShippingAccountId = shippingAccount.ShippingAccountId;
             db.SavedAddresses.Add(savedAddress);
 

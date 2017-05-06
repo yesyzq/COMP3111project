@@ -24,6 +24,14 @@
             </div>   
         }
 
+        @if (@ViewBag.errorMessage2 != null)
+                {
+            <div class="col-md-offset-2">
+                <b style="color: indianred">@ViewBag.errorMessage2</b>
+            </div>
+        }
+
+
         <div class="form-group">
             <div class="col-md-2">
                 Add a new address for:
@@ -86,7 +94,7 @@ else
             </div>
         </div>
 
- @if (ViewBag.preloadType == "pickup")
+ @if (Model.PageJumpType == "pickup")
  {
     <div id="pickup">
         <div class="form-group">

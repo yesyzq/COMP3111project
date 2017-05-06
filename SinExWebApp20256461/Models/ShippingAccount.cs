@@ -43,7 +43,7 @@ namespace SinExWebApp20256461.Models
         //--- credit card information ---------------
         [Display(Name = "Card Type")]
         [Required]
-        [RegularExpression(@"^American Express|Diners Club|Discover|MasterCard|UnionPay|Visa$", ErrorMessage ="Please input valid cardType")]
+        [RegularExpression(@"^American Express|Diners Club|Discover|MasterCard|UnionPay|Visa$", ErrorMessage = "Only the following types are allowed: American Express, Diners Club, Discover, MasterCard, UnionPay, Visa")]
         public virtual string CardType { get; set; }
         [Display(Name = "Card Number")]
         [Required]

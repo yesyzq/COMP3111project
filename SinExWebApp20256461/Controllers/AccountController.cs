@@ -188,7 +188,7 @@ namespace SinExWebApp20256461.Controllers
             ViewBag.AccountType = accountType;
             if(error == 1)
             {
-                ViewBag.errorMessage = "the card number does not match the card type";
+                ViewBag.errorMessage = "the credit card number is invalid";
             }
             return View(new RegisterCustomerViewModel());
         }

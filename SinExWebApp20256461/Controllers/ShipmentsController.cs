@@ -23,7 +23,7 @@ using System.Net.Mail;
 namespace SinExWebApp20256461.Controllers
 {
     public class ShipmentsController : BaseController
-    {  
+    {
         private SinExWebApp20256461Context db = new SinExWebApp20256461Context();
         // GET: Shipments/GenerateHistoryReport
         [Authorize(Roles = "Employee, Customer")]
@@ -802,22 +802,22 @@ namespace SinExWebApp20256461.Controllers
         }
         // GET: Shipments
         [Authorize(Roles = "Employee, Customer")]
-        public ActionResult Index(string EmployeeAction)
+        public ActionResult Index(string EmployeeAction, string ShippingAccountNumber, string ShippedStartDate, string ShippedEndDate)
         {
-            var shipments = from s in db.Shipments select s;
+            IQueryable<Shipment> shipments;
             if (User.IsInRole("Customer"))
             {
-                var shippingAccount = db.ShippingAccounts.FirstOrDefault(s => s.UserName == User.Identity.Name);
-                var shippingAccountId = 0;
-                if (shippingAccount != null)
-                {
-                    shippingAccountId = shippingAccount.ShippingAccountId;
-                }
-                shipments = from s in shipments
-                            where s.ShippingAccountId == shippingAccountId
+                shipments = from s in db.Shipments
+                            where s.ShippingAccount.UserName == User.Identity.Name
                             select s;
                 return View(shipments.ToList());
             }
+
+            // else Employee
+            if (string.IsNullOrWhiteSpace(ShippingAccountNumber))
+                shipments = from s in db.Shipments select s;
+            else
+                shipments = from s in db.Shipments where s.ShippingAccount.ShippingAccountNumber == ShippingAccountNumber select s;
 
             if (EmployeeAction == "enter_weight")
             {
@@ -836,11 +836,11 @@ namespace SinExWebApp20256461.Controllers
                             select s;
             }
 
-            if (shipments != null)
-            {
-                View(shipments.ToList());
-            }
-            return View();
+            //if (shipments != null)
+            //{
+                return View(shipments.ToList());
+            //}
+            //return View();
         }
 
         // GET: Shipments/Details/5

@@ -44,7 +44,7 @@ namespace SinExWebApp20256461.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var query = db.BusinessShippingAccounts.SingleOrDefault(c => c.UserName == User.Identity.Name);
+            var query = db.BusinessShippingAccounts.FirstOrDefault(c => c.UserName == User.Identity.Name);
             id = query.ShippingAccountId;
             BusinessShippingAccount businessShippingAccount = (BusinessShippingAccount)db.ShippingAccounts.Find(id);
             if (businessShippingAccount == null)
@@ -60,7 +60,7 @@ namespace SinExWebApp20256461.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var query = db.BusinessShippingAccounts.SingleOrDefault(c => c.UserName == User.Identity.Name);
+            var query = db.BusinessShippingAccounts.FirstOrDefault(c => c.UserName == User.Identity.Name);
             id = query.ShippingAccountId;
             BusinessShippingAccount businessShippingAccount = (BusinessShippingAccount)db.ShippingAccounts.Find(id);
             if (businessShippingAccount == null)

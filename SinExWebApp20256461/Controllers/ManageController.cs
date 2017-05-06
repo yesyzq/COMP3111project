@@ -62,7 +62,7 @@ namespace SinExWebApp20256461.Controllers
                 {
                     return RedirectToAction("ManageLogins", new { Message = message });
                 }
-                ShippingAccount currUser = db.ShippingAccounts.SingleOrDefault(s => s.UserName == userName);
+                ShippingAccount currUser = db.ShippingAccounts.FirstOrDefault(s => s.UserName == userName);
                 if (currUser is PersonalShippingAccount)
                 {
                     ViewBag.customerType = "Personal";
@@ -85,7 +85,7 @@ namespace SinExWebApp20256461.Controllers
             string accountNumber = "";
             if (User.IsInRole("Customer"))
             {
-                accountNumber = db.ShippingAccounts.SingleOrDefault(c => c.UserName == User.Identity.Name).ShippingAccountNumber;
+                accountNumber = db.ShippingAccounts.FirstOrDefault(c => c.UserName == User.Identity.Name).ShippingAccountNumber;
             }
            
             var model = new IndexViewModel

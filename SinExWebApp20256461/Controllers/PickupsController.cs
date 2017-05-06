@@ -112,12 +112,6 @@ namespace SinExWebApp20256461.Controllers
                     pickupView.Pickup.Location = senderMailingAddress;
                 }
 
-                if (location == "Diff")
-                {
-                    //search the address by the nickname
-                    //TODO
-                    pickupView.Pickup.Location = pickupView.PickupLocationNickname;
-                }
             }
             return View(pickupView);
         }
@@ -145,7 +139,11 @@ namespace SinExWebApp20256461.Controllers
 
             shipment.Pickup.Date = pickupView.Pickup.Date;
 
-            shipment.Pickup.Location = pickupView.Pickup.Location;
+            if (pickupView.PickupLocationNickname != null)
+            {
+                shipment.Pickup.Location = pickupView.PickupLocationNickname;
+            }
+           else  shipment.Pickup.Location = pickupView.Pickup.Location;
 
             shipment.Pickup.Type = pickupView.Pickup.Type;
 

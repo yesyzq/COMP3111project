@@ -15,7 +15,7 @@ namespace SinExWebApp20256461.ViewModels
         public virtual Shipment Shipment { get; set; }
         public virtual Recipient Recipient { get; set; }
         public virtual Pickup Pickup { get; set; }
-        public virtual string Status { get; set; }
+        //public virtual string Status { get; set; }
         public virtual string Nickname { get; set; }
         [Display(Name = "Email Notification?")]
         public virtual string IfSendEmail { get; set; }

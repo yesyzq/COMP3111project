@@ -134,41 +134,11 @@ namespace SinExWebApp20256461.Controllers
             var shippingAccount = (from s in db.ShippingAccounts
                                    where s.UserName == User.Identity.Name
                                    select s).First();
-            if (pickupView.RecipientNickname != null)
-            {
-                var r = shipment.Recipient;
-                SavedAddress helper_address = new SavedAddress
-                {
-                    NickName = pickupView.RecipientNickname,
-                    Street = r.Street,
-                    City = r.City,
-                    ProvinceCode = r.ProvinceCode,
-                    PostalCode = r.PostalCode,
-                    Type = "recipient",
-                    ShippingAccountId = shippingAccount.ShippingAccountId
-                };
-                if (r.Building != null)
-                {
-                    helper_address.Building = r.Building;
-                }
-                shippingAccount.SavedAddresses.Add(helper_address);
-                db.SavedAddresses.Add(helper_address);
-            }
-            if (pickupView.PickupNickname != null)
-            {
-                SavedAddress helper_address = new SavedAddress
-                {
-                    NickName = pickupView.PickupNickname,
-                    PickupLocation = pickupView.Pickup.Location,
-                    Type = "pickup",
-                    ShippingAccountId = shippingAccount.ShippingAccountId
-                };
-                shippingAccount.SavedAddresses.Add(helper_address);
-                db.SavedAddresses.Add(helper_address);
-            }
 
             shipment.Pickup.Date = pickupView.Pickup.Date;
+
             shipment.Pickup.Location = pickupView.Pickup.Location;
+
             shipment.Pickup.Type = pickupView.Pickup.Type;
 
             /* need to add pickup */

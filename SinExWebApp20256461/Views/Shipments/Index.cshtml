@@ -13,9 +13,13 @@
 
 @if (User.IsInRole("Employee"))
 {
-    <div class="btn-toolbar">
-        @Html.ActionLink("Enter Actual Weight", "Index", new { EmployeeAction = "enter_weight" }, new { @class = "btn btn-default" })
-        @Html.ActionLink("Enter Tax & Duty", "Index", new { EmployeeAction = "enter_tax" }, new { @class = "btn btn-default" })
+    <div class="row">
+        <div class="col-md-4">
+            <div class="btn-toolbar">
+                @Html.ActionLink("Enter Actual Weight", "Index", new { EmployeeAction = "enter_weight" }, new { @class = "btn btn-default" })
+                @Html.ActionLink("Enter Duty & Tax", "Index", new { EmployeeAction = "enter_tax" }, new { @class = "btn btn-default" })
+            </div>
+        </div>
     </div>
 }
 
@@ -45,7 +49,7 @@
         <th>
             @Html.DisplayNameFor(model => model.Status)
         </th>
-        <th></th>
+        <th>Enter</th>
     </tr>
 
 @foreach (var item in Model)
@@ -80,15 +84,18 @@
             <td>
                 @if (User.IsInRole("Employee"))
                 {
-                    if ((item.Status == "confirmed" || item.Status == "picked_up"))
+                    if (item.Status == "picked_up")
                     {
-                        @Html.ActionLink("Edit", "EditEmployee", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm" })
+                        @Html.ActionLink("Weight", "EnterWeight", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm" })
+                        @Html.ActionLink("Duty&Tax", "EnterTax", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm" })
+                        @Html.ActionLink("Authorization", "EnterAuthorization", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm" })
                     }
                     else
                     {
-                        @Html.ActionLink("Edit", "EditEmployee", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm disabled" })
+                        @Html.ActionLink("Weight", "EnterWeight", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm disabled" })
+                        @Html.ActionLink("Duty&Tax", "EnterTax", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm disabled" })
+                        @Html.ActionLink("Authorization", "EnterAuthorization", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm disabled" })
                     }
-                    <!--@Html.ActionLink("Delete", "Delete", new { id = item.WaybillId }, new { @class = "btn btn-danger btn-sm disabled"})-->
                 }
 
                 else if (User.IsInRole("Customer"))

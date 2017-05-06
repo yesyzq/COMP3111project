@@ -12,6 +12,10 @@
     
     <div class="form-horizontal">
         <hr />
+        @if (@ViewBag.errorMessage != null)
+                {
+            <p class="col-md-offset-2" style="color: indianred">@ViewBag.errorMessage</p>
+        }
         <h4>Shipment Information</h4>
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
@@ -140,6 +144,24 @@
                     <div class="col-md-10">
                         @Html.EditorFor(model => model.Recipient.City, new { htmlAttributes = new { @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.Recipient.City, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Recipient.CompanyName, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Recipient.CompanyName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Recipient.CompanyName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Recipient.DeptName, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Recipient.DeptName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Recipient.DeptName, "", new { @class = "text-danger" })
                     </div>
                 </div>
             </div>

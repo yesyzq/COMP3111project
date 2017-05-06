@@ -133,11 +133,15 @@ namespace SinExWebApp20256461.Controllers
             CostViewModel.DestinationList = db.Destinations.Select(a => a.City).Distinct().ToList();
             CostViewModel.OriginList = db.Destinations.Select(a => a.City).Distinct().ToList();
             CostViewModel.PackageTypesSizeList = db.PakageTypeSizes.Select(a => a.size).Distinct().ToList();
-            if (String.IsNullOrEmpty(submit) || NumOfPackages == null || NumOfPackages <= 0)
+            if (String.IsNullOrEmpty(submit) || NumOfPackages == null || NumOfPackages <= 0 || NumOfPackages > 10)
             {
                 if (NumOfPackages <= 0)
                 {
                     ViewBag.msg = "Package number can't smaller or equal zero";
+                }
+                else if (NumOfPackages > 10)
+                {
+                    ViewBag.msg = "Package number can't be greater than 10";
                 }
                 ViewBag.status = "initial";
                 return View(CostViewModel);

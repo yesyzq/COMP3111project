@@ -1,10 +1,10 @@
 ﻿@model SinExWebApp20256461.ViewModels.CreateShipmentViewModel
 
 @{
-    ViewBag.Title = "Edit Shipment";
+    ViewBag.Title = "Enter Weights";
 }
 
-<h2>Edit Shipment</h2>
+<h2>Enter Weights</h2>
 
 @using (Html.BeginForm())
 {
@@ -51,30 +51,19 @@
             </div>
         </div>
 
-        @if (Model.Status == "confirmed" || Model.Status == "picked_up")
-        {
-            <div class="form-group">
-                @Html.LabelFor(model => model.Shipment.Status, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.DropDownListFor(model => model.Shipment.Status, new SelectList(ViewBag.Statuses))
-                </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Shipment.Status, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Shipment.Status, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
             </div>
-        }
-        else
-        {
-            <div class="form-group">
-                @Html.LabelFor(model => model.Shipment.Status, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.Shipment.Status, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                </div>
-            </div>
-        }
+        </div>
 
         <hr />
         <h4>Package Information</h4>
         @for (var i = 0; i < Model.Packages.Count; i++)
         {
             string packageNum = "Package Number " + (i + 1);
+
             <h3>@Html.Label(packageNum)</h3>
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].PackageTypeSize, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -82,18 +71,28 @@
                     @Html.EditorFor(model => model.Packages[i].PackageTypeSize, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 </div>
             </div>
+            
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].Description, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.EditorFor(model => model.Packages[i].Description, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 </div>
             </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Packages[i].Currency, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Packages[i].Currency, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                </div>
+            </div>
+
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].Value, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.EditorFor(model => model.Packages[i].Value, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                 </div>
             </div>
+
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].WeightEstimated, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
@@ -104,7 +103,7 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].WeightActual, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @if (Model.Status == "confirmed" || Model.Status == "picked_up")
+                    @if (Model.Shipment.Status == "picked_up")
                     {
                         @Html.EditorFor(model => model.Packages[i].WeightActual, new { htmlAttributes = new { @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.Packages[i].WeightActual, "", new { @class = "text-danger" })
@@ -200,15 +199,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.DutyAmount, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @if (Model.Status == "confirmed" || Model.Status == "picked_up")
-                            {
-                                @Html.EditorFor(model => model.DutyAmount, new { htmlAttributes = new { @class = "form-control" } })
-                                @Html.ValidationMessageFor(model => model.DutyAmount, "", new { @class = "text-danger" })
-                            }
-                            else
-                            {
-                                @Html.EditorFor(model => model.DutyAmount, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                            }
+                            @Html.EditorFor(model => model.DutyAmount, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                         </div>
                     </div>
                 </div>
@@ -216,15 +207,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.TaxAmount, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @if (Model.Status == "confirmed" || Model.Status == "picked_up")
-                            {
-                                @Html.EditorFor(model => model.TaxAmount, new { htmlAttributes = new { @class = "form-control" } })
-                                @Html.ValidationMessageFor(model => model.TaxAmount, "", new { @class = "text-danger" })
-                            }
-                            else
-                            {
-                                @Html.EditorFor(model => model.TaxAmount, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                            }
+                            @Html.EditorFor(model => model.TaxAmount, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                         </div>
                     </div>
                 </div>
@@ -262,15 +245,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.ShipmentAuthorizationCode, "Authorization Code", htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @if (Model.Status == "confirmed" || Model.Status == "picked_up")
-                            {
-                                @Html.EditorFor(model => model.ShipmentAuthorizationCode, new { htmlAttributes = new { @class = "form-control" } })
-                                @Html.ValidationMessageFor(model => model.ShipmentAuthorizationCode, "", new { @class = "text-danger" })
-                            }
-                            else
-                            {
-                                @Html.EditorFor(model => model.ShipmentAuthorizationCode, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                            }
+                            @Html.EditorFor(model => model.ShipmentAuthorizationCode, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                         </div>
                     </div>
                 </div>
@@ -283,15 +258,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.ShipmentAuthorizationCode, "Authorization Code", htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @if (Model.Status == "confirmed" || Model.Status == "picked_up")
-                            {
-                                @Html.EditorFor(model => model.ShipmentAuthorizationCode, new { htmlAttributes = new { @class = "form-control" } })
-                                @Html.ValidationMessageFor(model => model.ShipmentAuthorizationCode, "", new { @class = "text-danger" })
-                            }
-                            else
-                            {
-                                @Html.EditorFor(model => model.ShipmentAuthorizationCode, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                            }
+                            @Html.EditorFor(model => model.ShipmentAuthorizationCode, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                         </div>
                     </div>
                 </div>
@@ -299,15 +266,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.DutyAndTaxAuthorizationCode, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @if (Model.Status == "confirmed" || Model.Status == "picked_up")
-                            {
-                                @Html.EditorFor(model => model.DutyAndTaxAuthorizationCode, new { htmlAttributes = new { @class = "form-control" } })
-                                @Html.ValidationMessageFor(model => model.DutyAndTaxAuthorizationCode, "", new { @class = "text-danger" })
-                            }
-                            else
-                            {
-                                @Html.EditorFor(model => model.DutyAndTaxAuthorizationCode, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                            }
+                            @Html.EditorFor(model => model.DutyAndTaxAuthorizationCode, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                         </div>
                     </div>
                 </div>
@@ -316,20 +275,21 @@
 
         @Html.HiddenFor(model => model.Shipment.ShippingAccountId)
         @Html.HiddenFor(model => model.Shipment.Recipient.RecipientID)
+        @Html.HiddenFor(model => model.IfSendEmail)
+        @Html.HiddenFor(model => model.ShipmentPayer)
+        @Html.HiddenFor(model => model.TaxPayer)
 
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-2">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" name="submit" value="Save" class="btn btn-default" />
             </div>
-            @*<div class="col-md-8">
-                    <input type="submit" value="Confirm" class="btn btn-default" />
-                </div>*@
         </div>
     </div>
 }
 
 <div>
+    <!--<a href="javascript:void(0);" onclick="history.go(-1);">Back to List</a>-->
     @Html.ActionLink("Back to List", "Index")
 </div>
 

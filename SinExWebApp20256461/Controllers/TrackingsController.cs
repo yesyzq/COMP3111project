@@ -8,6 +8,8 @@ using System.Web;
 using System.Web.Mvc;
 using SinExWebApp20256461.Models;
 using SinExWebApp20256461.ViewModels;
+using System.Net.Mail;
+
 namespace SinExWebApp20256461.Controllers
 {
     public class TrackingsController : Controller
@@ -38,11 +40,11 @@ namespace SinExWebApp20256461.Controllers
         }
 
         // GET: Trackings/Create
-        [Authorize(Roles = "Employee")]
         public ActionResult Create()
         {
             ViewBag.currTime = DateTime.Now.ToString("yyyyMMddHHmmss");
-            ViewBag.WaybillNumbers = new SelectList(db.Shipments.Select(a => a.WaybillNumber).Distinct());
+            ViewBag.page = 1;
+            // ViewBag.WaybillNumbers = new SelectList(db.Shipments.Select(a => a.WaybillNumber).Distinct());
             return View();
         }
 
@@ -51,16 +53,158 @@ namespace SinExWebApp20256461.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "TrackingID,WaybillNumber,DateTime,Description,Location,Remarks")] Tracking tracking)
+        public ActionResult Create([Bind(Include = "TrackingID,WaybillNumber,DateTime,Description,Location,Remarks, Type, DeliveredTo, DeliveredAt")] Tracking tracking, string submit)
         {
-            //if (ModelState.IsValid)
-            //{
-                string WaybillNumber = tracking.WaybillNumber;
-                tracking.WaybillId = db.Shipments.SingleOrDefault(a => a.WaybillNumber == WaybillNumber).WaybillId;
-                db.Trackings.Add(tracking);
-                db.SaveChanges();
-                return RedirectToAction("Create");
-            //}
+            if (submit == "select waybill")
+            {
+                Shipment shipment = db.Shipments.SingleOrDefault(a => a.WaybillNumber == tracking.WaybillNumber);
+                string status = shipment.Status;
+                if (status == "pending" || status == "delivered" || status == "lost" || status == "cancelled")
+                {
+                    ViewBag.msg = "This shipment is not avaliable for tracking";
+                    ViewBag.page = 1;
+                    return View();
+                }
+                else if (status == "confirmed")
+                {
+                    ViewBag.Types = new string[1];
+                    ViewBag.Types[0] = "picked_up";
+                    ViewBag.page = 2;
+                    return View(tracking);
+                }
+                else if (status == "picked_up" || status == "invoice_sent")
+                {
+                    ViewBag.Types = new string[3];
+                    ViewBag.Types[0] = "delivered";
+                    ViewBag.Types[1] = "lost";
+                    ViewBag.Types[2] = "other";
+                    ViewBag.page = 2;
+                    return View(tracking);
+                }
+            }
+            else if (submit == "select type")
+            {
+                if (tracking.Type == "delivered")
+                {
+                    ViewBag.page = 3;
+                }
+                else
+                {
+                    ViewBag.page = 4;
+                }
+                return View(tracking);
+            }
+            else if (submit == "save")
+            {
+                if (ModelState.IsValid)
+                {
+                    string WaybillNumber = tracking.WaybillNumber;
+                    tracking.WaybillId = db.Shipments.SingleOrDefault(a => a.WaybillNumber == WaybillNumber).WaybillId;
+                    if (tracking.Type == "delivered" || tracking.Type == "lost" || tracking.Type == "picked_up")
+                    {
+                        Shipment shipment = db.Shipments.SingleOrDefault(a => a.WaybillNumber == WaybillNumber);
+                        shipment.Status = tracking.Type;
+                        if (shipment.IfSendEmail == true)
+                        {
+                            if (tracking.Type == "picked_up")
+                            {
+                                MailMessage mailMessage = new MailMessage();
+                                //Add recipients 
+                                mailMessage.To.Add(shipment.ShippingAccount.EmailAddress);
+
+                                //Setting the displayed email address and display name
+                                //!!!Do not use this to prank others!!!
+                                mailMessage.From = new MailAddress("notification@sinex.com", "SinEx Notification");
+                                var senderName = "";
+                                if (shipment.ShippingAccount is PersonalShippingAccount)
+                                {
+                                    PersonalShippingAccount person = (PersonalShippingAccount)shipment.ShippingAccount;
+                                    senderName = person.FirstName + " " + person.LastName;
+                                }
+                                else if (shipment.ShippingAccount is BusinessShippingAccount)
+                                {
+                                    BusinessShippingAccount business = (BusinessShippingAccount)shipment.ShippingAccount;
+                                    senderName = business.ContactPersonName + ", " + business.CompanyName;
+                                }
+                                string senderAddr = "Sender's Address: " + shipment.ShippingAccount.BuildingInformation + ", "
+                                + shipment.ShippingAccount.StreetInformation + ", "
+                                + shipment.ShippingAccount.City + ", "
+                                + shipment.ShippingAccount.ProvinceCode + ", "
+                                + shipment.ShippingAccount.PostalCode;
+                                //Subject and content of the email
+                                mailMessage.Subject = "Pick up notification for Your Shipment (Waybill No. " + shipment.WaybillNumber + ")";
+                                mailMessage.Body = "Dear " + senderName + ",\n \n your shipment with waybillnumber " + shipment.WaybillNumber +
+                                    " has been picked up\n\n Detailed information are as follows\n"
+                                    + "sender name:\t" + senderName
+                                    + "\nsender address:\t" + senderAddr
+                                    + "\npick up date:\t" + tracking.DateTime;
+                                mailMessage.Priority = MailPriority.Normal;
+
+                                //Instantiate a new SmtpClient instance
+                                SmtpClient smtpClient = new SmtpClient("smtp.cse.ust.hk");
+                                smtpClient.Credentials = new System.Net.NetworkCredential("comp3111_team108@cse.ust.hk", "team108#");
+                                smtpClient.UseDefaultCredentials = true;
+                                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                                smtpClient.EnableSsl = true;
+                                //Send
+                                try
+                                {
+                                    smtpClient.Send(mailMessage);
+                                }
+                                catch (Exception e)
+                                {
+                                    ViewBag.msg = e;
+                                    return View();
+                                }
+
+                            }
+                            else if (tracking.Type == "delivered")
+                            {
+                                MailMessage mailMessage = new MailMessage();
+                                //Add recipients 
+                                mailMessage.To.Add(shipment.ShippingAccount.EmailAddress);
+
+                                //Setting the displayed email address and display name
+                                //!!!Do not use this to prank others!!!
+                                mailMessage.From = new MailAddress("notification@sinex.com", "SinEx Notification");
+                                var RecipientName = shipment.Recipient.FullName;
+                                string RecipientAddr = shipment.Recipient.Building
+                                    + ", " + shipment.Recipient.Street
+                                    + ", " + shipment.Recipient.City
+                                    + ", " + shipment.Recipient.ProvinceCode;
+                                //Subject and content of the email
+                                mailMessage.Subject = "Delivery notification for Your Shipment (Waybill No. " + shipment.WaybillNumber + ")";
+                                mailMessage.Body = "Dear " + RecipientName + ",\n \n your shipment with waybillnumber " + shipment.WaybillNumber +
+                                    " has been delivered\n\n Detailed information are as follows\n"
+                                    + "Recipient name:\t" + RecipientName
+                                    + "\nRecipient address:\t" + RecipientAddr
+                                    + "\npick up date:\t" + tracking.DateTime;
+                                mailMessage.Priority = MailPriority.Normal;
+
+                                //Instantiate a new SmtpClient instance
+                                SmtpClient smtpClient = new SmtpClient("smtp.cse.ust.hk");
+                                smtpClient.Credentials = new System.Net.NetworkCredential("comp3111_team108@cse.ust.hk", "team108#");
+                                smtpClient.UseDefaultCredentials = true;
+                                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                                smtpClient.EnableSsl = true;
+                                //Send
+                                try
+                                {
+                                    smtpClient.Send(mailMessage);
+                                }
+                                catch (Exception e)
+                                {
+                                    ViewBag.msg = e;
+                                    return View();
+                                }
+                            }
+                        }
+                    }
+                    db.Trackings.Add(tracking);
+                    db.SaveChanges();
+                    return RedirectToAction("Index", "Home");
+                }
+            }
 
             // ViewBag.WaybillId = new SelectList(db.Shipments, "WaybillId", "ReferenceNumber", tracking.WaybillId);
             return View(tracking);

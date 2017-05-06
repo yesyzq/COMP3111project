@@ -80,7 +80,15 @@ namespace SinExWebApp20256461.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(personalShippingAccount).State = EntityState.Modified;
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return View();
+                }
                 return RedirectToAction("Index", "Home");
             }
             return View(personalShippingAccount);

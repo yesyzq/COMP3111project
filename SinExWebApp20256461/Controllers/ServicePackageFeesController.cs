@@ -57,7 +57,15 @@ namespace SinExWebApp20256461.Controllers
             if (ModelState.IsValid)
             {
                 db.ServicePackageFees.Add(servicePackageFee);
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return View();
+                }
                 return RedirectToAction("Index");
             }
 
@@ -93,7 +101,15 @@ namespace SinExWebApp20256461.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(servicePackageFee).State = EntityState.Modified;
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return View();
+                }
                 return RedirectToAction("Index");
             }
             ViewBag.PackageTypeID = new SelectList(db.PackageTypes, "PackageTypeID", "Type", servicePackageFee.PackageTypeID);
@@ -123,7 +139,15 @@ namespace SinExWebApp20256461.Controllers
         {
             ServicePackageFee servicePackageFee = db.ServicePackageFees.Find(id);
             db.ServicePackageFees.Remove(servicePackageFee);
-            db.SaveChanges();
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return View();
+            }
             return RedirectToAction("Index");
         }
         public ActionResult Costcalculation(string Origin, string Destination, string ServiceType, IList<string> PackagesTypeSizes, IList<decimal> Weights, int? NumOfPackages, string submit)

@@ -180,7 +180,15 @@ namespace SinExWebApp20256461.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(pickup).State = EntityState.Modified;
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return View();
+                }
                 return RedirectToAction("Index");
             }
             return View(pickup);
@@ -208,7 +216,15 @@ namespace SinExWebApp20256461.Controllers
         {
             Pickup pickup = db.Pickups.Find(id);
             db.Pickups.Remove(pickup);
-            db.SaveChanges();
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return View();
+            }
             return RedirectToAction("Index");
         }
 

@@ -357,7 +357,15 @@ namespace SinExWebApp20256461.Controllers
             // save total cost to shipment invoice
             shipmentInvoice.TotalAmountPayable = (double) totalShipmentCost;
             db.Entry(shipmentInvoice).State = EntityState.Modified;
-            db.SaveChanges();
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
 
             string[] CompanyAddress = { "Sino Express LLC", "HKUST" };
 
@@ -1125,7 +1133,15 @@ namespace SinExWebApp20256461.Controllers
                 db.Entry(_invoice2).State = EntityState.Modified;
                 db.Entry(_recipient).State = EntityState.Modified;
                 db.Entry(shipmentDB).State = EntityState.Modified;
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return View(shipmentView);
+                }
 
                 if (submit == "Continue")
                 {
@@ -1188,7 +1204,15 @@ namespace SinExWebApp20256461.Controllers
                 }
 
                 db.Entry(shipmentDB).State = EntityState.Modified;
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return View(shipmentView);
+                }
 
                 bool invoice_sent = SendInvoice(id);
                 return RedirectToAction("Index");
@@ -1232,7 +1256,15 @@ namespace SinExWebApp20256461.Controllers
 
                 db.Entry(dutyAndTaxInvoice).State = EntityState.Modified;
                 db.Entry(shipmentDB).State = EntityState.Modified;
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return View(shipmentView);
+                }
 
                 bool invoice_sent = SendInvoice(id);
                 return RedirectToAction("Index");
@@ -1278,7 +1310,15 @@ namespace SinExWebApp20256461.Controllers
                 db.Entry(shipmentInvoice).State = EntityState.Modified;
                 db.Entry(dutyAndTaxInvoice).State = EntityState.Modified;
                 db.Entry(shipmentDB).State = EntityState.Modified;
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return View(shipmentView);
+                }
 
                 bool invoice_sent = SendInvoice(id);
                 return RedirectToAction("Index");
@@ -1307,7 +1347,14 @@ namespace SinExWebApp20256461.Controllers
             Shipment shipment = db.Shipments.Find(id);
             //db.Shipments.Remove(shipment);
             shipment.Status = "deleted";
-            db.SaveChanges();
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
             return RedirectToAction("Index");
         }
 

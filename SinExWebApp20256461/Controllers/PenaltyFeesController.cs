@@ -51,7 +51,15 @@ namespace SinExWebApp20256461.Controllers
             if (ModelState.IsValid)
             {
                 db.PenaltyFees.Add(penaltyFee);
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return View();
+                }
                 return RedirectToAction("Index");
             }
 
@@ -83,7 +91,15 @@ namespace SinExWebApp20256461.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(penaltyFee).State = EntityState.Modified;
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return View();
+                }
                 return RedirectToAction("Index", "Home");
             }
             return View(penaltyFee);
@@ -111,7 +127,15 @@ namespace SinExWebApp20256461.Controllers
         {
             PenaltyFee penaltyFee = db.PenaltyFees.Find(id);
             db.PenaltyFees.Remove(penaltyFee);
-            db.SaveChanges();
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return View();
+            }
             return RedirectToAction("Index");
         }
 

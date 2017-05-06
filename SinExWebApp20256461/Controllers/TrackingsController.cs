@@ -58,6 +58,11 @@ namespace SinExWebApp20256461.Controllers
             if (submit == "select waybill")
             {
                 Shipment shipment = db.Shipments.FirstOrDefault(a => a.WaybillNumber == tracking.WaybillNumber);
+                if (shipment == null)
+                {
+                    return View();
+                }
+
                 string status = shipment.Status;
                 if (status == "pending" || status == "delivered" || status == "lost" || status == "cancelled")
                 {
@@ -201,7 +206,15 @@ namespace SinExWebApp20256461.Controllers
                         }
                     }
                     db.Trackings.Add(tracking);
-                    db.SaveChanges();
+                    try
+                    {
+                        db.SaveChanges();
+                    }
+                    catch (Exception e)
+                    {
+                        ViewBag.msg = e;
+                        return View();
+                    }
                     return RedirectToAction("Index", "Home");
                 }
             }
@@ -236,7 +249,15 @@ namespace SinExWebApp20256461.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(tracking).State = EntityState.Modified;
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return View();
+                }
                 return RedirectToAction("Index");
             }
             ViewBag.WaybillId = new SelectList(db.Shipments, "WaybillId", "ReferenceNumber", tracking.WaybillId);
@@ -276,7 +297,14 @@ namespace SinExWebApp20256461.Controllers
         {
             Tracking tracking = db.Trackings.Find(id);
             db.Trackings.Remove(tracking);
-            db.SaveChanges();
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
             return RedirectToAction("Index");
         }
 

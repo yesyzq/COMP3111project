@@ -51,7 +51,15 @@ namespace SinExWebApp20256461.Controllers
             if (ModelState.IsValid)
             {
                 db.PackageTypes.Add(packageType);
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return View();
+                }
                 return RedirectToAction("Index");
             }
 
@@ -83,7 +91,15 @@ namespace SinExWebApp20256461.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(packageType).State = EntityState.Modified;
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return View();
+                }
                 return RedirectToAction("Index");
             }
             return View(packageType);
@@ -111,7 +127,15 @@ namespace SinExWebApp20256461.Controllers
         {
             PackageType packageType = db.PackageTypes.Find(id);
             db.PackageTypes.Remove(packageType);
-            db.SaveChanges();
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return View();
+            }
             return RedirectToAction("Index");
         }
 

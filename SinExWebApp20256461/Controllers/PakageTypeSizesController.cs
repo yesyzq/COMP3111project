@@ -53,7 +53,15 @@ namespace SinExWebApp20256461.Controllers
             if (ModelState.IsValid)
             {
                 db.PakageTypeSizes.Add(pakageTypeSize);
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return View();
+                }
                 return RedirectToAction("Index");
             }
 
@@ -87,7 +95,15 @@ namespace SinExWebApp20256461.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(pakageTypeSize).State = EntityState.Modified;
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return View();
+                }
                 return RedirectToAction("Index");
             }
             ViewBag.PackageTypeID = new SelectList(db.PackageTypes, "PackageTypeID", "Type", pakageTypeSize.PackageTypeID);
@@ -116,7 +132,15 @@ namespace SinExWebApp20256461.Controllers
         {
             PakageTypeSize pakageTypeSize = db.PakageTypeSizes.Find(id);
             db.PakageTypeSizes.Remove(pakageTypeSize);
-            db.SaveChanges();
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return View();
+            }
             return RedirectToAction("Index");
         }
 

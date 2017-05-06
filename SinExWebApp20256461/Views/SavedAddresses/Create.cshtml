@@ -26,12 +26,22 @@
 
         <div class="form-group">
             <div class="col-md-2">
-                Add a new address for: 
+                Add a new address for:
             </div>
+@if (Model.PageJumpType == "pickup")
+{
             <div class="col-md-10">
                 Pickup @Html.RadioButtonFor(model => model.SavedAddress.Type, "pickup", new { @class = "btn_sa" })
-                Recipient @Html.RadioButtonFor(model => model.SavedAddress.Type, "recipient", new { @class = "btn_sa" })
+                Recipient @Html.RadioButtonFor(model => model.SavedAddress.Type, "recipient", new { @class = "btn_sa", @disabled = "disabled" })
             </div>
+}
+else 
+{
+    <div class="col-md-10">
+        Pickup @Html.RadioButtonFor(model => model.SavedAddress.Type, "pickup", new { @class = "btn_sa" })
+        Recipient @Html.RadioButtonFor(model => model.SavedAddress.Type, "recipient", new { @class = "btn_sa" })
+    </div>
+}
         </div>
         
         <div id="recipient" style="display: none">
@@ -115,8 +125,10 @@
     if (Model.PageJumpType == "pickup")
     {
         <div class="form-group">
-            <button type="submit" name="type_post" value="CreateAndReturnToPickup" class="btn btn-primary">Create And Return To Pickup</button>
-        </div>
+            <div class="col-md-offset-2 col-md-10">
+                <button type="submit" name="type_post" value="CreateAndReturnToPickup" class="btn btn-primary">Create And Return To Pickup</button>
+            </div>
+            </div>
 
     }
 

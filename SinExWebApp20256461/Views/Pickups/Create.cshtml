@@ -52,8 +52,12 @@
         @if (ViewBag.location == "Diff")
         {
             @Html.DropDownListFor(model => model.PickupLocationNickname, new SelectList(ViewBag.pickupLocations), "Please select another pickup location", new {@class = "form-control" })
-        }
-    </div>
+            <div class="btn-group" style="margin:5px 0 10px 0;">
+                @Html.ActionLink("Edit my pickup locations", "Index", "SavedAddresses",null, new { @class = "btn btn-info btn-large"  })
+                @Html.ActionLink("Create a new pickup location", "Create", "SavedAddresses", new { type = "pickup" }, new { @class = "btn btn-primary btn-large" })
+            </div>
+                }
+            </div>
 
 <br />
 <div class="row">

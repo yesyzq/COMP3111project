@@ -8,8 +8,11 @@ using System.Web;
 using System.Web.Mvc;
 using SinExWebApp20256461.Models;
 
+
 namespace SinExWebApp20256461.Controllers
 {
+
+
     public class SavedAddressesController : Controller
     {
         private SinExWebApp20256461Context db = new SinExWebApp20256461Context();
@@ -47,10 +50,13 @@ namespace SinExWebApp20256461.Controllers
         }
 
         // GET: SavedAddresses/Create
-        public ActionResult Create()
+        public ActionResult Create(string type)
         {
+            SavedAddress viewModel = new SavedAddress();
+            viewModel.Type = type;
+            ViewBag.preloadType = type;//for jumping from pickup to savedAddress
             ViewBag.ShippingAccountId = new SelectList(db.ShippingAccounts, "ShippingAccountId", "ShippingAccountNumber");
-            return View();
+            return View(viewModel);
         }
 
         // POST: SavedAddresses/Create

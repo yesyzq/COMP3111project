@@ -26,6 +26,7 @@ namespace SinExWebApp20256461.Models
         //public virtual int PackageTypeID { get; set; }
         //public virtual PackageType PackageType  { get; set; }
         [Display(Name = "Package Type Size")]
+        [Required]
         public virtual string PackageTypeSize { get; set; }    //for easy creation
         //public virtual PakageTypeSize PackageTypeSize { get; set; }
     }

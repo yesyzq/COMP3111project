@@ -280,6 +280,7 @@
     <Compile Include="ViewModels\InvoicesSearchViewModel.cs" />
     <Compile Include="ViewModels\NewPickupViewModel.cs" />
     <Compile Include="ViewModels\RegisterCustomerViewModel.cs" />
+    <Compile Include="ViewModels\SavedAddressViewModel.cs" />
     <Compile Include="ViewModels\ServicePackageFeeViewModel.cs" />
     <Compile Include="ViewModels\ShipmentsSearchViewModel.cs" />
     <Compile Include="ViewModels\ShipmentsListViewModel.cs" />

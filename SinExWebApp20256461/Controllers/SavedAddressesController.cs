@@ -7,7 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using SinExWebApp20256461.Models;
-
+using SinExWebApp20256461.ViewModels;
 
 namespace SinExWebApp20256461.Controllers
 {
@@ -50,11 +50,17 @@ namespace SinExWebApp20256461.Controllers
         }
 
         // GET: SavedAddresses/Create
-        public ActionResult Create(string type)
+        public ActionResult Create(string type, string waybillId)
         {
-            SavedAddress viewModel = new SavedAddress();
-            viewModel.Type = type;
+            SavedAddressViewModel viewModel = new SavedAddressViewModel();
+            viewModel.SavedAddress = new SavedAddress
+            {
+                Type=type
+            };
+
+            viewModel.WaybillId = waybillId;
             ViewBag.preloadType = type;//for jumping from pickup to savedAddress
+            ViewBag.WaybillId = waybillId;
             ViewBag.ShippingAccountId = new SelectList(db.ShippingAccounts, "ShippingAccountId", "ShippingAccountNumber");
             return View(viewModel);
         }
@@ -64,8 +70,11 @@ namespace SinExWebApp20256461.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(SavedAddress savedAddress)
+        public ActionResult Create(string type_post,SavedAddressViewModel savedAddressViewModel)
         {
+            SavedAddress savedAddress = new SavedAddress();
+            savedAddress = savedAddressViewModel.SavedAddress;
+
             ViewBag.ShippingAccountId = new SelectList(db.ShippingAccounts, "ShippingAccountId", "ShippingAccountNumber", savedAddress.ShippingAccountId);
             var shippingAccount = (from s in db.ShippingAccounts
                                    where s.UserName == User.Identity.Name
@@ -77,11 +86,17 @@ namespace SinExWebApp20256461.Controllers
             if (isExist)
             {
                 ViewBag.errorMessage = "The nickname already exists! Please choose another one";
-                return View(savedAddress);
+                return View(savedAddressViewModel);
             }
             savedAddress.ShippingAccountId = shippingAccount.ShippingAccountId;
             db.SavedAddresses.Add(savedAddress);
             db.SaveChanges();
+
+            if(type_post == "CreateAndReturnToPickup")
+            {
+                return RedirectToAction("Create","Pickups",new { waybillId =savedAddressViewModel.WaybillId});
+            }
+
             return RedirectToAction("Index");
         }
 

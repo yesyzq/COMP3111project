@@ -18,8 +18,9 @@ namespace SinExWebApp20256461.Controllers
         private SinExWebApp20256461Context db = new SinExWebApp20256461Context();
 
         // GET: SavedAddresses
-        public ActionResult Index()
+        public ActionResult Index(string waybillId)
         {
+            ViewBag.WaybillId = waybillId;
             var shippingAccount = (from s in db.ShippingAccounts
                                    where s.UserName == User.Identity.Name
                                    select s).First();
@@ -59,7 +60,7 @@ namespace SinExWebApp20256461.Controllers
             };
 
             viewModel.WaybillId = waybillId;
-            ViewBag.preloadType = type;//for jumping from pickup to savedAddress
+            viewModel.PageJumpType = type;//for jumping from pickup to savedAddress
             ViewBag.WaybillId = waybillId;
             ViewBag.ShippingAccountId = new SelectList(db.ShippingAccounts, "ShippingAccountId", "ShippingAccountNumber");
             return View(viewModel);
@@ -74,6 +75,14 @@ namespace SinExWebApp20256461.Controllers
         {
             SavedAddress savedAddress = new SavedAddress();
             savedAddress = savedAddressViewModel.SavedAddress;
+
+            /*Empty entry exception */
+            if(savedAddressViewModel.SavedAddress.NickName == null)
+            {
+                ViewBag.errorMessage = "You are required to assign a nickname to the location";
+                return View(savedAddressViewModel);
+            }
+
 
             ViewBag.ShippingAccountId = new SelectList(db.ShippingAccounts, "ShippingAccountId", "ShippingAccountNumber", savedAddress.ShippingAccountId);
             var shippingAccount = (from s in db.ShippingAccounts

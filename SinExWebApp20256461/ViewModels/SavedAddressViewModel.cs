@@ -10,5 +10,6 @@ namespace SinExWebApp20256461.ViewModels
     {
         public virtual SavedAddress SavedAddress { get; set; }
         public virtual string WaybillId { get; set; }
+        public virtual string PageJumpType { get; set; }
     }
 }

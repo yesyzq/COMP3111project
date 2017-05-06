@@ -7,7 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using SinExWebApp20256461.Models;
-
+using SinExWebApp20256461.ViewModels;
+using System.Data.Entity.Validation;
 
 namespace SinExWebApp20256461.Controllers
 {
@@ -18,8 +19,10 @@ namespace SinExWebApp20256461.Controllers
         private SinExWebApp20256461Context db = new SinExWebApp20256461Context();
 
         // GET: SavedAddresses
-        public ActionResult Index()
+        public ActionResult Index(string waybillId)
         {
+
+            ViewBag.WaybillId = waybillId;
             var shippingAccount = (from s in db.ShippingAccounts
                                    where s.UserName == User.Identity.Name
                                    select s).First();
@@ -50,11 +53,17 @@ namespace SinExWebApp20256461.Controllers
         }
 
         // GET: SavedAddresses/Create
-        public ActionResult Create(string type)
+        public ActionResult Create(string type, string waybillId)
         {
-            SavedAddress viewModel = new SavedAddress();
-            viewModel.Type = type;
-            ViewBag.preloadType = type;//for jumping from pickup to savedAddress
+            SavedAddressViewModel viewModel = new SavedAddressViewModel();
+            viewModel.SavedAddress = new SavedAddress
+            {
+                Type=type
+            };
+
+            viewModel.WaybillId = waybillId;
+            viewModel.PageJumpType = type;//for jumping from pickup to savedAddress
+            ViewBag.WaybillId = waybillId;
             ViewBag.ShippingAccountId = new SelectList(db.ShippingAccounts, "ShippingAccountId", "ShippingAccountNumber");
             return View(viewModel);
         }
@@ -64,8 +73,24 @@ namespace SinExWebApp20256461.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(SavedAddress savedAddress)
+        public ActionResult Create(string type_post,SavedAddressViewModel savedAddressViewModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(savedAddressViewModel);
+            }
+            SavedAddress savedAddress = new SavedAddress();
+            savedAddress = savedAddressViewModel.SavedAddress;
+
+            /*Empty entry exception */
+            if(savedAddressViewModel.SavedAddress.NickName == null )
+            {
+                ViewBag.errorMessage = "You are required to assign a nickname to the location";
+                return View(savedAddressViewModel);
+            }
+
+
+
             ViewBag.ShippingAccountId = new SelectList(db.ShippingAccounts, "ShippingAccountId", "ShippingAccountNumber", savedAddress.ShippingAccountId);
             var shippingAccount = (from s in db.ShippingAccounts
                                    where s.UserName == User.Identity.Name
@@ -77,11 +102,34 @@ namespace SinExWebApp20256461.Controllers
             if (isExist)
             {
                 ViewBag.errorMessage = "The nickname already exists! Please choose another one";
-                return View(savedAddress);
+                return View(savedAddressViewModel);
             }
+
+            /*Empty entry exception */
+            if (savedAddressViewModel.SavedAddress.PickupLocation == null)
+            {
+                ViewBag.errorMessage2 = "Please enter a pickup location";
+                return View(savedAddressViewModel);
+            }
+
             savedAddress.ShippingAccountId = shippingAccount.ShippingAccountId;
             db.SavedAddresses.Add(savedAddress);
-            db.SaveChanges();
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbEntityValidationException e)
+            {
+                Console.WriteLine(e);
+            }
+            
+
+            if(type_post == "CreateAndReturnToPickup")
+            {
+                return RedirectToAction("Create","Pickups",new { waybillId =savedAddressViewModel.WaybillId});
+            }
+
             return RedirectToAction("Index");
         }
 
@@ -116,7 +164,14 @@ namespace SinExWebApp20256461.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(savedAddress).State = EntityState.Modified;
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (DbEntityValidationException e)
+                {
+                    Console.WriteLine(e);
+                }
                 return RedirectToAction("Index");
             }
             ViewBag.ShippingAccountId = new SelectList(db.ShippingAccounts, "ShippingAccountId", "ShippingAccountNumber", savedAddress.ShippingAccountId);
@@ -145,7 +200,14 @@ namespace SinExWebApp20256461.Controllers
         {
             SavedAddress savedAddress = db.SavedAddresses.Find(id);
             db.SavedAddresses.Remove(savedAddress);
-            db.SaveChanges();
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbEntityValidationException e)
+            {
+                Console.WriteLine(e);
+            }
             return RedirectToAction("Index");
         }
 

@@ -56,6 +56,11 @@ namespace SinExWebApp20256461.Controllers
         // GET: Pickups/Create
         public ActionResult Create(int? waybillId, string pickupType, string location,string validDate, NewPickupViewModel pickupView = null)
         {
+            if(waybillId == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             pickupView = new NewPickupViewModel();
                  
             pickupView.Pickup = new Pickup
@@ -71,11 +76,14 @@ namespace SinExWebApp20256461.Controllers
                 return View(pickupView);
             }
 
-          
+   
             /* bind shipment */
-            var shipment = (from s in db.Shipments
-                            where s.WaybillId == waybillId
-                            select s).First();
+            var shipment = db.Shipments.FirstOrDefault(s => s.WaybillId == waybillId);
+            if (shipment == null)//protect the database access
+            {
+                return View(pickupView);
+            }
+
             var buildingInfo = shipment.ShippingAccount.BuildingInformation;
             var streetInfo = shipment.ShippingAccount.StreetInformation;
             var cityInfo = shipment.ShippingAccount.City;
@@ -104,12 +112,6 @@ namespace SinExWebApp20256461.Controllers
                     pickupView.Pickup.Location = senderMailingAddress;
                 }
 
-                if (location == "Diff")
-                {
-                    //search the address by the nickname
-                    //TODO
-                    pickupView.Pickup.Location = pickupView.PickupLocationNickname;
-                }
             }
             return View(pickupView);
         }
@@ -137,7 +139,11 @@ namespace SinExWebApp20256461.Controllers
 
             shipment.Pickup.Date = pickupView.Pickup.Date;
 
-            shipment.Pickup.Location = pickupView.Pickup.Location;
+            if (pickupView.PickupLocationNickname != null)
+            {
+                shipment.Pickup.Location = pickupView.PickupLocationNickname;
+            }
+           else  shipment.Pickup.Location = pickupView.Pickup.Location;
 
             shipment.Pickup.Type = pickupView.Pickup.Type;
 

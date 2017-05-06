@@ -1,4 +1,4 @@
-﻿@model SinExWebApp20256461.Models.SavedAddress
+﻿@model SinExWebApp20256461.ViewModels.SavedAddressViewModel
 
 @using (Html.BeginForm())
 {
@@ -6,13 +6,15 @@
 
     <div class="form-horizontal">
         <h4>SavedAddress</h4>
+
+
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
-            @Html.LabelFor(model => model.NickName, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.SavedAddress.NickName, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.NickName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.NickName, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.SavedAddress.NickName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.SavedAddress.NickName, "", new { @class = "text-danger" })
             </div>
         </div>
         @if (@ViewBag.errorMessage != null)
@@ -22,66 +24,84 @@
             </div>   
         }
 
+        @if (@ViewBag.errorMessage2 != null)
+                {
+            <div class="col-md-offset-2">
+                <b style="color: indianred">@ViewBag.errorMessage2</b>
+            </div>
+        }
+
+
         <div class="form-group">
             <div class="col-md-2">
-                Add a new address for: 
+                Add a new address for:
             </div>
+@if (Model.PageJumpType == "pickup")
+{
             <div class="col-md-10">
-                Pickup @Html.RadioButtonFor(model => model.Type, "pickup", new { @class = "btn_sa" })
-                Recipient @Html.RadioButtonFor(model => model.Type, "recipient", new { @class = "btn_sa" })
+                Pickup @Html.RadioButtonFor(model => model.SavedAddress.Type, "pickup", new { @class = "btn_sa" })
+                Recipient @Html.RadioButtonFor(model => model.SavedAddress.Type, "recipient", new { @class = "btn_sa", @disabled = "disabled" })
             </div>
+}
+else 
+{
+    <div class="col-md-10">
+        Pickup @Html.RadioButtonFor(model => model.SavedAddress.Type, "pickup", new { @class = "btn_sa" })
+        Recipient @Html.RadioButtonFor(model => model.SavedAddress.Type, "recipient", new { @class = "btn_sa" })
+    </div>
+}
         </div>
         
         <div id="recipient" style="display: none">
             <div class="form-group">
-                @Html.LabelFor(model => model.Building, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.LabelFor(model => model.SavedAddress.Building, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.Building, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Building, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.SavedAddress.Building, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.SavedAddress.Building, "", new { @class = "text-danger" })
                 </div>
             </div>
 
             <div class="form-group">
-                @Html.LabelFor(model => model.Street, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.LabelFor(model => model.SavedAddress.Street, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.Street, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Street, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.SavedAddress.Street, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.SavedAddress.Street, "", new { @class = "text-danger" })
                 </div>
             </div>
 
             <div class="form-group">
-                @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.LabelFor(model => model.SavedAddress.City, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.SavedAddress.City, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.SavedAddress.City, "", new { @class = "text-danger" })
                 </div>
             </div>
 
             <div class="form-group">
-                @Html.LabelFor(model => model.ProvinceCode, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.LabelFor(model => model.SavedAddress.ProvinceCode, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.ProvinceCode, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.ProvinceCode, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.SavedAddress.ProvinceCode, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.SavedAddress.ProvinceCode, "", new { @class = "text-danger" })
                 </div>
             </div>
 
             <div class="form-group">
-                @Html.LabelFor(model => model.PostalCode, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.LabelFor(model => model.SavedAddress.PostalCode, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.PostalCode, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.PostalCode, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.SavedAddress.PostalCode, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.SavedAddress.PostalCode, "", new { @class = "text-danger" })
                 </div>
             </div>
         </div>
 
- @if (ViewBag.preloadType == "pickup")
+ @if (Model.PageJumpType == "pickup")
  {
     <div id="pickup">
         <div class="form-group">
-            @Html.LabelFor(model => model.PickupLocation, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.SavedAddress.PickupLocation, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.PickupLocation, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.PickupLocation, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.SavedAddress.PickupLocation, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.SavedAddress.PickupLocation, "", new { @class = "text-danger" })
             </div>
         </div>
     </div>
@@ -90,10 +110,10 @@
  {
     <div id="pickup" style="display: none">
         <div class="form-group">
-            @Html.LabelFor(model => model.PickupLocation, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.SavedAddress.PickupLocation, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.PickupLocation, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.PickupLocation, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.SavedAddress.PickupLocation, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.SavedAddress.PickupLocation, "", new { @class = "text-danger" })
             </div>
         </div>
     </div>
@@ -106,6 +126,20 @@
             </div>
         </div>
     </div>
+   
+    @Html.HiddenFor(model =>model.WaybillId)
+    @Html.HiddenFor(model => model.PageJumpType)
+
+    if (Model.PageJumpType == "pickup")
+    {
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="submit" name="type_post" value="CreateAndReturnToPickup" class="btn btn-primary">Create And Return To Pickup</button>
+            </div>
+            </div>
+
+    }
+
 
 <div>
     @Html.ActionLink("Back to List", "Index")

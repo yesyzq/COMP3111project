@@ -452,7 +452,7 @@ namespace SinExWebApp20256461.Controllers
 
                     //Setting the displayed email address and display name
                     //!!!Do not use this to prank others!!!
-                    //mailMessage.From = new MailAddress("invoice@sinex.com", "SinEx Invoices");
+                    mailMessage.From = new MailAddress("invoice@sinex.com", "SinEx Invoices");
 
                     //Subject and content of the email
                     mailMessage.Subject = "E-Invoice for Your Shipment (Waybill No. " + waybillNumber + ")";
@@ -611,14 +611,14 @@ namespace SinExWebApp20256461.Controllers
                     MailMessage mailMessage = new MailMessage();
                     //Add recipients 
                     //mailMessage.To.Add(shipmentPayerShippingAccount.EmailAddress);
-                    mailMessage.To.Add("gqi@connect.ust.hk");
-                    mailMessage.To.Add("xduac@connect.ust.hk");
-                    mailMessage.To.Add("zyuaf@connect.ust.hk");
-                    mailMessage.To.Add("swuai@connect.ust.hk");
+                    mailMessage.To.Add("gqi@ust.hk");
+                    mailMessage.To.Add("xduac@ust.hk");
+                    mailMessage.To.Add("zyuaf@ust.hk");
+                    mailMessage.To.Add("swuai@ust.hk");
 
                     //Setting the displayed email address and display name
                     //!!!Do not use this to prank others!!!
-                    mailMessage.From = new MailAddress("comp3111_team108@cse.ust.hk", "SinEx Invoices");
+                    mailMessage.From = new MailAddress("invoice@sinex.com", "SinEx Invoices");
 
                     //Subject and content of the email
                     mailMessage.Subject = "E-Invoice for Your Shipment (Waybill No. " + waybillNumber + ")";

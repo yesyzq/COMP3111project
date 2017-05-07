@@ -462,10 +462,10 @@ namespace SinExWebApp20256461.Controllers
 
                     //Instantiate a new SmtpClient instance
                     SmtpClient smtpClient = new SmtpClient("smtp.cse.ust.hk");
-                    smtpClient.Credentials = new System.Net.NetworkCredential("comp3111_team108@cse.ust.hk", "team108#");
-                    smtpClient.UseDefaultCredentials = true;
-                    smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                    smtpClient.EnableSsl = true;
+
+                
+                    //WARNING: DO NOT set any credentials and other settings
+
                     //Send
                     smtpClient.Send(mailMessage);
                     //Response.Write("Email Sent!!! Yay!");
@@ -563,10 +563,9 @@ namespace SinExWebApp20256461.Controllers
 
                     //Instantiate a new SmtpClient instance
                     SmtpClient smtpClient = new SmtpClient("smtp.cse.ust.hk");
-                    smtpClient.Credentials = new System.Net.NetworkCredential("comp3111_team108@cse.ust.hk", "team108#");
-                    smtpClient.UseDefaultCredentials = true;
-                    smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                    smtpClient.EnableSsl = true;
+
+                    //WARNING: DO NOT set any credentials and other settings!!!
+
                     //Send
                     smtpClient.Send(mailMessage);
                     //Response.Write("Email Sent!!! Yay!");
@@ -611,10 +610,10 @@ namespace SinExWebApp20256461.Controllers
                     MailMessage mailMessage = new MailMessage();
                     //Add recipients 
                     //mailMessage.To.Add(shipmentPayerShippingAccount.EmailAddress);
-                    mailMessage.To.Add("gqi@connect.ust.hk");
-                    mailMessage.To.Add("xduac@connect.ust.hk");
-                    mailMessage.To.Add("zyuaf@connect.ust.hk");
-                    mailMessage.To.Add("swuai@connect.ust.hk");
+                    mailMessage.To.Add("gqi@ust.hk");
+                    mailMessage.To.Add("xduac@ust.hk");
+                    mailMessage.To.Add("zyuaf@ust.hk");
+                    mailMessage.To.Add("swuai@ust.hk");
 
                     //Setting the displayed email address and display name
                     //!!!Do not use this to prank others!!!
@@ -628,10 +627,9 @@ namespace SinExWebApp20256461.Controllers
 
                     //Instantiate a new SmtpClient instance
                     SmtpClient smtpClient = new SmtpClient("smtp.cse.ust.hk");
-                    smtpClient.Credentials = new System.Net.NetworkCredential("comp3111_team108@cse.ust.hk", "team108#");
-                    smtpClient.UseDefaultCredentials = true;
-                    smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                    smtpClient.EnableSsl = true;
+
+                    //WARNING: DO NOT set any credentials and other settings!!!
+
                     //Send
                     smtpClient.Send(mailMessage);
                     //Response.Write("Email Sent!!! Yay!");

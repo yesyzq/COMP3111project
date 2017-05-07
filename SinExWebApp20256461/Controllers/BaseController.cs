@@ -59,5 +59,18 @@ namespace SinExWebApp20256461.Controllers
             result.Add("TWD", ConvertCurrency("TWD", Price));
             return result;
         }
+        public bool ValidCity(string city)
+        {
+            List<string> cities = db.Destinations.Select(a => a.City).ToList();
+            if (cities.Contains(city))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
     }
 }

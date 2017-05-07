@@ -116,8 +116,8 @@ namespace SinExWebApp20256461.Controllers
                             {
                                 MailMessage mailMessage = new MailMessage();
                                 //Add recipients 
+                                mailMessage.To.Add(shipment.Recipient.EmailAddress);
                                 mailMessage.To.Add(shipment.ShippingAccount.EmailAddress);
-
                                 //Setting the displayed email address and display name
                                 //!!!Do not use this to prank others!!!
                                 mailMessage.From = new MailAddress("notification@sinex.com", "SinEx Notification");
@@ -132,14 +132,14 @@ namespace SinExWebApp20256461.Controllers
                                     BusinessShippingAccount business = (BusinessShippingAccount)shipment.ShippingAccount;
                                     senderName = business.ContactPersonName + ", " + business.CompanyName;
                                 }
-                                string senderAddr = "Sender's Address: " + shipment.ShippingAccount.BuildingInformation + ", "
+                                string senderAddr = shipment.ShippingAccount.BuildingInformation + ", "
                                 + shipment.ShippingAccount.StreetInformation + ", "
                                 + shipment.ShippingAccount.City + ", "
                                 + shipment.ShippingAccount.ProvinceCode + ", "
                                 + shipment.ShippingAccount.PostalCode;
                                 //Subject and content of the email
                                 mailMessage.Subject = "Pick up notification for Your Shipment (Waybill No. " + shipment.WaybillNumber + ")";
-                                mailMessage.Body = "Dear " + senderName + ",\n \n your shipment with waybillnumber " + shipment.WaybillNumber +
+                                mailMessage.Body = "Dear Customer,\n \n your shipment with waybillnumber " + shipment.WaybillNumber +
                                     " has been picked up\n\n Detailed information are as follows\n"
                                     + "sender name:\t" + senderName
                                     + "\nsender address:\t" + senderAddr
@@ -168,7 +168,7 @@ namespace SinExWebApp20256461.Controllers
                                 MailMessage mailMessage = new MailMessage();
                                 //Add recipients 
                                 mailMessage.To.Add(shipment.ShippingAccount.EmailAddress);
-
+                                mailMessage.To.Add(shipment.Recipient.EmailAddress);
                                 //Setting the displayed email address and display name
                                 //!!!Do not use this to prank others!!!
                                 mailMessage.From = new MailAddress("notification@sinex.com", "SinEx Notification");
@@ -179,7 +179,7 @@ namespace SinExWebApp20256461.Controllers
                                     + ", " + shipment.Recipient.ProvinceCode;
                                 //Subject and content of the email
                                 mailMessage.Subject = "Delivery notification for Your Shipment (Waybill No. " + shipment.WaybillNumber + ")";
-                                mailMessage.Body = "Dear " + RecipientName + ",\n \n your shipment with waybillnumber " + shipment.WaybillNumber +
+                                mailMessage.Body = "Dear Customer, \n \n your shipment with waybillnumber " + shipment.WaybillNumber +
                                     " has been delivered\n\n Detailed information are as follows\n"
                                     + "Recipient name:\t" + RecipientName
                                     + "\nRecipient address:\t" + RecipientAddr

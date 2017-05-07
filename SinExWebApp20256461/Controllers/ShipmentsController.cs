@@ -1242,9 +1242,6 @@ namespace SinExWebApp20256461.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (shipmentView.DutyAmount.Equals(0) && shipmentView.TaxAmount.Equals(0))
-                    return RedirectToAction("Index");
-
                 ViewBag.PackageCurrency = db.Currencies.Select(m => m.CurrencyCode).Distinct().ToList();
                 ViewBag.ServiceTypes = db.ServiceTypes.Select(m => m.Type).Distinct().ToList();
                 ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(m => m.size).Distinct().ToList();

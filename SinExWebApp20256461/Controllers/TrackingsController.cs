@@ -64,7 +64,7 @@ namespace SinExWebApp20256461.Controllers
                 }
 
                 string status = shipment.Status;
-                if (status == "pending" || status == "delivered" || status == "lost" || status == "cancelled")
+                if (status == "pending" || status == "delivered" || status == "lost" || status == "cancelled" || status == "returned")
                 {
                     ViewBag.msg = "This shipment is not avaliable for tracking";
                     ViewBag.page = 1;
@@ -79,10 +79,11 @@ namespace SinExWebApp20256461.Controllers
                 }
                 else if (status == "picked_up" || status == "invoice_sent")
                 {
-                    ViewBag.Types = new string[3];
+                    ViewBag.Types = new string[4];
                     ViewBag.Types[0] = "delivered";
                     ViewBag.Types[1] = "lost";
-                    ViewBag.Types[2] = "other";
+                    ViewBag.Types[2] = "returned";
+                    ViewBag.Types[3] = "other";
                     ViewBag.page = 2;
                     return View(tracking);
                 }
@@ -105,7 +106,7 @@ namespace SinExWebApp20256461.Controllers
                 {
                     string WaybillNumber = tracking.WaybillNumber;
                     tracking.WaybillId = db.Shipments.FirstOrDefault(a => a.WaybillNumber == WaybillNumber).WaybillId;
-                    if (tracking.Type == "delivered" || tracking.Type == "lost" || tracking.Type == "picked_up")
+                    if (tracking.Type == "delivered" || tracking.Type == "lost" || tracking.Type == "picked_up" || tracking.Type == "returned")
                     {
                         Shipment shipment = db.Shipments.FirstOrDefault(a => a.WaybillNumber == WaybillNumber);
                         shipment.Status = tracking.Type;

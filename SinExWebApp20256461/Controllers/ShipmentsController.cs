@@ -873,6 +873,10 @@ namespace SinExWebApp20256461.Controllers
             ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(a => a.size).Distinct().ToList();
             ViewBag.PackageCurrency = db.Currencies.Select(a => a.CurrencyCode).Distinct().ToList();
 
+            var shippingAccount = (from s in db.ShippingAccounts
+                                                where s.UserName == User.Identity.Name
+                                                select s).First();
+            ViewBag.Origin = shippingAccount.City;
             shipmentView.Packages = new List<Package>();
             var new_package = new Package();
             shipmentView.Packages.Add(new_package);
@@ -884,6 +888,9 @@ namespace SinExWebApp20256461.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(string ShipmentPayer, string TaxPayer, string submit, CreateShipmentViewModel shipmentView = null, Recipient recipient = null)
         {
+            ViewBag.Origin = (from s in db.ShippingAccounts
+                                   where s.UserName == User.Identity.Name
+                                   select s).First().City;
             ViewBag.ServiceTypes = db.ServiceTypes.Select(a => a.Type).Distinct().ToList();
             ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(a => a.size).Distinct().ToList();
             ViewBag.PackageCurrency = db.Currencies.Select(a => a.CurrencyCode).Distinct().ToList();
@@ -915,6 +922,13 @@ namespace SinExWebApp20256461.Controllers
                         @ViewBag.errorMessage = "Recipient's Shipping Account Number is required once selected as payer";
                         return View(shipmentView);
                     }
+                }
+                string DestinationCity = shipmentView.Shipment.Destination;
+                List<string> cities = db.Destinations.Select(a => a.City).ToList();
+                if (!cities.Contains(DestinationCity))
+                {
+                    ViewBag.errorMessage = "Please input a valid city";
+                    return View(shipmentView);
                 }
                 var shipment = shipmentView.Shipment;
                 int num = db.Shipments.Count() + 1;

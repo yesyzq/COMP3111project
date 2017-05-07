@@ -29,7 +29,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Shipment.Origin, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Shipment.Origin, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.TextBoxFor(model => model.Shipment.Origin, htmlAttributes: new { @Value = ViewBag.Origin,  @class = "form-control", @readonly="readonly" })
                 @Html.ValidationMessageFor(model => model.Shipment.Origin, "", new { @class = "text-danger" })
             </div>
         </div>

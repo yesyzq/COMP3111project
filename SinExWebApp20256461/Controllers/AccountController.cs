@@ -17,7 +17,7 @@ using System.Net.Mail;
 namespace SinExWebApp20256461.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
         private SinExWebApp20256461Context db = new SinExWebApp20256461Context();
         private ApplicationSignInManager _signInManager;
@@ -230,12 +230,14 @@ namespace SinExWebApp20256461.Controllers
                         // Create a shipping account for the customer.
                         int id = db.ShippingAccounts.Count() + 1;
                         string strID = id.ToString().PadLeft(12, '0');
+                        ShippingAccount shippingacct = null;
                         if (model.PersonalInformation != null)
                         {
                             model.PersonalInformation.UserName = user.UserName;
                             model.PersonalInformation.ShippingAccountNumber = strID;
                             model.PersonalInformation.ShippingAccountId = id;
                             db.ShippingAccounts.Add(model.PersonalInformation);
+                            shippingacct = model.PersonalInformation;
                         }
                         else
                         {
@@ -243,9 +245,42 @@ namespace SinExWebApp20256461.Controllers
                             model.BusinessInformation.ShippingAccountNumber = strID;
                             model.BusinessInformation.ShippingAccountId = id;
                             db.ShippingAccounts.Add(model.BusinessInformation);
+                            shippingacct = model.BusinessInformation;
                         }
                         try
                         {
+                            if (ValidCity(shippingacct.City))
+                            {
+                                string ProvinceCode = db.Destinations.SingleOrDefault(a => a.City == shippingacct.City).ProvinceCode;
+                                if (ProvinceCode != shippingacct.ProvinceCode)
+                                {
+                                    ViewBag.errorMessage = "City and Province must match";
+                                    // return View(model);
+                                    if (shippingacct is PersonalShippingAccount)
+                                    {
+                                        return RedirectToAction("register", "account", new { accounttype = "personal" });
+                                    }
+                                    else
+                                    {
+                                        return RedirectToAction("register", "account", new { accounttype = "business" });
+                                    }
+
+                                }
+                            }
+                            else
+                            {
+                                ViewBag.errorMessage = "Please input a valid city";
+                                if (shippingacct is PersonalShippingAccount)
+                                {
+                                    return RedirectToAction("Register", "Account", new { accountType = "Personal" });
+                                }
+                                else
+                                {
+                                    return RedirectToAction("Register", "Account", new { accountType = "Business" });
+                                }
+                                // return View(model);
+
+                            }
                             db.SaveChanges();
                             // send confirmation email
                             MailMessage mailMessage = new MailMessage();
@@ -286,7 +321,7 @@ namespace SinExWebApp20256461.Controllers
                             }
                             catch (Exception e)
                             {
-                                ViewBag.msg = e;
+                                ViewBag.errorMessage = e;
                                 return View();
                             }
                         }

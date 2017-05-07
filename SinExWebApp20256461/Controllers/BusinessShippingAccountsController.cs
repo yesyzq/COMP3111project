@@ -10,7 +10,7 @@ using SinExWebApp20256461.Models;
 
 namespace SinExWebApp20256461.Controllers
 {
-    public class BusinessShippingAccountsController : Controller
+    public class BusinessShippingAccountsController : BaseController
     {
         private SinExWebApp20256461Context db = new SinExWebApp20256461Context();
 
@@ -89,6 +89,10 @@ namespace SinExWebApp20256461.Controllers
                 db.Entry(businessShippingAccount).State = EntityState.Modified;
                 try
                 {
+                    if (!CityMatchProCode(businessShippingAccount.City, businessShippingAccount.ProvinceCode))
+                    {
+                        return View(businessShippingAccount);
+                    }
                     db.SaveChanges();
                 }
                 catch (Exception e)

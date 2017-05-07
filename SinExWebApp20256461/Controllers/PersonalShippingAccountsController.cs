@@ -78,6 +78,7 @@ namespace SinExWebApp20256461.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ShippingAccountNumber, UserName, ShippingAccountID,BuildingInformation,StreetInformation,City,ProvinceCode,PostalCode,CardType,CardNumber,SecurityNumber,CardHolderName,Month,Year,PhoneNumber,EmailAddress,FirstName,LastName")] PersonalShippingAccount personalShippingAccount)
         {
+            ViewBag.Cities = db.Destinations.Select(a => a.City).Distinct().ToList();
             if (ModelState.IsValid)
             {
                 db.Entry(personalShippingAccount).State = EntityState.Modified;

@@ -48,6 +48,7 @@ namespace SinExWebApp20256461.Controllers
         // GET: BusinessShippingAccounts/Edit/5
         public ActionResult Edit(int? id)
         {
+            ViewBag.Cities = db.Destinations.Select(a => a.City).Distinct().ToList();
             if (User.Identity.Name == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -85,6 +86,7 @@ namespace SinExWebApp20256461.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ShippingAccountNumber, UserName, ShippingAccountID,BuildingInformation,StreetInformation,City,ProvinceCode,PostalCode,CardType,CardNumber,SecurityNumber,CardHolderName,Month,Year,PhoneNumber,EmailAddress,ContactPersonName,CompanyName,DepartmentName")] BusinessShippingAccount businessShippingAccount)
         {
+            ViewBag.Cities = db.Destinations.Select(a => a.City).Distinct().ToList();
             if (ModelState.IsValid)
             {
                 db.Entry(businessShippingAccount).State = EntityState.Modified;

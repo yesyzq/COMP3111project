@@ -312,15 +312,8 @@ namespace SinExWebApp20256461.Controllers
             if (!shipment.WeightEntered == true)
                 return false;
 
-            SinExWebApp20256461.Models.Invoice shipmentInvoice = null;
-            SinExWebApp20256461.Models.Invoice dutyAndTaxInvoice = null;
-            foreach (var invoice in shipment.Invoices)
-            {
-                if (invoice.Type == "shipment")
-                    shipmentInvoice = invoice;
-                else if (invoice.Type == "tax_duty")
-                    dutyAndTaxInvoice = invoice;
-            }
+            var shipmentInvoice = shipment.Invoices.FirstOrDefault(a => a.Type == "shipment");
+            var dutyAndTaxInvoice = shipment.Invoices.FirstOrDefault(a => a.Type == "tax_duty");
 
             bool seperateInvoice = (shipmentInvoice.ShippingAccountNumber != dutyAndTaxInvoice.ShippingAccountNumber);
 
@@ -833,17 +826,14 @@ namespace SinExWebApp20256461.Controllers
             if (EmployeeAction == "enter_weight")
             {
                 shipments = from s in shipments
-                            where s.Status == "confirmed" || s.Status == "picked_up"
-                            where s.Packages.Any(a => a.WeightActual.Equals(0))
+                            where s.Status == "picked_up" && s.WeightEntered == false
                             select s;
             }
 
             else if (EmployeeAction == "enter_tax")
             {
                 shipments = from s in shipments
-                            where s.Status == "confirmed" || s.Status == "picked_up"
-                            where s.Invoices.FirstOrDefault(a => a.Type == "tax_duty").Duty.Equals(0) ||
-                                  s.Invoices.FirstOrDefault(a => a.Type == "tax_duty").Tax.Equals(0)
+                            where s.Status == "picked_up" && s.TaxEntered == false
                             select s;
             }
 

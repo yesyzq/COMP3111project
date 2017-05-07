@@ -19,13 +19,13 @@
             </div>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.BusinessInformation.City, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.BusinessInformation.City, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.BusinessInformation.City, "", new { @class = "text-danger" })
-            </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.BusinessInformation.City, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-6">
+            @Html.DropDownListFor(model => model.BusinessInformation.City, new SelectList(ViewBag.Cities), new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.BusinessInformation.City, "", new { @class = "text-danger" })
         </div>
+    </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.BusinessInformation.ProvinceCode, htmlAttributes: new { @class = "control-label col-md-2" })

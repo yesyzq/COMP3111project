@@ -72,5 +72,18 @@ namespace SinExWebApp20256461.Controllers
             }
 
         }
+        public  bool CityMatchProCode(string city, string provinceCode)
+        {
+            if (this.ValidCity(city))
+            {
+                string PCode = db.Destinations.SingleOrDefault(a => a.City == city).ProvinceCode;
+                if (PCode == provinceCode)
+                {
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
     }
 }

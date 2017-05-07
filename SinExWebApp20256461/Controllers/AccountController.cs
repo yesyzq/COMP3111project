@@ -187,9 +187,15 @@ namespace SinExWebApp20256461.Controllers
         public ActionResult Register(string accountType, int? error)
         {
             ViewBag.AccountType = accountType;
+            ViewBag.Cities = db.Destinations.Select(a => a.City).Distinct().ToList();
+            ViewBag.ProvinceCodes = db.Destinations.Select(a => a.ProvinceCode).Distinct().ToList();
             if(error == 1)
             {
                 ViewBag.errorMessage = "the credit card number is invalid";
+            }
+            else if(error == 2)
+            {
+                ViewBag.errorMessage = "City and Province must match";
             }
             return View(new RegisterCustomerViewModel());
         }
@@ -258,11 +264,11 @@ namespace SinExWebApp20256461.Controllers
                                     // return View(model);
                                     if (shippingacct is PersonalShippingAccount)
                                     {
-                                        return RedirectToAction("register", "account", new { accounttype = "personal" });
+                                        return RedirectToAction("register", "account", new { accounttype = "personal" , error = 2});
                                     }
                                     else
                                     {
-                                        return RedirectToAction("register", "account", new { accounttype = "business" });
+                                        return RedirectToAction("register", "account", new { accounttype = "business", error = 2 });
                                     }
 
                                 }

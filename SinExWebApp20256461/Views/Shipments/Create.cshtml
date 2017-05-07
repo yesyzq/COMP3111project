@@ -13,8 +13,8 @@
     <div class="form-horizontal">
         <hr />
         @if (@ViewBag.errorMessage != null)
-                {
-            <p class="col-md-offset-2" style="color: indianred">@ViewBag.errorMessage</p>
+        {
+            <p class="col-md-offset-2" style="color: indianred">* @ViewBag.errorMessage</p>
         }
         <h4>Shipment Information</h4>
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })

@@ -300,6 +300,14 @@ namespace SinExWebApp20256461.Controllers
                 return false;
             }
 
+            // duty & tax not yet entered
+            if (!shipment.TaxEntered == true)
+                return false;
+
+            // actual weight not yet entered
+            if (!shipment.WeightEntered == true)
+                return false;
+
             SinExWebApp20256461.Models.Invoice shipmentInvoice = null;
             SinExWebApp20256461.Models.Invoice dutyAndTaxInvoice = null;
             foreach (var invoice in shipment.Invoices)
@@ -325,10 +333,6 @@ namespace SinExWebApp20256461.Controllers
                     return false;
             }
 
-            // duty & tax not yet entered
-            if (dutyAndTaxInvoice.Duty.Equals(0) || dutyAndTaxInvoice.Tax.Equals(0))
-                return false;
-
             // Shipment Invoice
             string shipmentPayerShippingAccountNumber = shipmentInvoice.ShippingAccountNumber;
             var shipmentPayerShippingAccount = db.ShippingAccounts.FirstOrDefault(s => s.ShippingAccountNumber == shipmentPayerShippingAccountNumber);
@@ -344,10 +348,6 @@ namespace SinExWebApp20256461.Controllers
                 string packageInfo = "Package Type: " + package.PackageTypeSize
                     + "\nActual Weight: " + package.WeightActual;
                 decimal actualWeight = (decimal)package.WeightActual;
-
-                // actual weights not yet entered
-                if (actualWeight.Equals(0))
-                    return false;
 
                 Dictionary<string, decimal> cost = Calculate(package.Shipment.ServiceType, package.PackageTypeSize, actualWeight);
                 totalShipmentCost += cost[shipmentPayerCurrencyCode];
@@ -908,6 +908,14 @@ namespace SinExWebApp20256461.Controllers
             }
             if (ModelState.IsValid)
             {
+                if (shipmentView.ShipmentPayer == "Recipient" || shipmentView.TaxPayer == "Recipient")
+                {
+                    if (string.IsNullOrWhiteSpace(shipmentView.RecipientShippingAccountNumber))
+                    {
+                        @ViewBag.errorMessage = "Recipient's Shipping Account Number is required once selected as payer";
+                        return View(shipmentView);
+                    }
+                }
                 var shipment = shipmentView.Shipment;
                 int num = db.Shipments.Count() + 1;
                 string strNum = num.ToString().PadLeft(16, '0');
@@ -1089,13 +1097,13 @@ namespace SinExWebApp20256461.Controllers
                 }
 
                 /* Update Invoice */
-                int i_id1 = shipmentDB.Invoices.ToList()[0].InvoiceID;
-                int i_id2 = shipmentDB.Invoices.ToList()[1].InvoiceID;
-                var _invoice1 = db.Invoices.Find(i_id1);
-                var _invoice2 = db.Invoices.Find(i_id2);
+                var _invoice1 = shipmentDB.Invoices.SingleOrDefault(c => c.Type == "shipment");
+                var _invoice2 = shipmentDB.Invoices.SingleOrDefault(c => c.Type == "tax_duty");
                 var a = shipmentDB.ShippingAccount.ShippingAccountNumber;
-                _invoice1.ShippingAccountNumber = ShipmentPayer == "Sender" ? a : shipmentView.RecipientShippingAccountNumber;
-                _invoice2.ShippingAccountNumber = TaxPayer == "Sender" ? a : shipmentView.RecipientShippingAccountNumber;
+                if (ShipmentPayer == "Recipient" && string.IsNullOrWhiteSpace(shipmentView.RecipientShippingAccountNumber))
+                    _invoice1.ShippingAccountNumber = shipmentView.RecipientShippingAccountNumber;
+                if (TaxPayer == "Recipient" && string.IsNullOrWhiteSpace(shipmentView.RecipientShippingAccountNumber))
+                    _invoice2.ShippingAccountNumber = shipmentView.RecipientShippingAccountNumber;
 
                 /* Update recipient */
                 int r_id = shipmentDB.Recipient.RecipientID;
@@ -1199,6 +1207,8 @@ namespace SinExWebApp20256461.Controllers
                     }
                 }
 
+                shipmentDB.WeightEntered = true;
+
                 db.Entry(shipmentDB).State = EntityState.Modified;
                 try
                 {
@@ -1249,6 +1259,8 @@ namespace SinExWebApp20256461.Controllers
                 dutyAndTaxInvoice.Duty = shipmentView.DutyAmount;
                 dutyAndTaxInvoice.Tax = shipmentView.TaxAmount;
                 dutyAndTaxInvoice.TotalAmountPayable = shipmentView.DutyAmount + shipmentView.TaxAmount;
+
+                shipmentDB.TaxEntered = true;
 
                 db.Entry(dutyAndTaxInvoice).State = EntityState.Modified;
                 db.Entry(shipmentDB).State = EntityState.Modified;

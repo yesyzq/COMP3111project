@@ -474,7 +474,7 @@ namespace SinExWebApp20256461.Controllers
                     //Response.Write("Email Sent!!! Yay!");
                 }
                 catch (Exception e)
-                { Console.WriteLine("{0} Exception caught.", e); return false; }
+                { Console.WriteLine("{0} Exception caught.", e); }
 
                 // -------------------------------
                 // Duty and Tax Invoice
@@ -575,7 +575,7 @@ namespace SinExWebApp20256461.Controllers
                     //Response.Write("Email Sent!!! Yay!");
                 }
                 catch (Exception e)
-                { Console.WriteLine("{0} Exception caught.", e); return false; }
+                { Console.WriteLine("{0} Exception caught.", e); }
             }
             else
             {

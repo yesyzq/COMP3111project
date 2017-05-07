@@ -48,6 +48,7 @@ namespace SinExWebApp20256461.Controllers
             var query =  db.PersonalShippingAccounts.FirstOrDefault(c => c.UserName == User.Identity.Name);
             id = query.ShippingAccountId;
             PersonalShippingAccount personalShippingAccount = (PersonalShippingAccount)db.ShippingAccounts.Find(id);
+            ViewBag.Cities = db.Destinations.Select(a => a.City).Distinct().ToList();
             if (personalShippingAccount == null)
             {
                 return HttpNotFound();

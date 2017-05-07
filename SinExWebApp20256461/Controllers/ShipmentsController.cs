@@ -867,6 +867,7 @@ namespace SinExWebApp20256461.Controllers
             ShippingAccount account = (from s in db.ShippingAccounts
                                        where s.UserName == User.Identity.Name
                                        select s).First();
+            ViewBag.Cities = db.Destinations.Select(a => a.City).Distinct().ToList();
             ViewBag.SavedAddresses = db.SavedAddresses.Where(a => a.ShippingAccountId == account.ShippingAccountId).Select(a => a.NickName).ToList();
             var shippingAccount = (from s in db.ShippingAccounts
                                                 where s.UserName == User.Identity.Name
@@ -883,6 +884,7 @@ namespace SinExWebApp20256461.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(string ShipmentPayer, string TaxPayer, string submit, CreateShipmentViewModel shipmentView = null, Recipient recipient = null)
         {
+            ViewBag.Cities = db.Destinations.Select(a => a.City).Distinct().ToList();
             ViewBag.Origin = (from s in db.ShippingAccounts
                                    where s.UserName == User.Identity.Name
                                    select s).First().City;
@@ -1008,6 +1010,7 @@ namespace SinExWebApp20256461.Controllers
         // GET: Shipments/Edit
         public ActionResult EditCustomer(int? id)
         {
+            ViewBag.Cities = db.Destinations.Select(a => a.City).Distinct().ToList();
             Shipment shipment = db.Shipments.Find(id);
             if (shipment == null)
             {
@@ -1061,7 +1064,7 @@ namespace SinExWebApp20256461.Controllers
             ViewBag.ServiceTypes = db.ServiceTypes.Select(a => a.Type).Distinct().ToList();
             ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(a => a.size).Distinct().ToList();
             ViewBag.PackageCurrency = db.Currencies.Select(a => a.CurrencyCode).Distinct().ToList();
-
+            ViewBag.Cities = db.Destinations.Select(a => a.City).Distinct().ToList();
             return View(ret);
         }
 
@@ -1072,6 +1075,7 @@ namespace SinExWebApp20256461.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditCustomer(int? id, CreateShipmentViewModel shipmentView, string submit, string IfSendEmail, string ShipmentPayer, string TaxPayer)
         {
+            ViewBag.Cities = db.Destinations.Select(a => a.City).Distinct().ToList();
             ViewBag.PackageCurrency = db.Currencies.Select(m => m.CurrencyCode).Distinct().ToList();
             ViewBag.ServiceTypes = db.ServiceTypes.Select(m => m.Type).Distinct().ToList();
             ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(m => m.size).Distinct().ToList();

@@ -70,6 +70,7 @@ namespace SinExWebApp20256461.Controllers
             }
             var query = db.BusinessShippingAccounts.FirstOrDefault(c => c.UserName == User.Identity.Name);
             id = query.ShippingAccountId;
+            ViewBag.Cities = db.Destinations.Select(a => a.City).Distinct().ToList();
             BusinessShippingAccount businessShippingAccount = (BusinessShippingAccount)db.ShippingAccounts.Find(id);
             if (businessShippingAccount == null)
             {

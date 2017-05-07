@@ -96,13 +96,15 @@ namespace SinExWebApp20256461.Controllers
             if (!string.IsNullOrWhiteSpace(ShippedStartDate))
             {
                 DateTime shippedStartDate = DateTime.ParseExact(ShippedStartDate, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                shipmentQuery = shipmentQuery.Where(a => a.ShippedDate >= shippedStartDate);
+                shippedStartDate = shippedStartDate.AddDays(-1);
+                shipmentQuery = shipmentQuery.Where(a => a.ShippedDate > shippedStartDate);
             }
 
             if (!string.IsNullOrWhiteSpace(ShippedEndDate))
             {
                 DateTime shippedEndDate = DateTime.ParseExact(ShippedEndDate, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                shipmentQuery = shipmentQuery.Where(a => a.ShippedDate <= shippedEndDate);
+                shippedEndDate = shippedEndDate.AddDays(1);
+                shipmentQuery = shipmentQuery.Where(a => a.ShippedDate < shippedEndDate);
             }
 
             ViewBag.ServiceTypeSortParm = sortOrder == "ServiceType" ? "ServiceType_desc" : "ServiceType";
@@ -229,13 +231,15 @@ namespace SinExWebApp20256461.Controllers
             if (!string.IsNullOrWhiteSpace(ShippedStartDate))
             {
                 DateTime shippedStartDate = DateTime.ParseExact(ShippedStartDate, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                invoiceQuery = invoiceQuery.Where(a => a.ShippedDate >= shippedStartDate);
+                shippedStartDate = shippedStartDate.AddDays(-1);
+                invoiceQuery = invoiceQuery.Where(a => a.ShippedDate > shippedStartDate);
             }
 
             if (!string.IsNullOrWhiteSpace(ShippedEndDate))
             {
                 DateTime shippedEndDate = DateTime.ParseExact(ShippedEndDate, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                invoiceQuery = invoiceQuery.Where(a => a.ShippedDate <= shippedEndDate);
+                shippedEndDate = shippedEndDate.AddDays(1);
+                invoiceQuery = invoiceQuery.Where(a => a.ShippedDate < shippedEndDate);
             }
 
             ViewBag.ServiceTypeSortParm = (sortOrder == "serviceType") ? "serviceType_desc" : "serviceType";
@@ -528,12 +532,12 @@ namespace SinExWebApp20256461.Controllers
                 { Console.WriteLine("{0} Exception caught.", e); }
 
                 // combine and save total
-                string filepath1 = invoiceFolder + waybillNumber + "_shipment.pdf";
-                string filepath2 = invoiceFolder + waybillNumber + "_duty_and_tax.pdf";
+                string filepath1 = Path.Combine(invoiceFolder, waybillNumber + "_shipment.pdf");
+                string filepath2 = Path.Combine(invoiceFolder, waybillNumber + "_duty_and_tax.pdf");
                 if (System.IO.File.Exists(filepath1) && System.IO.File.Exists(filepath2))
                 {
-                    using (PdfDocument one = PdfReader.Open("file1.pdf", PdfDocumentOpenMode.Import))
-                    using (PdfDocument two = PdfReader.Open("file2.pdf", PdfDocumentOpenMode.Import))
+                    using (PdfDocument one = PdfReader.Open(filepath1, PdfDocumentOpenMode.Import))
+                    using (PdfDocument two = PdfReader.Open(filepath2, PdfDocumentOpenMode.Import))
                     using (PdfDocument outPdf = new PdfDocument())
                     {
                         CopyPages(one, outPdf);

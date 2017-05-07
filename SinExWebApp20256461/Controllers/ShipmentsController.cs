@@ -96,13 +96,15 @@ namespace SinExWebApp20256461.Controllers
             if (!string.IsNullOrWhiteSpace(ShippedStartDate))
             {
                 DateTime shippedStartDate = DateTime.ParseExact(ShippedStartDate, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                shipmentQuery = shipmentQuery.Where(a => a.ShippedDate >= shippedStartDate);
+                shippedStartDate = shippedStartDate.AddDays(-1);
+                shipmentQuery = shipmentQuery.Where(a => a.ShippedDate > shippedStartDate);
             }
 
             if (!string.IsNullOrWhiteSpace(ShippedEndDate))
             {
                 DateTime shippedEndDate = DateTime.ParseExact(ShippedEndDate, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                shipmentQuery = shipmentQuery.Where(a => a.ShippedDate <= shippedEndDate);
+                shippedEndDate = shippedEndDate.AddDays(1);
+                shipmentQuery = shipmentQuery.Where(a => a.ShippedDate < shippedEndDate);
             }
 
             ViewBag.ServiceTypeSortParm = sortOrder == "ServiceType" ? "ServiceType_desc" : "ServiceType";
@@ -229,13 +231,15 @@ namespace SinExWebApp20256461.Controllers
             if (!string.IsNullOrWhiteSpace(ShippedStartDate))
             {
                 DateTime shippedStartDate = DateTime.ParseExact(ShippedStartDate, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                invoiceQuery = invoiceQuery.Where(a => a.ShippedDate >= shippedStartDate);
+                shippedStartDate = shippedStartDate.AddDays(-1);
+                invoiceQuery = invoiceQuery.Where(a => a.ShippedDate > shippedStartDate);
             }
 
             if (!string.IsNullOrWhiteSpace(ShippedEndDate))
             {
                 DateTime shippedEndDate = DateTime.ParseExact(ShippedEndDate, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                invoiceQuery = invoiceQuery.Where(a => a.ShippedDate <= shippedEndDate);
+                shippedEndDate = shippedEndDate.AddDays(1);
+                invoiceQuery = invoiceQuery.Where(a => a.ShippedDate < shippedEndDate);
             }
 
             ViewBag.ServiceTypeSortParm = (sortOrder == "serviceType") ? "serviceType_desc" : "serviceType";
@@ -308,15 +312,8 @@ namespace SinExWebApp20256461.Controllers
             if (!shipment.WeightEntered == true)
                 return false;
 
-            SinExWebApp20256461.Models.Invoice shipmentInvoice = null;
-            SinExWebApp20256461.Models.Invoice dutyAndTaxInvoice = null;
-            foreach (var invoice in shipment.Invoices)
-            {
-                if (invoice.Type == "shipment")
-                    shipmentInvoice = invoice;
-                else if (invoice.Type == "tax_duty")
-                    dutyAndTaxInvoice = invoice;
-            }
+            var shipmentInvoice = shipment.Invoices.FirstOrDefault(a => a.Type == "shipment");
+            var dutyAndTaxInvoice = shipment.Invoices.FirstOrDefault(a => a.Type == "tax_duty");
 
             bool seperateInvoice = (shipmentInvoice.ShippingAccountNumber != dutyAndTaxInvoice.ShippingAccountNumber);
 
@@ -474,7 +471,7 @@ namespace SinExWebApp20256461.Controllers
                     //Response.Write("Email Sent!!! Yay!");
                 }
                 catch (Exception e)
-                { Console.WriteLine("{0} Exception caught.", e); return false; }
+                { Console.WriteLine("{0} Exception caught.", e); }
 
                 // -------------------------------
                 // Duty and Tax Invoice
@@ -528,12 +525,12 @@ namespace SinExWebApp20256461.Controllers
                 { Console.WriteLine("{0} Exception caught.", e); }
 
                 // combine and save total
-                string filepath1 = invoiceFolder + waybillNumber + "_shipment.pdf";
-                string filepath2 = invoiceFolder + waybillNumber + "_duty_and_tax.pdf";
+                string filepath1 = Path.Combine(invoiceFolder, waybillNumber + "_shipment.pdf");
+                string filepath2 = Path.Combine(invoiceFolder, waybillNumber + "_duty_and_tax.pdf");
                 if (System.IO.File.Exists(filepath1) && System.IO.File.Exists(filepath2))
                 {
-                    using (PdfDocument one = PdfReader.Open("file1.pdf", PdfDocumentOpenMode.Import))
-                    using (PdfDocument two = PdfReader.Open("file2.pdf", PdfDocumentOpenMode.Import))
+                    using (PdfDocument one = PdfReader.Open(filepath1, PdfDocumentOpenMode.Import))
+                    using (PdfDocument two = PdfReader.Open(filepath2, PdfDocumentOpenMode.Import))
                     using (PdfDocument outPdf = new PdfDocument())
                     {
                         CopyPages(one, outPdf);
@@ -575,7 +572,7 @@ namespace SinExWebApp20256461.Controllers
                     //Response.Write("Email Sent!!! Yay!");
                 }
                 catch (Exception e)
-                { Console.WriteLine("{0} Exception caught.", e); return false; }
+                { Console.WriteLine("{0} Exception caught.", e); }
             }
             else
             {
@@ -829,17 +826,14 @@ namespace SinExWebApp20256461.Controllers
             if (EmployeeAction == "enter_weight")
             {
                 shipments = from s in shipments
-                            where s.Status == "confirmed" || s.Status == "picked_up"
-                            where s.Packages.Any(a => a.WeightActual.Equals(0))
+                            where s.Status == "picked_up" && s.WeightEntered == false
                             select s;
             }
 
             else if (EmployeeAction == "enter_tax")
             {
                 shipments = from s in shipments
-                            where s.Status == "confirmed" || s.Status == "picked_up"
-                            where s.Invoices.FirstOrDefault(a => a.Type == "tax_duty").Duty.Equals(0) ||
-                                  s.Invoices.FirstOrDefault(a => a.Type == "tax_duty").Tax.Equals(0)
+                            where s.Status == "picked_up" && s.TaxEntered == false
                             select s;
             }
 
@@ -1256,9 +1250,6 @@ namespace SinExWebApp20256461.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (shipmentView.DutyAmount.Equals(0) && shipmentView.TaxAmount.Equals(0))
-                    return RedirectToAction("Index");
-
                 ViewBag.PackageCurrency = db.Currencies.Select(m => m.CurrencyCode).Distinct().ToList();
                 ViewBag.ServiceTypes = db.ServiceTypes.Select(m => m.Type).Distinct().ToList();
                 ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(m => m.size).Distinct().ToList();

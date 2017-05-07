@@ -919,7 +919,7 @@ namespace SinExWebApp20256461.Controllers
                 }
                 string DestinationCity = shipmentView.Shipment.Destination;
                 List<string> cities = db.Destinations.Select(a => a.City).ToList();
-                if (!cities.Contains(DestinationCity))
+                if (!ValidCity(DestinationCity))
                 {
                     ViewBag.errorMessage = "Please input a valid city";
                     return View(shipmentView);
@@ -1078,7 +1078,11 @@ namespace SinExWebApp20256461.Controllers
             {
                 var shipment = shipmentView.Shipment;
                 var shipmentDB = db.Shipments.Find(id);
-
+                if (!ValidCity(shipmentView.Shipment.Destination))
+                {
+                    ViewBag.errorMessage = "Please input a valid city";
+                    return View(shipmentView);
+                }
                 if (submit == "add" && shipmentView.Packages.Count < 10)
                 {
                     var new_package = new Package();

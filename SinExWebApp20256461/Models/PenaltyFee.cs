@@ -13,6 +13,7 @@ namespace SinExWebApp20256461.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public virtual int PenaltyFeeID { get; set; }
+        [Range(typeof(decimal), "0", "999999999", ErrorMessage = "{0} must be a number between {1} and {2}.")]
         public virtual decimal Fee { get; set; }
     }
 }

@@ -25,7 +25,7 @@ namespace SinExWebApp20256461.ViewModels
         public virtual IList<decimal> Weights { get; set; }
         [Display(Name = "Number of Packages")]
         [Required]
-        [Range(1, 10, ErrorMessage = "Please enter valid integer Number")]
+        [Range(typeof(int), "1", "10", ErrorMessage = "{0} must be a number between {1} and {2}.")]
         public virtual int NumOfPackages { get; set; }
     }
 }

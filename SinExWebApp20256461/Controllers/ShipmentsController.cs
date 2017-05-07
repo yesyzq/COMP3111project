@@ -452,7 +452,7 @@ namespace SinExWebApp20256461.Controllers
 
                     //Setting the displayed email address and display name
                     //!!!Do not use this to prank others!!!
-                    //mailMessage.From = new MailAddress("invoice@sinex.com", "SinEx Invoices");
+                    mailMessage.From = new MailAddress("invoice@sinex.com", "SinEx Invoices");
 
                     //Subject and content of the email
                     mailMessage.Subject = "E-Invoice for Your Shipment (Waybill No. " + waybillNumber + ")";
@@ -617,7 +617,7 @@ namespace SinExWebApp20256461.Controllers
 
                     //Setting the displayed email address and display name
                     //!!!Do not use this to prank others!!!
-                    mailMessage.From = new MailAddress("comp3111_team108@cse.ust.hk", "SinEx Invoices");
+                    mailMessage.From = new MailAddress("invoice@sinex.com", "SinEx Invoices");
 
                     //Subject and content of the email
                     mailMessage.Subject = "E-Invoice for Your Shipment (Waybill No. " + waybillNumber + ")";

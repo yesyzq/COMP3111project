@@ -60,7 +60,7 @@ namespace SinExWebApp20256461.Controllers
                 Shipment shipment = db.Shipments.FirstOrDefault(a => a.WaybillNumber == tracking.WaybillNumber);
                 if (shipment == null)
                 {
-                    return View();
+                    return Create();
                 }
 
                 string status = shipment.Status;

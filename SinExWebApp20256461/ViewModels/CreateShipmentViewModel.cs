@@ -28,8 +28,10 @@ namespace SinExWebApp20256461.ViewModels
         public virtual IList<Package> Packages { get; set; }
         public virtual List<String> ServiceTypes { get; set; }
         public virtual List<String> PackageTypeSizes { get; set; }
+        [Range(typeof(double), "0", "999999999999", ErrorMessage = "{0} must be a number between {1} and {2}.")]
         [Display(Name = "Duty Amount")]
         public virtual double DutyAmount { get; set; }
+        [Range(typeof(double), "0", "999999999999", ErrorMessage = "{0} must be a number between {1} and {2}.")]
         [Display(Name = "Tax Amount")]
         public virtual double TaxAmount { get; set; }
         [Display(Name = "Shipment Authorization Code")]

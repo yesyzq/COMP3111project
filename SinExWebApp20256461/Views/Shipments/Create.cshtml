@@ -63,7 +63,7 @@
         @for (var i = 0; i < Model.Packages.Count; i++)
         {
             string packageNum = "Package Number " + (i + 1);
-            <h3>@Html.Label(packageNum)</h3>
+            <h5>@Html.Label(packageNum)</h5>
             string n = "delete " + (i+1);
             <input type="submit" name="submit" value= "@n" class="btn btn-danger" />
             <div class="form-group">

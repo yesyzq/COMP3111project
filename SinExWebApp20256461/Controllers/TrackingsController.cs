@@ -148,10 +148,9 @@ namespace SinExWebApp20256461.Controllers
 
                                 //Instantiate a new SmtpClient instance
                                 SmtpClient smtpClient = new SmtpClient("smtp.cse.ust.hk");
-                                smtpClient.Credentials = new System.Net.NetworkCredential("comp3111_team108@cse.ust.hk", "team108#");
-                                smtpClient.UseDefaultCredentials = true;
-                                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                                smtpClient.EnableSsl = true;
+
+                                //WARNING: DO NOT set any credentials and other settings!!!
+
                                 //Send
                                 try
                                 {
@@ -189,10 +188,9 @@ namespace SinExWebApp20256461.Controllers
 
                                 //Instantiate a new SmtpClient instance
                                 SmtpClient smtpClient = new SmtpClient("smtp.cse.ust.hk");
-                                smtpClient.Credentials = new System.Net.NetworkCredential("comp3111_team108@cse.ust.hk", "team108#");
-                                smtpClient.UseDefaultCredentials = true;
-                                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                                smtpClient.EnableSsl = true;
+
+                                //WARNING: DO NOT set any credentials and other settings!!!
+
                                 //Send
                                 try
                                 {

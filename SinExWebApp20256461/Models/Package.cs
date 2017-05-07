@@ -15,12 +15,15 @@ namespace SinExWebApp20256461.Models
         [Display(Name = "Shipping Account Number")]
         public virtual string ShippingAccountNumber { get; set; }
         public virtual string Description { get; set; }
+        [Range(typeof(double), "0", "999999999999", ErrorMessage = "{0} must be a number between {1} and {2}.")]
         public virtual double Value { get; set; }
         [Required]
         public virtual string Currency { get; set; }
+        [Range(typeof(double), "0", "99999", ErrorMessage = "{0} must be a number between {1} and {2}.")]
         [Display(Name = "Estimated Weight")]
         [Required]
         public virtual double WeightEstimated { get; set; }
+        [Range(typeof(double), "0", "99999", ErrorMessage = "{0} must be a number between {1} and {2}.")]
         [Display(Name = "Actual Weight")]
         public virtual double WeightActual { get; set; }
         //public virtual int PackageTypeID { get; set; }

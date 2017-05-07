@@ -17,7 +17,7 @@
             @Html.AntiForgeryToken()
 
             <div class="form-horizontal">
-                <h4>Tracking</h4>
+                <h2>Tracking</h2>
                 <hr />
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 @if (ViewBag.page == 1)
@@ -132,8 +132,8 @@
         }
     @ViewBag.msg
 
-    <div>
+    @*<div>
         @Html.ActionLink("Back to List", "Index")
-    </div>
+    </div>*@
 </body>
 </html>

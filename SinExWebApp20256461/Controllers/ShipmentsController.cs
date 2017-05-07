@@ -388,7 +388,7 @@ namespace SinExWebApp20256461.Controllers
             shipmentPayerInfo[4] = "Authorization Code: " + shipmentInvoice.AuthenticationCode;
 
             // Shipment Info
-            string waybillNumber = WaybillId.ToString().PadLeft(16, '0');
+            string waybillNumber = db.Shipments.FirstOrDefault(a => a.WaybillId == WaybillId).WaybillNumber;
             string[] shipmentInfo = new string[6];
             shipmentInfo[0] = "Waybill Number: " + waybillNumber;
             shipmentInfo[1] = "Shipped Date: " + shipment.ShippedDate.ToString();
@@ -444,22 +444,22 @@ namespace SinExWebApp20256461.Controllers
                     .Save(Path.Combine(invoiceFolder, waybillNumber + "_shipment.pdf"));
                 }
                 catch (Exception e)
-                { Console.WriteLine("{0} Exception caught.", e); return false; }
+                { Console.WriteLine("{0} Exception caught.", e); }
 
                 // Send Email
                 try
                 {
                     MailMessage mailMessage = new MailMessage();
                     //Add recipients 
-                    mailMessage.To.Add(senderShippingAccount.EmailAddress);
+                    mailMessage.To.Add(shipmentPayerShippingAccount.EmailAddress);
 
                     //Setting the displayed email address and display name
                     //!!!Do not use this to prank others!!!
-                    mailMessage.From = new MailAddress("invoice@sinex.com", "SinEx Invoices");
+                    //mailMessage.From = new MailAddress("invoice@sinex.com", "SinEx Invoices");
 
                     //Subject and content of the email
                     mailMessage.Subject = "E-Invoice for Your Shipment (Waybill No. " + waybillNumber + ")";
-                    mailMessage.Body = "Dear " + firstName + ",\n \n Please find attached the invoice for your Sino Express shipment (Waybill Number: " + waybillNumber + "). Thanks for choosing SinEx! \n \n Best Regards, \n Sino Express Invoicing System";
+                    mailMessage.Body = "Dear " + shipmentPayerInfo[0] + ",\n \n Please find attached the invoice for your Sino Express shipment (Waybill Number: " + waybillNumber + "). Thanks for choosing SinEx! \n \n Best Regards, \n Sino Express Invoicing System";
                     mailMessage.Priority = MailPriority.Normal;
                     mailMessage.Attachments.Add(new Attachment(Path.Combine(invoiceFolder, waybillNumber + "_shipment.pdf")));
 
@@ -525,14 +525,34 @@ namespace SinExWebApp20256461.Controllers
                     .Save(Path.Combine(invoiceFolder, waybillNumber + "_duty_and_tax.pdf"));
                 }
                 catch (Exception e)
-                { Console.WriteLine("{0} Exception caught.", e); return false; }
+                { Console.WriteLine("{0} Exception caught.", e); }
+
+                // combine and save total
+                string filepath1 = invoiceFolder + waybillNumber + "_shipment.pdf";
+                string filepath2 = invoiceFolder + waybillNumber + "_duty_and_tax.pdf";
+                if (System.IO.File.Exists(filepath1) && System.IO.File.Exists(filepath2))
+                {
+                    using (PdfDocument one = PdfReader.Open("file1.pdf", PdfDocumentOpenMode.Import))
+                    using (PdfDocument two = PdfReader.Open("file2.pdf", PdfDocumentOpenMode.Import))
+                    using (PdfDocument outPdf = new PdfDocument())
+                    {
+                        CopyPages(one, outPdf);
+                        CopyPages(two, outPdf);
+                        try
+                        {
+                            outPdf.Save(Path.Combine(invoiceFolder, waybillNumber + "_total.pdf"));
+                        }
+                        catch (Exception e)
+                        { Console.WriteLine("{0} Exception caught.", e); }
+                    }
+                }
 
                 // Send Email
                 try
                 {
                     MailMessage mailMessage = new MailMessage();
                     //Add recipients 
-                    mailMessage.To.Add(senderShippingAccount.EmailAddress);
+                    mailMessage.To.Add(dutyAndTaxPayerShippingAccount.EmailAddress);
 
                     //Setting the displayed email address and display name
                     //!!!Do not use this to prank others!!!
@@ -540,7 +560,7 @@ namespace SinExWebApp20256461.Controllers
 
                     //Subject and content of the email
                     mailMessage.Subject = "E-Invoice for Your Shipment (Waybill No. " + waybillNumber + ")";
-                    mailMessage.Body = "Dear " + firstName + ",\n \n Please find attached the invoice for your Sino Express shipment (Waybill Number: " + waybillNumber + "). Thanks for choosing SinEx! \n \n Best Regards, \n Sino Express Invoicing System";
+                    mailMessage.Body = "Dear " + dutyAndTaxPayerInfo[0] + ",\n \n Please find attached the invoice for your Sino Express shipment (Waybill Number: " + waybillNumber + "). Thanks for choosing SinEx! \n \n Best Regards, \n Sino Express Invoicing System";
                     mailMessage.Priority = MailPriority.Normal;
                     mailMessage.Attachments.Add(new Attachment(Path.Combine(invoiceFolder, waybillNumber + "_duty_and_tax.pdf")));
 
@@ -556,21 +576,6 @@ namespace SinExWebApp20256461.Controllers
                 }
                 catch (Exception e)
                 { Console.WriteLine("{0} Exception caught.", e); return false; }
-
-
-                string filepath1 = invoiceFolder + waybillNumber + "_shipment.pdf";
-                string filepath2 = invoiceFolder + waybillNumber + "_duty_and_tax.pdf";
-                if (System.IO.File.Exists(filepath1) && System.IO.File.Exists(filepath2))
-                {
-                    using (PdfDocument one = PdfReader.Open("file1.pdf", PdfDocumentOpenMode.Import))
-                    using (PdfDocument two = PdfReader.Open("file2.pdf", PdfDocumentOpenMode.Import))
-                    using (PdfDocument outPdf = new PdfDocument())
-                    {
-                        CopyPages(one, outPdf);
-                        CopyPages(two, outPdf);
-                        outPdf.Save(Path.Combine(invoiceFolder, waybillNumber + "_total.pdf"));
-                    }
-                }
             }
             else
             {
@@ -600,7 +605,7 @@ namespace SinExWebApp20256461.Controllers
                     .Save(Path.Combine(invoiceFolder, waybillNumber + "_total.pdf"));
                 }
                 catch (Exception e)
-                { Console.WriteLine("{0} Exception caught.", e); return false; }
+                { Console.WriteLine("{0} Exception caught.", e); }
                 
 
                 // Send Email
@@ -608,7 +613,7 @@ namespace SinExWebApp20256461.Controllers
                 {
                     MailMessage mailMessage = new MailMessage();
                     //Add recipients 
-                    //mailMessage.To.Add(senderShippingAccount.EmailAddress);
+                    //mailMessage.To.Add(shipmentPayerShippingAccount.EmailAddress);
                     mailMessage.To.Add("gqi@connect.ust.hk");
                     mailMessage.To.Add("xduac@connect.ust.hk");
                     mailMessage.To.Add("zyuaf@connect.ust.hk");
@@ -616,11 +621,11 @@ namespace SinExWebApp20256461.Controllers
 
                     //Setting the displayed email address and display name
                     //!!!Do not use this to prank others!!!
-                    mailMessage.From = new MailAddress("invoice@sinex.com", "SinEx Invoices");
+                    mailMessage.From = new MailAddress("comp3111_team108@cse.ust.hk", "SinEx Invoices");
 
                     //Subject and content of the email
                     mailMessage.Subject = "E-Invoice for Your Shipment (Waybill No. " + waybillNumber + ")";
-                    mailMessage.Body = "Dear " + firstName + ",\n \n Please find attached the invoice for your Sino Express shipment (Waybill Number: " + waybillNumber + "). Thanks for choosing SinEx! \n \n Best Regards, \n Sino Express Invoicing System";
+                    mailMessage.Body = "Dear " + shipmentPayerInfo[0] + ",\n \n Please find attached the invoice for your Sino Express shipment (Waybill Number: " + waybillNumber + "). Thanks for choosing SinEx! \n \n Best Regards, \n Sino Express Invoicing System";
                     mailMessage.Priority = MailPriority.Normal;
                     mailMessage.Attachments.Add(new Attachment(Path.Combine(invoiceFolder, waybillNumber + "_total.pdf")));
 
@@ -1156,23 +1161,6 @@ namespace SinExWebApp20256461.Controllers
         public ActionResult EnterWeight(int? id)
         {
             return EditCustomer(id);
-
-            //switch (shipment.Status)
-            //{
-            //    case "confirmed":
-            //        ViewBag.Statuses = new List<string>{ "picked_up" };
-            //        break;
-            //    case "picked_up":
-            //        ViewBag.Statuses = new List<string>{ "picked_up", "lost" };
-            //        break;
-            //    case "pending":
-            //    case "invoice_sent":
-            //    case "delivered":
-            //    case "lost":
-            //    case "cancelled":
-            //    default:
-            //        break;
-            //}
         }
 
         // POST: Shipments/Edit/5
@@ -1200,7 +1188,15 @@ namespace SinExWebApp20256461.Controllers
                 for (int i = 0; i < shipmentView.Packages.Count; i++)
                 {
                     shipmentDB.Packages.Add(shipmentView.Packages[i]);
-                    db.Packages.Add(shipmentView.Packages[i]);
+                    try
+                    {
+                        db.Packages.Add(shipmentView.Packages[i]);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        return View(shipmentView);
+                    }
                 }
 
                 db.Entry(shipmentDB).State = EntityState.Modified;

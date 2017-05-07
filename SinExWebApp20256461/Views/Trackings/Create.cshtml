@@ -7,6 +7,11 @@
     <meta name="viewport" content="width=device-width" />
     <title>Create</title>
 </head>
+
+@{
+    ViewBag.Title = "Input Tracking";
+}
+
 <body>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/jqueryval")
@@ -17,7 +22,7 @@
             @Html.AntiForgeryToken()
 
             <div class="form-horizontal">
-                <h2>Tracking</h2>
+                <h2>Input Tracking</h2>
                 <hr />
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 @if (ViewBag.page == 1)

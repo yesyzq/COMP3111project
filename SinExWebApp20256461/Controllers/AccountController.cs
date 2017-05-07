@@ -12,6 +12,7 @@ using SinExWebApp20256461.Models;
 using SinExWebApp20256461.ViewModels;
 using System.Net;
 using System.Data.Entity.Validation;
+using System.Net.Mail;
 
 namespace SinExWebApp20256461.Controllers
 {
@@ -246,6 +247,48 @@ namespace SinExWebApp20256461.Controllers
                         try
                         {
                             db.SaveChanges();
+                            // send confirmation email
+                            MailMessage mailMessage = new MailMessage();
+                            //Add recipients
+                            ShippingAccount account = null;
+                            if (model.PersonalInformation != null)
+                            {
+                                // personal shipping account
+                                account = model.PersonalInformation;
+                            }
+                            else
+                            {
+                                // business shipping account
+                                account = model.BusinessInformation;
+                            }
+                            mailMessage.To.Add(account.EmailAddress);
+
+                            //Setting the displayed email address and display name
+                            //!!!Do not use this to prank others!!!
+                            mailMessage.From = new MailAddress("notification@sinex.com", "SinEx Confirmation");
+                            var name = account.UserName;
+                            //Subject and content of the email
+                            mailMessage.Subject = "Account Confirmation";
+                            mailMessage.Body = "Dear " + name + ",\n \n your account with account number " + account.ShippingAccountNumber +
+                                " has been created.\n Thank you for choosing SinEx \n\n Best regards,\nSino Express";
+                            mailMessage.Priority = MailPriority.Normal;
+
+                            //Instantiate a new SmtpClient instance
+                            SmtpClient smtpClient = new SmtpClient("smtp.cse.ust.hk");
+                            smtpClient.Credentials = new System.Net.NetworkCredential("comp3111_team108@cse.ust.hk", "team108#");
+                            smtpClient.UseDefaultCredentials = true;
+                            smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                            smtpClient.EnableSsl = true;
+                            //Send
+                            try
+                            {
+                                smtpClient.Send(mailMessage);
+                            }
+                            catch (Exception e)
+                            {
+                                ViewBag.msg = e;
+                                return View();
+                            }
                         }
                         catch (DbEntityValidationException e)
                         {

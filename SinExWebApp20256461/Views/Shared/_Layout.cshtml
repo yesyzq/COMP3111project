@@ -33,6 +33,7 @@
                             <li>@Html.ActionLink("Fees", "index", "ServicePackageFees")</li>
                             <li>@Html.ActionLink("Currencies", "index", "Currencies")</li>
                             <li>@Html.ActionLink("Tracking", "GetTracking", "Trackings")</li>
+                            <li>@Html.ActionLink("Input Tracking", "Create", "Trackings")</li>
                             @if (User.IsInRole("Customer"))
                             {
                                 <li>@Html.ActionLink("Manage Shipments", "Index", "Shipments")</li>
@@ -42,7 +43,6 @@
                             {
                                 <li>@Html.ActionLink("Manage Shipments", "Index", "Shipments")</li>
                                 <li>@Html.ActionLink("Change Penalty Fee", "Edit", "PenaltyFees", new { id = 1 }, null)</li>
-                                <li>@Html.ActionLink("Input Tracking", "Create", "Trackings")</li>
                             }
                         </ul>
                     </li>

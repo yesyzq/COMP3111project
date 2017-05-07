@@ -13,7 +13,7 @@ namespace SinExWebApp20256461
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*",
-                        "~/Scripts/customs.js"));
+                        "~/Scripts/custom.js"));
             //bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
             //          "~/Scripts/customs.js"));
             // Use the development version of Modernizr to develop with and learn from. Then, when you're

@@ -19,8 +19,14 @@ $(".btn_sa").click(function () {
     if ($(this).val() == "recipient") {
         $("#recipient").css("display", "block");
         $("#pickup").css("display", "none");
-    } else {
+    } else if ($(this).val() == "pickup") {
         $("#recipient").css("display", "none");
         $("#pickup").css("display", "block");
+    } else if ($(this).val() == "saved_address") {
+        $("#new_address").css("display", "none");
+        $("#saved_address").css("display", "block");
+    } else if ($(this).val() == "new_address") {
+        $("#saved_address").css("display", "none");
+        $("#new_address").css("display", "block");
     }
 });

@@ -42,5 +42,6 @@ namespace SinExWebApp20256461.ViewModels
         [StringLength(4, MinimumLength = 4)]
         [RegularExpression(@"^[0-9]+$", ErrorMessage = "Please input 4-digit authorization code")]
         public virtual string DutyAndTaxAuthorizationCode { get; set; }
+        public virtual string IsSavedRecipient { get; set; }
     }
 }

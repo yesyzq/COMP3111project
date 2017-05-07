@@ -52,5 +52,8 @@ namespace SinExWebApp20256461.Models
         public virtual ICollection<Package> Packages { get; set; }
         public virtual int PickupID { get; set; }
         public virtual Pickup Pickup { get; set; }
+
+        public virtual bool WeightEntered { get; set; }
+        public virtual bool TaxEntered { get; set; }
     }
 }

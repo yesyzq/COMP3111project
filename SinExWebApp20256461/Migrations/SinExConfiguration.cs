@@ -91,13 +91,13 @@ namespace SinExWebApp20256461.Migrations
 
             context.PakageTypeSizes.AddOrUpdate(
                 p => p.PakageTypeSizeID,
-                //new PakageTypeSize { size = "Envenlope-250x350mm", weightLimit = "Not applicable", PackageTypeID = 1 },
-                //new PakageTypeSize { size = "Pak-small - 350x400mm", weightLimit = "5kg", PackageTypeID = 2 },
-                //new PakageTypeSize { size = "Pak-large - 450x500mm", weightLimit = "5kg", PackageTypeID = 2 },
-                //new PakageTypeSize { size = "Tube-1000x80mm", weightLimit = "Not applicable", PackageTypeID = 3 },
-                //new PakageTypeSize { size = "Box-small - 300x250x150mm", weightLimit = "10kg", PackageTypeID = 4 },
-                //new PakageTypeSize { size = "Box-medium - 400x350x250mm", weightLimit = "20kg", PackageTypeID = 4 },
-                //new PakageTypeSize { size = "Box-large - 500x450x350mm", weightLimit = "30kg", PackageTypeID = 4 },
+                new PakageTypeSize { size = "Envenlope-250x350mm", weightLimit = "Not applicable", PackageTypeID = 1 },
+                new PakageTypeSize { size = "Pak-small - 350x400mm", weightLimit = "5kg", PackageTypeID = 2 },
+                new PakageTypeSize { size = "Pak-large - 450x500mm", weightLimit = "5kg", PackageTypeID = 2 },
+                new PakageTypeSize { size = "Tube-1000x80mm", weightLimit = "Not applicable", PackageTypeID = 3 },
+                new PakageTypeSize { size = "Box-small - 300x250x150mm", weightLimit = "10kg", PackageTypeID = 4 },
+                new PakageTypeSize { size = "Box-medium - 400x350x250mm", weightLimit = "20kg", PackageTypeID = 4 },
+                new PakageTypeSize { size = "Box-large - 500x450x350mm", weightLimit = "30kg", PackageTypeID = 4 },
                 new PakageTypeSize { size = "Customer", weightLimit = "Not applicable", PackageTypeID = 5 }
                 );
 

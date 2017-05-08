@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
-
+using System.Web.Mvc;
 using SinExWebApp20256461.Models;
 
 namespace SinExWebApp20256461.ViewModels
@@ -45,5 +45,7 @@ namespace SinExWebApp20256461.ViewModels
         public virtual string IsSavedRecipient { get; set; }
         [Display(Name = "Currency Code")]
         public virtual string TaxCurrency { get; set; }
+        public virtual SelectList PackagesTypeSizesList { get; set; }
+        public virtual SelectList CurrenciesList { get; set; }
     }
 }

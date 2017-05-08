@@ -15,21 +15,21 @@
     @Html.HiddenFor(model => model.locationIsSame)
 
     <div class="btn-group" style="margin:5px 0 10px 0;">
-        @Html.ActionLink("Immediate", "Create", new {waybillId= ViewBag.WaybillId, pickupType = "Immediate", location = ViewBag.Location }, new { @class = "btn btn-primary btn-large" })
-        @Html.ActionLink("Prearranged", "Create", new { waybillId = ViewBag.WaybillId, pickupType = "Prearranged", location = ViewBag.Location }, new { @class = "btn btn-info btn-large" })
+        @Html.ActionLink("Immediate", "Create", new {waybillId= ViewBag.WaybillId, pickupType = "Immediate", location = ViewBag.Location }, new { @class = "btn btn-primary btn-large" ,@title= "A customer should indicate the pickup type (immediate or prearranged) at the time that the shipment waybill is confirmed." })
+        @Html.ActionLink("Prearranged", "Create", new { waybillId = ViewBag.WaybillId, pickupType = "Prearranged", location = ViewBag.Location }, new { @class = "btn btn-info btn-large", @title = "A customer should indicate the pickup type (immediate or prearranged) at the time that the shipment waybill is confirmed." })
     </div>
 
     if (Model.Pickup.Type == "Immediate")
     {
         <div class="form-group">
-            @Html.TextBoxFor(model => model.Pickup.Date, htmlAttributes: new { @Value = @DateTime.Now, @type = "datetime", @class = "form-control", @readonly = "readonly" })
+            @Html.TextBoxFor(model => model.Pickup.Date, htmlAttributes: new { @Value = @DateTime.Now, @type = "datetime", @class = "form-control", @readonly = "readonly", @title = "It should be possible to arrange either for immediate shipment pickup or prearranged pickup up to 5 days in advance." })
         </div>
     }
 
     if (Model.Pickup.Type == "Prearranged")
     {
         <div class="form-group">
-            @Html.TextBoxFor(model => model.Pickup.Date, htmlAttributes: new { @Value = @DateTime.Now, @type = "datetime", @class = "form-control" })
+            @Html.TextBoxFor(model => model.Pickup.Date, htmlAttributes: new { @Value = @DateTime.Now, @type = "datetime", @class = "form-control", @title = "It should be possible to arrange either for immediate shipment pickup or prearranged pickup up to 5 days in advance." })
         </div>
       
         <div>You can prearranged your pickup up to 5 days, specify both date and time</div>
@@ -39,10 +39,9 @@
 
 <h2>The Pickup Location  :</h2>
     <div class="btn-group" style="margin:5px 0 10px 0;">
-        @Html.ActionLink("Same as your mailing address", "Create", new { waybillId = ViewBag.WaybillId, pickupType = Model.Pickup.Type, location = "Same" }, new { @class = "btn btn-success btn-large" })
-        @Html.ActionLink("Different: Select from Saved Address", "Create", new { waybillId = ViewBag.WaybillId, pickupType = Model.Pickup.Type, location = "Diff" }, new { @class = "btn btn-warning btn-large" })
-        @Html.ActionLink("Different: Enter directly", "Create", new { waybillId = ViewBag.WaybillId, pickupType = Model.Pickup.Type, location = "Direct" }, new { @class = "btn btn-info btn-large" })
-
+        @Html.ActionLink("Same as your mailing address", "Create", new { waybillId = ViewBag.WaybillId, pickupType = Model.Pickup.Type, location = "Same" }, new { @class = "btn btn-success btn-large" , @title = "The pickup location can either be the same as the sender’s mailing address or it can be different." })
+        @Html.ActionLink("Different: Select from Saved Address", "Create", new { waybillId = ViewBag.WaybillId, pickupType = Model.Pickup.Type, location = "Diff" }, new { @class = "btn btn-warning btn-large", @title = "The pickup location can either be the same as the sender’s mailing address or it can be different." })
+        @Html.ActionLink("Different: Enter directly", "Create", new { waybillId = ViewBag.WaybillId, pickupType = Model.Pickup.Type, location = "Direct" }, new { @class = "btn btn-info btn-large", @title = "The pickup location can either be the same as the sender’s mailing address or it can be different." })
 
     </div>
 
@@ -50,7 +49,7 @@
         @if (ViewBag.location == "Same")
         {
             <h5>Same:The below pickup location is the same as your mailing address:</h5>
-            @Html.TextBoxFor(model => model.Pickup.Location, new { @Value = Model.Pickup.Location, @class = "form-control", @readonly = "readonly" })
+            @Html.TextBoxFor(model => model.Pickup.Location, new { @Value = Model.Pickup.Location, @class = "form-control", @readonly = "readonly", @title = "This is your mailing address" })
         }
 
         @if (ViewBag.location == "Diff")
@@ -59,8 +58,8 @@
             <h5>Different:You may enter,save,edit and delete you pickup locations:</h5>
             @Html.DropDownListFor(model => model.PickupLocationNickname, new SelectList(ViewBag.pickupLocations), "Please select a pickup location", new {@class = "form-control" })
             <div class="btn-group" style="margin:5px 0 10px 0;">
-                @Html.ActionLink("Edit my pickup locations", "Index", "SavedAddresses", new { waybillId = ViewBag.WaybillId }, new { @class = "btn btn-info btn-large"  })
-                @Html.ActionLink("Create a new pickup location", "Create", "SavedAddresses", new { type = "pickup" ,waybillId= ViewBag.WaybillId }, new { @class = "btn btn-primary btn-large" })
+                @Html.ActionLink("Edit my pickup locations", "Index", "SavedAddresses", new { waybillId = ViewBag.WaybillId }, new { @class = "btn btn-info btn-large" ,@title = "This will guide you to SavedAddress Page to edit pickup locations" })
+                @Html.ActionLink("Create a new pickup location", "Create", "SavedAddresses", new { type = "pickup" ,waybillId= ViewBag.WaybillId }, new { @class = "btn btn-primary btn-large", @title = "This will guide you to SavedAddress Page to create new pickup locations" })
             </div>
 
             }
@@ -69,8 +68,7 @@
         @if (ViewBag.location == "Direct")
         {
         <h5>Different:Or you can directly input a Pickup Location below:</h5>
-        <h6>Format:Building/Street/City/Province</h6>
-        @Html.TextBoxFor(model => model.Pickup.Location, htmlAttributes: new { placeholder = "e.g. Flat A 20/F Tower A Galaxia, 275 Fung Tak Road, Hong Kong, HK", @class = "form-control" })
+        @Html.TextBoxFor(model => model.Pickup.Location, htmlAttributes: new { placeholder = "e.g. Flat A 20/F Tower A Galaxia, 275 Fung Tak Road, Hong Kong, HK", @class = "form-control", @title = "Format:Building/Street/City/Province" })
         }
             </div>
 

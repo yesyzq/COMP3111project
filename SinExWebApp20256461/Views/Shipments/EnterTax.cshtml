@@ -330,3 +330,13 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
+
+<script src="/Scripts/jquery-1.10.2.js"></script>
+<script src="/Scripts/customs.js"></script>
+<script>
+    show_div("@Model.ShipmentPayer");
+    show_div("@Model.TaxPayer");
+    if(@Model.RecipientShippingAccountNumber != ""){
+        document.getElementById("append").style.display = 'block';
+    }
+</script>

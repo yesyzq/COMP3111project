@@ -1314,6 +1314,29 @@ namespace SinExWebApp20256461.Controllers
                 ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(m => m.size).Distinct().ToList();
 
                 var shipmentDB = db.Shipments.Find(id);
+                var shippingAccount = (from s in db.ShippingAccounts
+                                       where s.UserName == User.Identity.Name
+                                       select s).First();
+                var shipmentInvoices = shipmentDB.Invoices;
+                string payerRecipient = "";
+                if (!string.IsNullOrWhiteSpace(shipmentInvoices.ToList()[0].ShippingAccountNumber))
+                {
+                    if (shipmentInvoices.ToList()[0].ShippingAccountNumber != shippingAccount.ShippingAccountNumber)
+                    {
+                        payerRecipient = shipmentInvoices.ToList()[0].ShippingAccountNumber;
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(shipmentInvoices.ToList()[1].ShippingAccountNumber))
+                {
+                    if (shipmentInvoices.ToList()[1].ShippingAccountNumber != shippingAccount.ShippingAccountNumber)
+                    {
+                        payerRecipient = shipmentInvoices.ToList()[0].ShippingAccountNumber;
+                    }
+                }
+                if (payerRecipient != "")
+                {
+                    shipmentView.RecipientShippingAccountNumber = payerRecipient;
+                }
 
                 /* Invoice */
                 int i_id2 = shipmentDB.Invoices.FirstOrDefault(a => a.Type == "tax_duty").InvoiceID;

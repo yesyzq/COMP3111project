@@ -68,7 +68,7 @@ namespace SinExWebApp20256461.Models
         [Display(Name = "Expiry Year")]
         [Required]
         [StringLength(4, MinimumLength = 4)]
-        [RegularExpression(@"^[0-9]*$", ErrorMessage ="Please input valid year")]
+        [RegularExpression(@"^20[1-3][0-9]*$", ErrorMessage ="Please input valid year")]
         public virtual string Year { get; set; }
 
         [Display(Name = "Phone Number")]

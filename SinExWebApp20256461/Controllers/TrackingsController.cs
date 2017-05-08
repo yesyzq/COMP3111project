@@ -110,6 +110,7 @@ namespace SinExWebApp20256461.Controllers
                     {
                         Shipment shipment = db.Shipments.FirstOrDefault(a => a.WaybillNumber == WaybillNumber);
                         shipment.Status = tracking.Type;
+                        
                         if(tracking.Type == "picked_up")
                         {
                             shipment.ShippedDate = tracking.DateTime;
@@ -118,97 +119,98 @@ namespace SinExWebApp20256461.Controllers
                         {
                             shipment.DeliveredDate = tracking.DateTime;
                         }
-                        if (shipment.IfSendEmail == true)
+                        
+                        // if send picked up notification to recipient
+                        if (shipment.IfSendEmailRecipient == true && tracking.Type == "picked_up")
                         {
-                            if (tracking.Type == "picked_up")
+                            MailMessage mailMessage = new MailMessage();
+                            //Add recipients
+                            mailMessage.To.Add(shipment.Recipient.EmailAddress);
+                            //mailMessage.To.Add(shipment.ShippingAccount.EmailAddress);
+                            //Setting the displayed email address and display name
+                            //!!!Do not use this to prank others!!!
+                            mailMessage.From = new MailAddress("notification@sinex.com", "SinEx Notification");
+                            var senderName = "";
+                            if (shipment.ShippingAccount is PersonalShippingAccount)
                             {
-                                MailMessage mailMessage = new MailMessage();
-                                //Add recipients 
-                                mailMessage.To.Add(shipment.Recipient.EmailAddress);
-                                mailMessage.To.Add(shipment.ShippingAccount.EmailAddress);
-                                //Setting the displayed email address and display name
-                                //!!!Do not use this to prank others!!!
-                                mailMessage.From = new MailAddress("notification@sinex.com", "SinEx Notification");
-                                var senderName = "";
-                                if (shipment.ShippingAccount is PersonalShippingAccount)
-                                {
-                                    PersonalShippingAccount person = (PersonalShippingAccount)shipment.ShippingAccount;
-                                    senderName = person.FirstName + " " + person.LastName;
-                                }
-                                else if (shipment.ShippingAccount is BusinessShippingAccount)
-                                {
-                                    BusinessShippingAccount business = (BusinessShippingAccount)shipment.ShippingAccount;
-                                    senderName = business.ContactPersonName + ", " + business.CompanyName;
-                                }
-                                string senderAddr = shipment.ShippingAccount.BuildingInformation + ", "
-                                + shipment.ShippingAccount.StreetInformation + ", "
-                                + shipment.ShippingAccount.City + ", "
-                                + shipment.ShippingAccount.ProvinceCode + ", "
-                                + shipment.ShippingAccount.PostalCode;
-                                //Subject and content of the email
-                                mailMessage.Subject = "Pick up notification for Your Shipment (Waybill No. " + shipment.WaybillNumber + ")";
-                                mailMessage.Body = "Dear Customer,\n \n your shipment with waybillnumber " + shipment.WaybillNumber +
-                                    " has been picked up\n\n Detailed information are as follows\n"
-                                    + "sender name:\t" + senderName
-                                    + "\nsender address:\t" + senderAddr
-                                    + "\npick up date:\t" + tracking.DateTime;
-                                mailMessage.Priority = MailPriority.Normal;
-
-                                //Instantiate a new SmtpClient instance
-                                SmtpClient smtpClient = new SmtpClient("smtp.cse.ust.hk");
-
-                                //WARNING: DO NOT set any credentials and other settings!!!
-
-                                //Send
-                                try
-                                {
-                                    smtpClient.Send(mailMessage);
-                                }
-                                catch (Exception e)
-                                {
-                                    ViewBag.msg = e;
-                                    return View();
-                                }
-
+                                PersonalShippingAccount person = (PersonalShippingAccount)shipment.ShippingAccount;
+                                senderName = person.FirstName + " " + person.LastName;
                             }
-                            else if (tracking.Type == "delivered")
+                            else if (shipment.ShippingAccount is BusinessShippingAccount)
                             {
-                                MailMessage mailMessage = new MailMessage();
-                                //Add recipients 
-                                mailMessage.To.Add(shipment.ShippingAccount.EmailAddress);
-                                mailMessage.To.Add(shipment.Recipient.EmailAddress);
-                                //Setting the displayed email address and display name
-                                //!!!Do not use this to prank others!!!
-                                mailMessage.From = new MailAddress("notification@sinex.com", "SinEx Notification");
-                                var RecipientName = shipment.Recipient.FullName;
-                                string RecipientAddr = shipment.Recipient.Building
-                                    + ", " + shipment.Recipient.Street
-                                    + ", " + shipment.Recipient.City
-                                    + ", " + shipment.Recipient.ProvinceCode;
-                                //Subject and content of the email
-                                mailMessage.Subject = "Delivery notification for Your Shipment (Waybill No. " + shipment.WaybillNumber + ")";
-                                mailMessage.Body = "Dear Customer, \n \n your shipment with waybillnumber " + shipment.WaybillNumber +
-                                    " has been delivered\n\n Detailed information are as follows\n"
-                                    + "Recipient name:\t" + RecipientName
-                                    + "\nRecipient address:\t" + RecipientAddr
-                                    + "\npick up date:\t" + tracking.DateTime;
-                                mailMessage.Priority = MailPriority.Normal;
+                                BusinessShippingAccount business = (BusinessShippingAccount)shipment.ShippingAccount;
+                                senderName = business.ContactPersonName + ", " + business.CompanyName;
+                            }
+                            string senderAddr = shipment.ShippingAccount.BuildingInformation + ", "
+                            + shipment.ShippingAccount.StreetInformation + ", "
+                            + shipment.ShippingAccount.City + ", "
+                            + shipment.ShippingAccount.ProvinceCode + ", "
+                            + shipment.ShippingAccount.PostalCode;
+                            //Subject and content of the email
+                            mailMessage.Subject = "Pick up notification for Your Shipment (Waybill No. " + shipment.WaybillNumber + ")";
+                            mailMessage.Body = "Dear Customer,\n \nYour shipment with waybillnumber " + shipment.WaybillNumber +
+                                " has been picked up. \n\nDetailed information are as follows: \n"
+                                + "Sender name:\t" + senderName
+                                + "\nSender address:\t" + senderAddr
+                                + "\nPick up date:\t" + tracking.DateTime;
+                            mailMessage.Priority = MailPriority.Normal;
 
-                                //Instantiate a new SmtpClient instance
-                                SmtpClient smtpClient = new SmtpClient("smtp.cse.ust.hk");
+                            //Instantiate a new SmtpClient instance
+                            SmtpClient smtpClient = new SmtpClient("smtp.cse.ust.hk");
 
-                                //WARNING: DO NOT set any credentials and other settings!!!
+                            //WARNING: DO NOT set any credentials and other settings!!!
 
-                                //Send
-                                try
-                                {
-                                    smtpClient.Send(mailMessage);
-                                }
-                                catch (Exception e)
-                                {
-                                    ViewBag.msg = e;
-                                    return View();
-                                }
+                            //Send
+                            try
+                            {
+                                smtpClient.Send(mailMessage);
+                            }
+                            catch (Exception e)
+                            {
+                                ViewBag.msg = e;
+                                return View();
+                            }
+
+                        }
+
+                        // if send delivered notification to sender
+                        if (shipment.IfSendEmail == true && tracking.Type == "delivered")
+                        {
+                            MailMessage mailMessage = new MailMessage();
+                            //Add recipients 
+                            mailMessage.To.Add(shipment.ShippingAccount.EmailAddress);
+                            //mailMessage.To.Add(shipment.Recipient.EmailAddress);
+                            //Setting the displayed email address and display name
+                            //!!!Do not use this to prank others!!!
+                            mailMessage.From = new MailAddress("notification@sinex.com", "SinEx Notification");
+                            var RecipientName = shipment.Recipient.FullName;
+                            string RecipientAddr = shipment.Recipient.Building
+                                + ", " + shipment.Recipient.Street
+                                + ", " + shipment.Recipient.City
+                                + ", " + shipment.Recipient.ProvinceCode;
+                            //Subject and content of the email
+                            mailMessage.Subject = "Delivery notification for Your Shipment (Waybill No. " + shipment.WaybillNumber + ")";
+                            mailMessage.Body = "Dear Customer, \n \nYour shipment with waybillnumber " + shipment.WaybillNumber +
+                                " has been delivered. \n\nDetailed information are as follows: \n"
+                                + "Recipient name:\t" + RecipientName
+                                + "\nRecipient address:\t" + RecipientAddr
+                                + "\nDelivered date:\t" + tracking.DateTime;
+                            mailMessage.Priority = MailPriority.Normal;
+
+                            //Instantiate a new SmtpClient instance
+                            SmtpClient smtpClient = new SmtpClient("smtp.cse.ust.hk");
+
+                            //WARNING: DO NOT set any credentials and other settings!!!
+
+                            //Send
+                            try
+                            {
+                                smtpClient.Send(mailMessage);
+                            }
+                            catch (Exception e)
+                            {
+                                ViewBag.msg = e;
+                                return View();
                             }
                         }
                     }
@@ -295,6 +297,19 @@ namespace SinExWebApp20256461.Controllers
             }
             TrackingView.Trackings = db.Trackings.Where(a => a.Shipment.WaybillNumber == WaybillNumber).OrderBy(a => a.DateTime).ToList();
             TrackingView.Shipment = db.Shipments.FirstOrDefault(a => a.WaybillNumber == WaybillNumber);
+
+            var delivered_tracking = db.Trackings.FirstOrDefault(a => a.Shipment.WaybillNumber == WaybillNumber && a.Type == "delivered");
+            if (delivered_tracking != null)
+            {
+                ViewBag.DeliveredTo = delivered_tracking.DeliveredTo ?? "";
+                ViewBag.DeliveredAt = delivered_tracking.DeliveredAt ?? "";
+            }
+            else
+            {
+                ViewBag.DeliveredTo = "";
+                ViewBag.DeliveredAt = "";
+            }
+
             return View(TrackingView);
         }
         // POST: Trackings/Delete/5

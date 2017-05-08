@@ -58,6 +58,14 @@
             </div>
         </div>
 
+        <div class="form-group">
+            @Html.LabelFor(model => model.IfSendEmailRecipient, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                Yes @Html.RadioButtonFor(model => model.IfSendEmailRecipient, "Yes")
+                No @Html.RadioButtonFor(model => model.IfSendEmailRecipient, "No")
+            </div>
+        </div>
+
         <hr />
         <h4>Package Information</h4>
         @for (var i = 0; i < Model.Packages.Count; i++)

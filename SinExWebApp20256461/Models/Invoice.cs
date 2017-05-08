@@ -19,7 +19,7 @@ namespace SinExWebApp20256461.Models
         // public virtual ShippingAccount ShippingAccount { get; set; }
         [Display(Name = "Shipping Account Number")]
         public virtual string ShippingAccountNumber { get; set; }
-        [Display(Name = "Total Amount Payable")]
+        [Display(Name = "Total Amount Payable (CNY)")]
         public virtual double TotalAmountPayable { get; set; }  // if the type is "shipment"
         public virtual double Duty { get; set; }    // if the type is "duty&tax"; notice that they r seperate
         public virtual double Tax { get; set; }

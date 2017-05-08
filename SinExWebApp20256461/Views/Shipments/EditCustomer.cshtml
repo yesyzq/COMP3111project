@@ -8,6 +8,7 @@
 @Html.HiddenFor(model => model.Shipment.ShippingAccountId)
 @Html.HiddenFor(model => model.Shipment.Recipient.RecipientID)
 @Html.HiddenFor(model => model.IfSendEmail)
+@Html.HiddenFor(model => model.IfSendEmailRecipient)
 @Html.HiddenFor(model => model.ShipmentPayer)
 @Html.HiddenFor(model => model.TaxPayer)
 @Html.HiddenFor(model => model.PackageTypeSizesList)
@@ -70,6 +71,14 @@
             <div class="col-md-10">
                 Yes @Html.RadioButtonFor(model => model.IfSendEmail, "Yes")
                 No @Html.RadioButtonFor(model => model.IfSendEmail, "No")
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IfSendEmailRecipient, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                Yes @Html.RadioButtonFor(model => model.IfSendEmailRecipient, "Yes")
+                No @Html.RadioButtonFor(model => model.IfSendEmailRecipient, "No")
             </div>
         </div>
 

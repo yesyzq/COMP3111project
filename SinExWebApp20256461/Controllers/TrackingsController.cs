@@ -110,6 +110,14 @@ namespace SinExWebApp20256461.Controllers
                     {
                         Shipment shipment = db.Shipments.FirstOrDefault(a => a.WaybillNumber == WaybillNumber);
                         shipment.Status = tracking.Type;
+                        if(tracking.Type == "picked_up")
+                        {
+                            shipment.ShippedDate = tracking.DateTime;
+                        }
+                        if (tracking.Type == "delivered")
+                        {
+                            shipment.DeliveredDate = tracking.DateTime;
+                        }
                         if (shipment.IfSendEmail == true)
                         {
                             if (tracking.Type == "picked_up")

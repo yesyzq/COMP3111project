@@ -88,9 +88,20 @@
                         @Html.DisplayFor(modelItem => item.ShippedDate)
                     </th>
                 }
-                <th>
-                    @Html.DisplayFor(modelItem => item.DeliveredDate)
-                </th>
+                else
+                {
+                    <th>N/A</th>
+                }
+                @if (item.Status == "delivered")
+                {
+                    <th>
+                        @Html.DisplayFor(modelItem => item.DeliveredDate)
+                    </th>
+                }
+                else
+                {
+                    <th>N/A</th>
+                }
                 <th>
                     @Html.DisplayFor(modelItem => item.RecipientName)
                 </th>

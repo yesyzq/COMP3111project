@@ -673,123 +673,6 @@ namespace SinExWebApp20256461.Controllers
             }
         }
 
-        public ActionResult getCost(string Origin, string Destination, string ServiceType, string PackageType, string Size, int? weights)
-        {
-            var cost = new CostViewModel();
-            // cost.PackageTypes = (new SelectList(db.PackageTypes.Select(a => a.Type).Distinct())).ToList();
-            // cost.ServiceTypes = (new SelectList(db.ServiceTypes.Select(a => a.Type).Distinct())).ToList();
-            cost.PackageTypes = db.PackageTypes.Select(a => a.Type).Distinct().ToList();
-            cost.ServiceTypes = db.ServiceTypes.Select(a => a.Type).Distinct().ToList();
-            cost.Origins = db.Destinations.Select(a => a.City).Distinct().ToList();
-            cost.Destinations = db.Destinations.Select(a => a.City).Distinct().ToList();
-            cost.Sizes = db.PakageTypeSizes.Select(a => a.size).Distinct().ToList();
-            // int serviceTypeID = db.ServiceTypes.FirstOrDefault(s => s.Type == ServiceType).ServiceTypeID;
-            // int packageTypeID = db.PackageTypes.FirstOrDefault(s => s.Type == PackageType).PackageTypeID;
-            IEnumerable<ServicePackageFee> Fees = db.ServicePackageFees.Include(c => c.PackageType).Include(c => c.ServiceType);
-            IEnumerable<PakageTypeSize> Sizes = db.PakageTypeSizes.Include(c => PackageType);
-            double minimumFee = 0;
-            double Fee = 0;
-            foreach (var fee in Fees)
-            {
-                if (fee.ServiceType.Type == ServiceType && fee.PackageType.Type == PackageType)
-                {
-                    minimumFee = (double)fee.MinimumFee;
-                    Fee = (double)fee.Fee;
-                }
-            }
-            double HKDRate = db.Currencies.FirstOrDefault(s => s.CurrencyCode == "HKD").ExchangeRate;
-            double MOPRate = db.Currencies.FirstOrDefault(s => s.CurrencyCode == "MOP").ExchangeRate;
-            double TWDRate = db.Currencies.FirstOrDefault(s => s.CurrencyCode == "TWD").ExchangeRate;
-            cost.Origin = Origin;
-            cost.Destination = Destination;
-            cost.ServiceType = ServiceType;
-            cost.PackageType = PackageType;
-            string weightLimit = "kg";
-            foreach (var size in Sizes)
-            {
-                if (size.PackageType.Type == PackageType && size.size == Size)
-                {
-                    weightLimit = size.weightLimit;
-                }
-            }
-
-            if (weights == null)
-            {
-                weights = 0;
-            }
-            cost.weights = (int)weights;
-            if (ServiceType == null || PackageType == null)
-            {
-                cost.CNYcost = 0;
-                cost.HKDcost = 0;
-                cost.MOPcost = 0;
-                cost.TWDcost = 0;
-                return View(cost);
-            }
-            if (PackageType == "Envelope")
-            {
-                cost.CNYcost = Fee;
-                cost.HKDcost = (double)ConvertCurrency("HKD", (decimal)Fee);
-                cost.MOPcost = (double)ConvertCurrency("MOP", (decimal)Fee); ;
-                cost.TWDcost = (double)ConvertCurrency("TWD", (decimal)Fee); ;
-            }
-            else if (PackageType == "Customer")
-            {
-                double price = (int)weights * Fee;
-                if (price < minimumFee)
-                {
-                    price = minimumFee;
-                }
-                cost.CNYcost = price;
-                cost.HKDcost = (double)ConvertCurrency("HKD", (decimal)price);
-                cost.MOPcost = (double)ConvertCurrency("MOP", (decimal)price);
-                cost.TWDcost = (double)ConvertCurrency("TWD", (decimal)price);
-            }
-            else
-            {
-                int weightLimitLength = weightLimit.Length - 2;
-                if (weightLimitLength < 0)
-                {
-                    weightLimitLength = 0;
-                }
-                string weightSubString = weightLimit.Substring(0, weightLimitLength);
-                int intWeightLimit = 0;
-                if (weightSubString.Length > 0)
-                {
-                    if (weightLimit == "Not applicable")
-                    {
-                        intWeightLimit = 2147483647;
-                    }
-                    else
-                    {
-                        intWeightLimit = Int32.Parse(weightSubString);
-                    }
-                }
-                else
-                {
-                    cost.CNYcost = 0;
-                    cost.HKDcost = 0;
-                    cost.MOPcost = 0;
-                    cost.TWDcost = 0;
-                    return View(cost);
-                }
-                double price = (int)weights * Fee;
-                if (weights > intWeightLimit)
-                {
-                    price += 500;
-                }
-                if (price < minimumFee)
-                {
-                    price = minimumFee;
-                }
-                cost.CNYcost = price;
-                cost.HKDcost = (double)ConvertCurrency("HKD", (decimal)price);
-                cost.MOPcost = (double)ConvertCurrency("MOP", (decimal)price);
-                cost.TWDcost = (double)ConvertCurrency("TWD", (decimal)price);
-            }
-            return View(cost);
-        }
-
         void CopyPages(PdfDocument from, PdfDocument to)
         {
             for (int i = 0; i < from.PageCount; i++)
@@ -842,12 +725,7 @@ namespace SinExWebApp20256461.Controllers
                             where s.Status == "picked_up" && s.TaxEntered == false
                             select s;
             }
-
-            //if (shipments != null)
-            //{
-                return View(shipments.ToList());
-            //}
-            //return View();
+            return View(shipments.ToList());
         }
 
         // GET: Shipments/Details/5
@@ -1014,10 +892,6 @@ namespace SinExWebApp20256461.Controllers
                 ViewBag.waybillId = shipment.WaybillId;
 
                 return RedirectToAction("Index");
-                //return RedirectToAction("Create", "Pickups", new { waybillId = shipment.WaybillId });
-            // }
-
-            // return View(shipmentView);
         }
 
         // GET: Shipments/Edit
@@ -1192,7 +1066,6 @@ namespace SinExWebApp20256461.Controllers
                 shipmentDB.Destination = shipment.Destination;
                 shipmentDB.ServiceType = shipment.ServiceType;
                 shipmentDB.IfSendEmail = IfSendEmail == "Yes" ? true : false;
-
 
                 // shipmentDB.Status = submit == "Confirm" ? "confirmed" : "pending";
                 

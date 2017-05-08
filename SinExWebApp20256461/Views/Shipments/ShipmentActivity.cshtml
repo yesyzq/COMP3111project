@@ -1,0 +1,95 @@
+﻿@model IEnumerable<SinExWebApp20256461.Models.Shipment>
+
+@{
+    ViewBag.Title = "Manage Shipments";
+}
+
+<h2>Manage Shipments</h2>
+
+
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="btn-toolbar">
+            @Html.ActionLink("Enter Actual Weight", "ShipmentActivity", new { EmployeeAction = "enter_weight" }, new { @class = "btn btn-default" })
+            @Html.ActionLink("Enter Duty & Tax", "ShipmentActivity", new { EmployeeAction = "enter_tax" }, new { @class = "btn btn-default" })
+        </div>
+    </div>
+</div>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.WaybillNumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReferenceNumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ServiceType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Recipient.FullName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NumberOfPackages)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Origin)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Destination)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th>Operation</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        if (item.Status != "deleted")
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink(item.WaybillNumber, "DisplayShipment", new { WaybillNumber = item.WaybillNumber })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReferenceNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ServiceType)
+                </td>
+                <th>
+                    @Html.DisplayFor(modelItem => item.Recipient.FullName)
+                </th>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberOfPackages)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Origin)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Destination)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                     @if (item.Status == "picked_up")
+                     {
+                         @Html.ActionLink("Weight", "EnterWeight", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm" })
+                         @Html.ActionLink("Duty&Tax", "EnterTax", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm" })
+                         @Html.ActionLink("Authorization", "EnterAuthorization", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm" })
+                     }
+                     else
+                     {
+                         @Html.ActionLink("Weight", "EnterWeight", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm disabled" })
+                         @Html.ActionLink("Duty&Tax", "EnterTax", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm disabled" })
+                         @Html.ActionLink("Authorization", "EnterAuthorization", new { id = item.WaybillId }, new { @class = "btn btn-default btn-sm disabled" })
+                     }      
+                </td>
+            </tr>
+        }
+    }
+</table>

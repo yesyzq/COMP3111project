@@ -728,6 +728,31 @@ namespace SinExWebApp20256461.Controllers
             return View(shipments.ToList());
         }
 
+        // GET: Enter Shipment Tax and Duty
+        public ActionResult ShipmentActivity(string EmployeeAction, string ShippingAccountNumber, string ShippedStartDate, string ShippedEndDate)
+        {
+            IQueryable<Shipment> shipments;
+            if (string.IsNullOrWhiteSpace(ShippingAccountNumber))
+                shipments = from s in db.Shipments select s;
+            else
+                shipments = from s in db.Shipments where s.ShippingAccount.ShippingAccountNumber == ShippingAccountNumber select s;
+
+            if (EmployeeAction == "enter_weight")
+            {
+                shipments = from s in shipments
+                            where s.Status == "picked_up" && s.WeightEntered == false
+                            select s;
+            }
+
+            else if (EmployeeAction == "enter_tax")
+            {
+                shipments = from s in shipments
+                            where s.Status == "picked_up" && s.TaxEntered == false
+                            select s;
+            }
+            return View(shipments.ToList());
+        }
+
         // GET: Shipments/Details/5
         public ActionResult Details(int? id)
         {

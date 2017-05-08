@@ -23,7 +23,17 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <!--<li>@Html.ActionLink("Home", "Index", "Home")</li>-->
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
+                    <!--<li>@Html.ActionLink("About", "About", "Home")</li>-->
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin Services<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Shipment Activity", "GetTracking", "Trackings")</li>
+                            <li>@Html.ActionLink("Shipment Pickup", "ShipmentActivity", "Shipments")</li>
+                            <li>@Html.ActionLink("Add City", "Index", "Destinations")</li>
+                            <li>@Html.ActionLink("Change Fee", "Edit", "PenaltyFees", new { id = 1 }, null)</li>
+                            <li>@Html.ActionLink("Change Currency", "index", "Currencies")</li>
+                        </ul>
+                    </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Service<b class="caret"></b></a>
                         <ul class="dropdown-menu">
@@ -33,16 +43,10 @@
                             <li>@Html.ActionLink("Fees", "index", "ServicePackageFees")</li>
                             <li>@Html.ActionLink("Currencies", "index", "Currencies")</li>
                             <li>@Html.ActionLink("Tracking", "GetTracking", "Trackings")</li>
-                            <li>@Html.ActionLink("Input Tracking", "Create", "Trackings")</li>
                             @if (User.IsInRole("Customer"))
                             {
                                 <li>@Html.ActionLink("Manage Shipments", "Index", "Shipments")</li>
                                 <li>@Html.ActionLink("Saved Addresses", "Index", "SavedAddresses")</li>
-                            }
-                            @if (User.IsInRole("Employee"))
-                            {
-                                <li>@Html.ActionLink("Manage Shipments", "Index", "Shipments")</li>
-                                <li>@Html.ActionLink("Change Penalty Fee", "Edit", "PenaltyFees", new { id = 1 }, null)</li>
                             }
                         </ul>
                     </li>

@@ -918,7 +918,7 @@ namespace SinExWebApp20256461.Controllers
                 {
                     if (string.IsNullOrWhiteSpace(shipmentView.RecipientShippingAccountNumber))
                     {
-                        @ViewBag.errorMessage = "Recipient's Shipping Account Number is required once selected as payer";
+                        ViewBag.errorMessage = "Recipient's Shipping Account Number is required once selected as payer";
                         return View(shipmentView);
                     }
                 }
@@ -1027,26 +1027,49 @@ namespace SinExWebApp20256461.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            string shipmentPayer;
-            string taxPayer;
+            string shipmentPayer = "Sender", taxPayer = "Sender"; // set default value to senders
             int i_id1 = shipment.Invoices.FirstOrDefault(a => a.Type == "shipment").InvoiceID;
             int i_id2 = shipment.Invoices.FirstOrDefault(a => a.Type == "tax_duty").InvoiceID;
             var shipmentInvoice = db.Invoices.Find(i_id1);
             var taxInvoice = db.Invoices.Find(i_id2);
             string shipmentShippingAccountNumber = db.ShippingAccounts.FirstOrDefault(a => a.ShippingAccountId == shipment.ShippingAccountId).ShippingAccountNumber;
 
-            if (string.IsNullOrWhiteSpace(shipmentInvoice.ShippingAccountNumber))
-                shipmentPayer = "";
-            else if (shipmentInvoice.ShippingAccountNumber == shipmentShippingAccountNumber)
-                shipmentPayer = "Sender";
-            else
-                shipmentPayer = "Recipient";
-            if (string.IsNullOrWhiteSpace(taxInvoice.ShippingAccountNumber))
-                taxPayer = "";
-            else if (taxInvoice.ShippingAccountNumber == shipmentShippingAccountNumber)
-                taxPayer = "Sender";
-            else
-                taxPayer = "Recipient";
+            string payerRecipient = "";
+            if (!string.IsNullOrWhiteSpace(shipmentInvoice.ShippingAccountNumber))
+            {
+                if (shipmentInvoice.ShippingAccountNumber != shipmentShippingAccountNumber)
+                {
+                    shipmentPayer = "Recipient";
+                    payerRecipient = shipmentInvoice.ShippingAccountNumber;
+                }   
+            }
+            if (!string.IsNullOrWhiteSpace(taxInvoice.ShippingAccountNumber))
+            {
+                if (taxInvoice.ShippingAccountNumber != shipmentShippingAccountNumber)
+                {
+                    taxPayer = "Recipient";
+                    payerRecipient = taxInvoice.ShippingAccountNumber;
+                    //ViewBag.JS2 = "btn_click('Recipient');";
+                    // ViewBag.JS2 = "show_div('Recipient');";
+                }
+            }
+
+            var ret = new CreateShipmentViewModel {
+                Shipment = shipment,
+                DutyAmount = taxInvoice.Duty,
+                TaxAmount = taxInvoice.Tax,
+                Packages = shipment.Packages.ToList(),
+                IfSendEmail = (shipment.IfSendEmail) ? "Yes" : "No",
+                ShipmentPayer = shipmentPayer,
+                TaxPayer = taxPayer,
+                ShipmentAuthorizationCode = shipment.Invoices.FirstOrDefault(a => a.Type == "shipment").AuthenticationCode,
+                DutyAndTaxAuthorizationCode = shipment.Invoices.FirstOrDefault(a => a.Type == "tax_duty").AuthenticationCode,
+            };
+            if (payerRecipient != "")
+            {
+                ret.RecipientShippingAccountNumber = payerRecipient;
+            }
+
 
             /* display the estimated fee */
             string currencyCode = db.Destinations.FirstOrDefault(a => a.ProvinceCode == shipment.ShippingAccount.ProvinceCode).CurrencyCode;

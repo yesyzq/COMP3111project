@@ -948,8 +948,8 @@ namespace SinExWebApp20256461.Controllers
                 /* saved recipient address */
                 var address = (from s in db.SavedAddresses
                                where s.NickName == shipmentView.Nickname
-                               select s).First();
-                if (shipmentView.IsSavedRecipient != null)
+                               select s).FirstOrDefault();
+                if (shipmentView.IsSavedRecipient == "saved_address")
                 {
                     shipment.Recipient.Building = address.Building;
                     shipment.Recipient.City = address.City;
@@ -1034,6 +1034,7 @@ namespace SinExWebApp20256461.Controllers
             var shipmentInvoice = db.Invoices.Find(i_id1);
             var taxInvoice = db.Invoices.Find(i_id2);
             string shipmentShippingAccountNumber = db.ShippingAccounts.FirstOrDefault(a => a.ShippingAccountId == shipment.ShippingAccountId).ShippingAccountNumber;
+
             if (string.IsNullOrWhiteSpace(shipmentInvoice.ShippingAccountNumber))
                 shipmentPayer = "";
             else if (shipmentInvoice.ShippingAccountNumber == shipmentShippingAccountNumber)
@@ -1046,17 +1047,6 @@ namespace SinExWebApp20256461.Controllers
                 taxPayer = "Sender";
             else
                 taxPayer = "Recipient";
-            var ret = new CreateShipmentViewModel {
-                Shipment = shipment,
-                DutyAmount = taxInvoice.Duty,
-                TaxAmount = taxInvoice.Tax,
-                Packages = shipment.Packages.ToList(),
-                IfSendEmail = (shipment.IfSendEmail) ? "Yes" : "No",
-                ShipmentPayer = shipmentPayer,
-                TaxPayer = taxPayer,
-                ShipmentAuthorizationCode = shipment.Invoices.FirstOrDefault(a => a.Type == "shipment").AuthenticationCode,
-                DutyAndTaxAuthorizationCode = shipment.Invoices.FirstOrDefault(a => a.Type == "tax_duty").AuthenticationCode,
-            };
 
             /* display the estimated fee */
             string currencyCode = db.Destinations.FirstOrDefault(a => a.ProvinceCode == shipment.ShippingAccount.ProvinceCode).CurrencyCode;
@@ -1069,6 +1059,24 @@ namespace SinExWebApp20256461.Controllers
                 totalEstimatedCost += feeArray[num];
             }
 
+            double exchangeRate = db.Currencies.FirstOrDefault(a => a.CurrencyCode == currencyCode).ExchangeRate;
+            double dutyAmount = taxInvoice.Duty * exchangeRate;
+            double taxAmount = taxInvoice.Tax * exchangeRate;
+
+            var ret = new CreateShipmentViewModel
+            {
+                Shipment = shipment,
+                DutyAmount = dutyAmount,
+                TaxAmount = taxAmount,
+                Packages = shipment.Packages.ToList(),
+                IfSendEmail = (shipment.IfSendEmail) ? "Yes" : "No",
+                ShipmentPayer = shipmentPayer,
+                TaxPayer = taxPayer,
+                ShipmentAuthorizationCode = shipment.Invoices.FirstOrDefault(a => a.Type == "shipment").AuthenticationCode,
+                DutyAndTaxAuthorizationCode = shipment.Invoices.FirstOrDefault(a => a.Type == "tax_duty").AuthenticationCode,
+            };
+
+            ViewBag.TaxCurrencyCodes = db.Currencies.Select(a => a.CurrencyCode).Distinct().ToList();
             ViewBag.CurrencyCode = currencyCode;
             ViewBag.FeeCollection = feeArray;
             ViewBag.TotalEstimatedFee = totalEstimatedCost;
@@ -1281,8 +1289,10 @@ namespace SinExWebApp20256461.Controllers
                 var dutyAndTaxInvoice = db.Invoices.Find(i_id2);
 
                 // shipment costs to be determined when sending shipment invoice
-                dutyAndTaxInvoice.Duty = shipmentView.DutyAmount;
-                dutyAndTaxInvoice.Tax = shipmentView.TaxAmount;
+                var exchangeRate = db.Currencies.FirstOrDefault(a => a.CurrencyCode == shipmentView.TaxCurrency).ExchangeRate;
+
+                dutyAndTaxInvoice.Duty = shipmentView.DutyAmount / exchangeRate;
+                dutyAndTaxInvoice.Tax = shipmentView.TaxAmount / exchangeRate;
                 dutyAndTaxInvoice.TotalAmountPayable = shipmentView.DutyAmount + shipmentView.TaxAmount;
 
                 shipmentDB.TaxEntered = true;

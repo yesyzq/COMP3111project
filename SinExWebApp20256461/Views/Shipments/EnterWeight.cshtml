@@ -206,7 +206,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.DutyAmount, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.DutyAmount, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                            @ViewBag.CurrencyCode @Html.DisplayFor(model => model.DutyAmount)
                         </div>
                     </div>
                 </div>
@@ -214,7 +214,8 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.TaxAmount, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.TaxAmount, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                            @ViewBag.CurrencyCode @Html.DisplayFor(model => model.TaxAmount)
+                            @*@Html.EditorFor(model => model.TaxAmount, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })*@
                         </div>
                     </div>
                 </div>

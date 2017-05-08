@@ -49,6 +49,7 @@ namespace SinExWebApp20256461.Models
         [Required]
         [Display(Name = "Email Notification?")]
         public virtual bool IfSendEmail { get; set; }
+        public virtual bool IfSendEmailRecipient { get; set; }
         public virtual ICollection<Invoice> Invoices { get; set; }
         public virtual ICollection<Package> Packages { get; set; }
         public virtual int PickupID { get; set; }

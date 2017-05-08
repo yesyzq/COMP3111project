@@ -464,7 +464,7 @@ namespace SinExWebApp20256461.Controllers
 
                     //Subject and content of the email
                     mailMessage.Subject = "E-Invoice for Your Shipment (Waybill No. " + waybillNumber + ")";
-                    mailMessage.Body = "Dear " + shipmentPayerInfo[0] + ",\n \n Please find attached the invoice for your Sino Express shipment (Waybill Number: " + waybillNumber + "). Thanks for choosing SinEx! \n \n Best Regards, \n Sino Express Invoicing System";
+                    mailMessage.Body = "Dear " + shipmentPayerInfo[0] + ",\n \nPlease find attached the invoice for your Sino Express shipment (Waybill Number: " + waybillNumber + "). Thanks for choosing SinEx! \n \nBest Regards, \nSino Express Invoicing System";
                     mailMessage.Priority = MailPriority.Normal;
                     mailMessage.Attachments.Add(new Attachment(Path.Combine(invoiceFolder, waybillNumber + "_shipment.pdf")));
 
@@ -506,6 +506,8 @@ namespace SinExWebApp20256461.Controllers
                 dutyAndTaxPayerInfo[3] = "Credit Card Number (Last Four Digits): " + dutyAndTaxPayerCreditCardNumber.Substring(dutyAndTaxPayerCreditCardNumber.Length - 4);
                 dutyAndTaxPayerInfo[4] = "Authorization Code: " + dutyAndTaxInvoice.AuthenticationCode;
 
+                double exchangeRate = db.Currencies.FirstOrDefault(a => a.CurrencyCode == dutyAndTaxPayerCurrencyCode).ExchangeRate;
+
                 // Duty and Tax Invoice
                 try
                 {
@@ -517,7 +519,7 @@ namespace SinExWebApp20256461.Controllers
                     .Company(Address.Make("FROM", CompanyAddress))
                     .Client(Address.Make("BILLING TO", dutyAndTaxPayerInfo))
                     .Items(new List<ItemRow> {
-                        ItemRow.Make("Duty", "", (decimal)1, 0, (decimal)dutyAmount, (decimal)dutyAmount),
+                        ItemRow.Make("Duty", "", (decimal)1, 0, (decimal)(dutyAmount * exchangeRate), (decimal)(dutyAmount * exchangeRate)),
                         ItemRow.Make("Tax", "", (decimal)1, 0, (decimal)taxAmount, (decimal)taxAmount),
                     })
                     .Totals(new List<TotalRow> {
@@ -565,7 +567,7 @@ namespace SinExWebApp20256461.Controllers
 
                     //Subject and content of the email
                     mailMessage.Subject = "E-Invoice for Your Shipment (Waybill No. " + waybillNumber + ")";
-                    mailMessage.Body = "Dear " + dutyAndTaxPayerInfo[0] + ",\n \n Please find attached the invoice for your Sino Express shipment (Waybill Number: " + waybillNumber + "). Thanks for choosing SinEx! \n \n Best Regards, \n Sino Express Invoicing System";
+                    mailMessage.Body = "Dear " + dutyAndTaxPayerInfo[0] + ",\n \nPlease find attached the invoice for your Sino Express shipment (Waybill Number: " + waybillNumber + "). Thanks for choosing SinEx! \n \nBest Regards, \nSino Express Invoicing System";
                     mailMessage.Priority = MailPriority.Normal;
                     mailMessage.Attachments.Add(new Attachment(Path.Combine(invoiceFolder, waybillNumber + "_duty_and_tax.pdf")));
 
@@ -586,12 +588,14 @@ namespace SinExWebApp20256461.Controllers
                 // -----------------------------------
                 // Shipment and Duty and Tax Invoice
                 // -----------------------------------
-                shipmentItems.Add(ItemRow.Make("Duty", "", (decimal)1, 0, (decimal)dutyAmount, (decimal)dutyAmount));
-                shipmentItems.Add(ItemRow.Make("Tax", "", (decimal)1, 0, (decimal)taxAmount, (decimal)taxAmount));
+                double exchangeRate = db.Currencies.FirstOrDefault(a => a.CurrencyCode == shipmentPayerCurrencyCode).ExchangeRate;
+
+                shipmentItems.Add(ItemRow.Make("Duty", "", (decimal)1, 0, (decimal)(dutyAmount * exchangeRate), (decimal)(dutyAmount * exchangeRate)));
+                shipmentItems.Add(ItemRow.Make("Tax", "", (decimal)1, 0, (decimal)(taxAmount * exchangeRate), (decimal)(taxAmount * exchangeRate)));
 
                 try
                 {
-                    new InvoicerApi(SizeOption.A4, OrientationOption.Landscape, shipmentPayerCurrencyCode)
+                    new InvoicerApi(SizeOption.A4, OrientationOption.Landscape, shipmentPayerCurrencyCode + " ")
                     .TextColor("#CC0000")
                     .BackColor("#FFD6CC")
                     .Reference(waybillNumber)
@@ -601,7 +605,7 @@ namespace SinExWebApp20256461.Controllers
                     .Items(shipmentItems)
                     .Totals(new List<TotalRow> {
                         //TotalRow.Make("Sub Total", (decimal)dutyAndTaxAmount),
-                        TotalRow.Make("Total", (decimal)(totalShipmentCost + (decimal)(dutyAmount + taxAmount)), true),
+                        TotalRow.Make("Total", (decimal)(totalShipmentCost + (decimal)((dutyAmount + taxAmount) * exchangeRate)), true),
                     })
                     .Details(new List<DetailRow> {
                         DetailRow.Make("SHIPMENT INFORMATION", shipmentInfo)
@@ -629,7 +633,7 @@ namespace SinExWebApp20256461.Controllers
 
                     //Subject and content of the email
                     mailMessage.Subject = "E-Invoice for Your Shipment (Waybill No. " + waybillNumber + ")";
-                    mailMessage.Body = "Dear " + shipmentPayerInfo[0] + ",\n \n Please find attached the invoice for your Sino Express shipment (Waybill Number: " + waybillNumber + "). Thanks for choosing SinEx! \n \n Best Regards, \n Sino Express Invoicing System";
+                    mailMessage.Body = "Dear " + shipmentPayerInfo[0] + ",\n \nPlease find attached the invoice for your Sino Express shipment (Waybill Number: " + waybillNumber + "). Thanks for choosing SinEx! \n \nBest Regards, \nSino Express Invoicing System";
                     mailMessage.Priority = MailPriority.Normal;
                     mailMessage.Attachments.Add(new Attachment(Path.Combine(invoiceFolder, waybillNumber + "_total.pdf")));
 
@@ -992,6 +996,7 @@ namespace SinExWebApp20256461.Controllers
                           
 
                 shipment.IfSendEmail = shipmentView.IfSendEmail == "Yes" ? true : false;
+                shipment.IfSendEmailRecipient = shipmentView.IfSendEmailRecipient == "Yes" ? true : false;
 
                 var pickup = new Pickup();
                 pickup.Date = DateTime.Now;
@@ -1082,6 +1087,7 @@ namespace SinExWebApp20256461.Controllers
                 TaxAmount = taxAmount,
                 Packages = shipment.Packages.ToList(),
                 IfSendEmail = (shipment.IfSendEmail) ? "Yes" : "No",
+                IfSendEmailRecipient = (shipment.IfSendEmailRecipient) ? "Yes" : "No",
                 ShipmentPayer = shipmentPayer,
                 TaxPayer = taxPayer,
                 ShipmentAuthorizationCode = shipment.Invoices.FirstOrDefault(a => a.Type == "shipment").AuthenticationCode,
@@ -1110,7 +1116,7 @@ namespace SinExWebApp20256461.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditCustomer(int? id, CreateShipmentViewModel shipmentView, string submit, string IfSendEmail, string ShipmentPayer, string TaxPayer)
+        public ActionResult EditCustomer(int? id, CreateShipmentViewModel shipmentView, string submit, string IfSendEmail, string IfSendEmailRecipient, string ShipmentPayer, string TaxPayer)
         {
             ViewBag.Cities = db.Destinations.Select(a => a.City).Distinct().ToList();
             ViewBag.PackageCurrency = db.Currencies.Select(m => m.CurrencyCode).Distinct().ToList();
@@ -1147,13 +1153,14 @@ namespace SinExWebApp20256461.Controllers
                 }
 
                 if (IfSendEmail == "Yes")
-                {
                     shipment.IfSendEmail = true;
-                }
                 else
-                {
                     shipment.IfSendEmail = false;
-                }
+
+                if (IfSendEmailRecipient == "Yes")
+                    shipment.IfSendEmailRecipient = true;
+                else
+                    shipment.IfSendEmailRecipient = false;
 
                 /* Update Invoice */
                 var _invoice1 = shipmentDB.Invoices.SingleOrDefault(c => c.Type == "shipment");
@@ -1197,10 +1204,11 @@ namespace SinExWebApp20256461.Controllers
                 shipmentDB.Destination = shipment.Destination;
                 shipmentDB.ServiceType = shipment.ServiceType;
                 shipmentDB.IfSendEmail = IfSendEmail == "Yes" ? true : false;
+                shipmentDB.IfSendEmailRecipient = IfSendEmailRecipient == "Yes" ? true : false;
 
 
                 // shipmentDB.Status = submit == "Confirm" ? "confirmed" : "pending";
-                
+
                 db.Entry(_invoice1).State = EntityState.Modified;
                 db.Entry(_invoice2).State = EntityState.Modified;
                 db.Entry(_recipient).State = EntityState.Modified;
@@ -1235,7 +1243,7 @@ namespace SinExWebApp20256461.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EnterWeight(int? id, CreateShipmentViewModel shipmentView, string submit, string IfSendEmail, string ShipmentPayer, string TaxPayer)
+        public ActionResult EnterWeight(int? id, CreateShipmentViewModel shipmentView, string submit, string IfSendEmail, string IfSendEmailRecipient, string ShipmentPayer, string TaxPayer)
         {
             if (ModelState.IsValid)
             {
@@ -1297,7 +1305,7 @@ namespace SinExWebApp20256461.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EnterTax(int? id, CreateShipmentViewModel shipmentView, string submit, string IfSendEmail, string ShipmentPayer, string TaxPayer)
+        public ActionResult EnterTax(int? id, CreateShipmentViewModel shipmentView, string submit, string IfSendEmail, string IfSendEmailRecipient, string ShipmentPayer, string TaxPayer)
         {
             if (ModelState.IsValid)
             {
@@ -1350,7 +1358,7 @@ namespace SinExWebApp20256461.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EnterAuthorization(int? id, CreateShipmentViewModel shipmentView, string submit, string IfSendEmail, string ShipmentPayer, string TaxPayer)
+        public ActionResult EnterAuthorization(int? id, CreateShipmentViewModel shipmentView, string submit, string IfSendEmail, string IfSendEmailRecipient, string ShipmentPayer, string TaxPayer)
         {
             if (ModelState.IsValid)
             {

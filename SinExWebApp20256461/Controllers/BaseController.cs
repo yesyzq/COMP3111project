@@ -43,7 +43,7 @@ namespace SinExWebApp20256461.Controllers
                         isValid = true;
                     break;
                 case "UnionPay":
-                    if (prefix2 == "62")
+                    if (prefix2 == "62" && cardNumber.Length >= 16 && cardNumber.Length <= 19)
                         isValid = true;
                     break;
                 case "Visa":

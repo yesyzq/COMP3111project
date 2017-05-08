@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SinExWebApp20256461", "SinE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SinExWebApp20256461.Tests", "SinExWebApp20256461.Tests\SinExWebApp20256461.Tests.csproj", "{0F3700AE-CE29-436A-8C83-90B669E8E3F0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SinWebApp20256461_2", "SinWebApp20256461_2\SinWebApp20256461_2.csproj", "{BBDDCDB2-2277-450F-BDC0-28DD6CF0FDF4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{0F3700AE-CE29-436A-8C83-90B669E8E3F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F3700AE-CE29-436A-8C83-90B669E8E3F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F3700AE-CE29-436A-8C83-90B669E8E3F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBDDCDB2-2277-450F-BDC0-28DD6CF0FDF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBDDCDB2-2277-450F-BDC0-28DD6CF0FDF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBDDCDB2-2277-450F-BDC0-28DD6CF0FDF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBDDCDB2-2277-450F-BDC0-28DD6CF0FDF4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

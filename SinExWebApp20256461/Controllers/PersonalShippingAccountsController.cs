@@ -76,9 +76,14 @@ namespace SinExWebApp20256461.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ShippingAccountNumber, UserName, ShippingAccountID,BuildingInformation,StreetInformation,City,ProvinceCode,PostalCode,CardType,CardNumber,SecurityNumber,CardHolderName,Month,Year,PhoneNumber,EmailAddress,FirstName,LastName")] PersonalShippingAccount personalShippingAccount)
+        public ActionResult Edit(PersonalShippingAccount personalShippingAccount)
         {
             ViewBag.Cities = db.Destinations.Select(a => a.City).Distinct().ToList();
+            if(!ValidateCard(personalShippingAccount.CardNumber, personalShippingAccount.CardType))
+            {
+                ViewBag.errorMessage = "the card number does not match the card type";
+                return View(personalShippingAccount);
+            }
             if (ModelState.IsValid)
             {
                 db.Entry(personalShippingAccount).State = EntityState.Modified;

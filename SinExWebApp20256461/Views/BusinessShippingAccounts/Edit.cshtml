@@ -18,6 +18,12 @@
         @Html.HiddenFor(model => model.ShippingAccountId)
         @Html.HiddenFor(model => model.ShippingAccountNumber)
         @Html.HiddenFor(model => model.UserName)
+
+        @if (@ViewBag.errorMessage != null)
+        {
+            <p style="color:indianred">@ViewBag.errorMessage</p>
+        }
+
         <div class="form-group">
             @Html.LabelFor(model => model.BuildingInformation, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">

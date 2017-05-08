@@ -861,17 +861,15 @@ namespace SinExWebApp20256461.Controllers
         public ActionResult Create()
         {
             var shipmentView = new CreateShipmentViewModel();
+            var shippingAccount = (from s in db.ShippingAccounts
+                                   where s.UserName == User.Identity.Name
+                                   select s).First();
+
             ViewBag.ServiceTypes = db.ServiceTypes.Select(a => a.Type).Distinct().ToList();
             ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(a => a.size).Distinct().ToList();
             ViewBag.PackageCurrency = db.Currencies.Select(a => a.CurrencyCode).Distinct().ToList();
-            ShippingAccount account = (from s in db.ShippingAccounts
-                                       where s.UserName == User.Identity.Name
-                                       select s).First();
             ViewBag.Cities = db.Destinations.Select(a => a.City).Distinct().ToList();
-            ViewBag.SavedAddresses = db.SavedAddresses.Where(a => a.ShippingAccountId == account.ShippingAccountId).Select(a => a.NickName).ToList();
-            var shippingAccount = (from s in db.ShippingAccounts
-                                                where s.UserName == User.Identity.Name
-                                                select s).First();
+            ViewBag.SavedAddresses = db.SavedAddresses.Where(a => a.ShippingAccountId == shippingAccount.ShippingAccountId).Select(a => a.NickName).ToList();
             ViewBag.Origin = shippingAccount.City;
             shipmentView.Packages = new List<Package>();
             var new_package = new Package();
@@ -884,6 +882,9 @@ namespace SinExWebApp20256461.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(string ShipmentPayer, string TaxPayer, string submit, CreateShipmentViewModel shipmentView = null, Recipient recipient = null)
         {
+            var shippingAccount = (from s in db.ShippingAccounts
+                                   where s.UserName == User.Identity.Name
+                                   select s).First();
             ViewBag.Cities = db.Destinations.Select(a => a.City).Distinct().ToList();
             ViewBag.Origin = (from s in db.ShippingAccounts
                                    where s.UserName == User.Identity.Name
@@ -891,6 +892,7 @@ namespace SinExWebApp20256461.Controllers
             ViewBag.ServiceTypes = db.ServiceTypes.Select(a => a.Type).Distinct().ToList();
             ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(a => a.size).Distinct().ToList();
             ViewBag.PackageCurrency = db.Currencies.Select(a => a.CurrencyCode).Distinct().ToList();
+            ViewBag.SavedAddresses = db.SavedAddresses.Where(a => a.ShippingAccountId == shippingAccount.ShippingAccountId).Select(a => a.NickName).ToList();
             /* add packages */
             if (submit == "add")
             {
@@ -910,8 +912,8 @@ namespace SinExWebApp20256461.Controllers
                 }
                 return View(shipmentView);
             }
-            if (ModelState.IsValid)
-            {
+            // if (ModelState.IsValid)
+            // {
                 if (shipmentView.ShipmentPayer == "Recipient" || shipmentView.TaxPayer == "Recipient")
                 {
                     if (string.IsNullOrWhiteSpace(shipmentView.RecipientShippingAccountNumber))
@@ -943,11 +945,20 @@ namespace SinExWebApp20256461.Controllers
                     db.Packages.Add(shipmentView.Packages[i]);
                 }
                 shipment.NumberOfPackages = shipmentView.Packages.Count;
+                /* saved recipient address */
+                var address = (from s in db.SavedAddresses
+                               where s.NickName == shipmentView.Nickname
+                               select s).First();
+                if (shipmentView.IsSavedRecipient != null)
+                {
+                    shipment.Recipient.Building = address.Building;
+                    shipment.Recipient.City = address.City;
+                    shipment.Recipient.Street = address.Street;
+                    shipment.Recipient.ProvinceCode = address.ProvinceCode;
+                    shipment.Recipient.PostalCode = address.PostalCode;
+                }
 
                 /* bind shipping account */
-                var shippingAccount = (from s in db.ShippingAccounts
-                                       where s.UserName == User.Identity.Name
-                                       select s).First();
                 shipment.ShippingAccountId = shippingAccount.ShippingAccountId;
 
                 /* create invoices */
@@ -996,9 +1007,9 @@ namespace SinExWebApp20256461.Controllers
 
                 return RedirectToAction("Index");
                 //return RedirectToAction("Create", "Pickups", new { waybillId = shipment.WaybillId });
-            }
+            // }
 
-            return View(shipmentView);
+            // return View(shipmentView);
         }
 
         // GET: Shipments/Edit

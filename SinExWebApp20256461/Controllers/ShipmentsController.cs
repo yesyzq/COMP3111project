@@ -170,7 +170,7 @@ namespace SinExWebApp20256461.Controllers
             int pageNumber = (page ?? 1);
 
             // Populate the ShippingAccountNumber dropdown list.
-            invoiceSearch.Invoice.ShippingAccounts = PopulateShippingAccountsDropdownList().ToList();
+            invoiceSearch.Invoice.ShippingAccounts = new SelectList(db.Invoices.Select(a => a.ShippingAccountNumber).Distinct().OrderBy(c => c)).ToList();
 
             if (FirstClick == 1)
             {
@@ -1094,6 +1094,7 @@ namespace SinExWebApp20256461.Controllers
                 DutyAndTaxAuthorizationCode = shipment.Invoices.FirstOrDefault(a => a.Type == "tax_duty").AuthenticationCode,
                 PackageTypeSizesList = new SelectList(db.PakageTypeSizes.Select(a => a.size).Distinct()),
                 CurrenciesList = new SelectList(db.Currencies.Select(a => a.CurrencyCode).Distinct()),
+                TaxCurrency = currencyCode,
             };
 
             if (payerRecipient != "")
@@ -1347,7 +1348,7 @@ namespace SinExWebApp20256461.Controllers
 
                 dutyAndTaxInvoice.Duty = shipmentView.DutyAmount / exchangeRate;
                 dutyAndTaxInvoice.Tax = shipmentView.TaxAmount / exchangeRate;
-                dutyAndTaxInvoice.TotalAmountPayable = shipmentView.DutyAmount + shipmentView.TaxAmount;
+                dutyAndTaxInvoice.TotalAmountPayable = dutyAndTaxInvoice.Duty + dutyAndTaxInvoice.Tax;
 
                 shipmentDB.TaxEntered = true;
 

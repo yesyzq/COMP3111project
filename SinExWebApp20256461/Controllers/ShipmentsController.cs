@@ -386,7 +386,7 @@ namespace SinExWebApp20256461.Controllers
 
             // Shipment Info
             string waybillNumber = db.Shipments.FirstOrDefault(a => a.WaybillId == WaybillId).WaybillNumber;
-            string[] shipmentInfo = new string[6];
+            string[] shipmentInfo = new string[8];
             shipmentInfo[0] = "Waybill Number: " + waybillNumber;
             shipmentInfo[1] = "Shipped Date: " + shipment.ShippedDate.ToString();
             shipmentInfo[2] = "Service Type: " + shipment.ServiceType;
@@ -406,11 +406,19 @@ namespace SinExWebApp20256461.Controllers
                 shipmentInfo[4] = "Sender's Full Name: " + senderPersonalShippingAccount.FirstName + " " + senderPersonalShippingAccount.LastName;
                 firstName = senderPersonalShippingAccount.FirstName;
             }
-            shipmentInfo[5] = "Sender's Address: " + senderShippingAccount.BuildingInformation + ", "
+            shipmentInfo[5] = "Sender's Address: " + ((string.IsNullOrWhiteSpace(senderShippingAccount.BuildingInformation)) ? "" : senderShippingAccount.BuildingInformation + ", ")
                 + senderShippingAccount.StreetInformation + ", "
                 + senderShippingAccount.City + ", "
                 + senderShippingAccount.ProvinceCode + ", "
                 + senderShippingAccount.PostalCode;
+
+            var recipient = shipment.Recipient;
+            shipmentInfo[6] = "Recipient's Full Name: " + recipient.FullName;
+            shipmentInfo[7] = "Recipient's Address: " + ((string.IsNullOrWhiteSpace(recipient.Building)) ? "" : recipient.Building + ", ")
+                + recipient.Street + ", "
+                + recipient.City + ", "
+                + recipient.ProvinceCode + ", "
+                + recipient.PostalCode;
 
             double dutyAmount = dutyAndTaxInvoice.Duty;
             double taxAmount = dutyAndTaxInvoice.Tax;
@@ -1049,27 +1057,8 @@ namespace SinExWebApp20256461.Controllers
                 {
                     taxPayer = "Recipient";
                     payerRecipient = taxInvoice.ShippingAccountNumber;
-                    //ViewBag.JS2 = "btn_click('Recipient');";
-                    // ViewBag.JS2 = "show_div('Recipient');";
                 }
             }
-
-            var ret = new CreateShipmentViewModel {
-                Shipment = shipment,
-                DutyAmount = taxInvoice.Duty,
-                TaxAmount = taxInvoice.Tax,
-                Packages = shipment.Packages.ToList(),
-                IfSendEmail = (shipment.IfSendEmail) ? "Yes" : "No",
-                ShipmentPayer = shipmentPayer,
-                TaxPayer = taxPayer,
-                ShipmentAuthorizationCode = shipment.Invoices.FirstOrDefault(a => a.Type == "shipment").AuthenticationCode,
-                DutyAndTaxAuthorizationCode = shipment.Invoices.FirstOrDefault(a => a.Type == "tax_duty").AuthenticationCode,
-            };
-            if (payerRecipient != "")
-            {
-                ret.RecipientShippingAccountNumber = payerRecipient;
-            }
-
 
             /* display the estimated fee */
             string currencyCode = db.Destinations.FirstOrDefault(a => a.ProvinceCode == shipment.ShippingAccount.ProvinceCode).CurrencyCode;
@@ -1100,6 +1089,11 @@ namespace SinExWebApp20256461.Controllers
                 PackagesTypeSizesList = new SelectList(db.PakageTypeSizes.Select(a => a.size).Distinct()),
                 CurrenciesList = new SelectList(db.Currencies.Select(a => a.CurrencyCode).Distinct()),
             };
+
+            if (payerRecipient != "")
+            {
+                ret.RecipientShippingAccountNumber = payerRecipient;
+            }
 
             ViewBag.TaxCurrencyCodes = db.Currencies.Select(a => a.CurrencyCode).Distinct().ToList();
             ViewBag.CurrencyCode = currencyCode;

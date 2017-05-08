@@ -939,7 +939,7 @@ namespace SinExWebApp20256461.Controllers
                 shipment.DeliveredDate = DateTime.Now;
                 shipment.Packages = new List<Package>();
                 for (int i = 0; i< shipmentView.Packages.Count; i++)
-                {
+                {                    
                     shipmentView.Packages[i].WeightEstimated = Math.Round(shipmentView.Packages[i].WeightEstimated, 1);
                     shipment.Packages.Add(shipmentView.Packages[i]);
                     db.Packages.Add(shipmentView.Packages[i]);
@@ -948,8 +948,8 @@ namespace SinExWebApp20256461.Controllers
                 /* saved recipient address */
                 var address = (from s in db.SavedAddresses
                                where s.NickName == shipmentView.Nickname
-                               select s).First();
-                if (shipmentView.IsSavedRecipient != null)
+                               select s).FirstOrDefault();
+                if (shipmentView.IsSavedRecipient == "saved_address")
                 {
                     shipment.Recipient.Building = address.Building;
                     shipment.Recipient.City = address.City;

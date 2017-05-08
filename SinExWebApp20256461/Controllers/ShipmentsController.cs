@@ -608,12 +608,12 @@ namespace SinExWebApp20256461.Controllers
                 try
                 {
                     MailMessage mailMessage = new MailMessage();
-                    //Add recipients 
-                    //mailMessage.To.Add(shipmentPayerShippingAccount.EmailAddress);
-                    mailMessage.To.Add("gqi@ust.hk");
-                    mailMessage.To.Add("xduac@ust.hk");
-                    mailMessage.To.Add("zyuaf@ust.hk");
-                    mailMessage.To.Add("swuai@ust.hk");
+                    //Add recipients
+                    mailMessage.To.Add(shipmentPayerShippingAccount.EmailAddress);
+                    //mailMessage.To.Add("gqi@ust.hk");
+                    //mailMessage.To.Add("xduac@ust.hk");
+                    //mailMessage.To.Add("zyuaf@ust.hk");
+                    //mailMessage.To.Add("swuai@ust.hk");
 
                     //Setting the displayed email address and display name
                     //!!!Do not use this to prank others!!!
@@ -1097,6 +1097,8 @@ namespace SinExWebApp20256461.Controllers
                 TaxPayer = taxPayer,
                 ShipmentAuthorizationCode = shipment.Invoices.FirstOrDefault(a => a.Type == "shipment").AuthenticationCode,
                 DutyAndTaxAuthorizationCode = shipment.Invoices.FirstOrDefault(a => a.Type == "tax_duty").AuthenticationCode,
+                PackagesTypeSizesList = new SelectList(db.PakageTypeSizes.Select(a => a.size).Distinct()),
+                CurrenciesList = new SelectList(db.Currencies.Select(a => a.CurrencyCode).Distinct()),
             };
 
             ViewBag.TaxCurrencyCodes = db.Currencies.Select(a => a.CurrencyCode).Distinct().ToList();
@@ -1104,7 +1106,6 @@ namespace SinExWebApp20256461.Controllers
             ViewBag.FeeCollection = feeArray;
             ViewBag.TotalEstimatedFee = totalEstimatedCost;
             ViewBag.ServiceTypes = db.ServiceTypes.Select(a => a.Type).Distinct().ToList();
-            ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(a => a.size).Distinct().ToList();
             ViewBag.PackageCurrency = db.Currencies.Select(a => a.CurrencyCode).Distinct().ToList();
             ViewBag.Cities = db.Destinations.Select(a => a.City).Distinct().ToList();
             return View(ret);

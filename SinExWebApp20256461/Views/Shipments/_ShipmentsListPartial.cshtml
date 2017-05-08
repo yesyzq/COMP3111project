@@ -82,9 +82,12 @@
                 <th>
                     @Html.DisplayFor(modelItem => item.ServiceType)
                 </th>
-                <th>
-                    @Html.DisplayFor(modelItem => item.ShippedDate)
-                </th>
+                @if (item.Status == "picked_up" || item.Status == "invoice_sent" || item.Status == "delivered" || item.Status == "lost")
+                {
+                    <th>
+                        @Html.DisplayFor(modelItem => item.ShippedDate)
+                    </th>
+                }
                 <th>
                     @Html.DisplayFor(modelItem => item.DeliveredDate)
                 </th>

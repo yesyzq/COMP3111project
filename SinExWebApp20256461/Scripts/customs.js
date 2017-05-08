@@ -1,15 +1,21 @@
 ﻿var count = 0;
-$(".btn_click").click(function () {
-    if ($(this).val() == "Recipient") {
+
+function show_div(s) {
+    console.log(count);
+    if (s == "Recipient") {
         if (count == 0)
             $("#append").css("display", "block");
         count++;
     }
-    if ($(this).val() == "Sender" && count > 0) {
+    if (s == "Sender" && count > 0) {
         count--;
         if (count == 0)
             $("#append").css("display", "none");
     }
+}
+
+$(".btn_click").click(function () {
+    show_div($(this).val());
     console.log(count);
 });
 

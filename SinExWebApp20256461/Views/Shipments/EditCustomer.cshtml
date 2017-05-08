@@ -5,15 +5,14 @@
 }
 
 <h2>Edit Shipment</h2>
-
-@using (Html.BeginForm("EditCustomer","Shipments"))
+@using (Html.BeginForm("EditCustomer", "Shipments"))
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <hr />
         @if (@ViewBag.errorMessage != null)
-                {
+        {
             <p class="col-md-offset-2" style="color: indianred">@ViewBag.errorMessage</p>
         }
         <h4>Shipment Information</h4>
@@ -53,7 +52,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Shipment.ServiceType, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownListFor(model => model.Shipment.ServiceType, new SelectList(ViewBag.ServiceTypes), new { @class = "form-control"})
+                @Html.DropDownListFor(model => model.Shipment.ServiceType, new SelectList(ViewBag.ServiceTypes), new { @class = "form-control" })
             </div>
         </div>
 
@@ -67,18 +66,22 @@
 
         <hr />
         <h4>Package Information</h4>
-        @for (var i = 0; i < Model.Packages.Count; i++)
+        @for (int i = 0; i < Model.Packages.Count; i++)
         {
             string packageNum = "Package Number " + (i + 1);
             <h3>@Html.Label(packageNum)</h3>
             string n = "delete " + (i + 1);
             <input type="submit" name="submit" value="@n" class="btn btn-danger" />
+
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].PackageTypeSize, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.DropDownListFor(model => model.Packages[i].PackageTypeSize, new SelectList(ViewBag.PackageTypeSizes), new { @class = "form-control", @value = Model.Packages[i].PackageTypeSize})
+                    @Html.DropDownListFor(model => model.Packages[i].PackageTypeSize, Model.PackagesTypeSizesList.Select(c => 
+                        new SelectListItem() { Value = c.Value, Text = c.Text, Selected = (c.Text == Model.Packages[i].PackageTypeSize) }
+                        ).ToList(), new { @class = "form-control" })
                 </div>
             </div>
+
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].Description, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
@@ -96,10 +99,15 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].Currency, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.DropDownListFor(model => model.Packages[i].Currency, new SelectList(ViewBag.PackageCurrency), new { @class = "form-control", @value = Model.Packages[i].Currency })
+                    @Html.DropDownListFor(model => model.Packages[i].Currency, Model.CurrenciesList.Select(c =>
+                        new SelectListItem() { Value = c.Value, Text = c.Text, Selected = (c.Text == Model.Packages[i].Currency) }
+                        ).ToList(), new { @class = "form-control" })
                 </div>
             </div>
-            <p class="col-md-offset-2" style="color: dodgerblue">Input 0 if your package type is "Envelope"</p>
+            if (Model.Packages[i].PackageTypeSize == "Envenlope-250x350mm")
+            {
+                <p class="col-md-offset-2" style="color: dodgerblue">Input 0 if your package type is "Envelope"</p>
+            }
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].WeightEstimated, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
@@ -230,7 +238,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.DutyAmount, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.DutyAmount, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                            @ViewBag.CurrencyCode @Html.DisplayFor(model => model.DutyAmount)
                         </div>
                     </div>
                 </div>
@@ -238,7 +246,8 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.TaxAmount, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.TaxAmount, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                            @ViewBag.CurrencyCode @Html.DisplayFor(model => model.TaxAmount)
+                            @*@Html.EditorFor(model => model.TaxAmount, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })*@
                         </div>
                     </div>
                 </div>
@@ -295,3 +304,13 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
+
+<script src="/Scripts/jquery-1.10.2.js"></script>
+<script src="/Scripts/customs.js"></script>
+<script>
+    show_div("@Model.ShipmentPayer");
+    show_div("@Model.TaxPayer");
+    if(@Model.RecipientShippingAccountNumber != ""){
+        document.getElementById("append").style.display = 'block';
+    }
+</script>

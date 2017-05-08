@@ -194,10 +194,25 @@
         <h4>Payment Information</h4>
         <div class="form-group">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TaxCurrency, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-8">
+                            @if (Model.Shipment.Status == "picked_up")
+                            {
+                                @Html.DropDownListFor(model => model.TaxCurrency, new SelectList(ViewBag.TaxCurrencyCodes), new { @class = "form-control" })
+                            }
+                            else
+                            {
+                                @Html.EditorFor(model => model.TaxCurrency, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
                     <div class="form-group">
                         @Html.LabelFor(model => model.DutyAmount, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
+                        <div class="col-md-8">
                             @if (Model.Shipment.Status == "picked_up")
                             {
                                 @Html.EditorFor(model => model.DutyAmount, new { htmlAttributes = new { @class = "form-control" } })
@@ -210,10 +225,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
                         @Html.LabelFor(model => model.TaxAmount, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
+                        <div class="col-md-8">
                             @if (Model.Shipment.Status == "picked_up")
                             {
                                 @Html.EditorFor(model => model.TaxAmount, new { htmlAttributes = new { @class = "form-control" } })

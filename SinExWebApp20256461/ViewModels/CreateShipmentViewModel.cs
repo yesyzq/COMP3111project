@@ -43,5 +43,7 @@ namespace SinExWebApp20256461.ViewModels
         [RegularExpression(@"^[0-9]+$", ErrorMessage = "Please input 4-digit authorization code")]
         public virtual string DutyAndTaxAuthorizationCode { get; set; }
         public virtual string IsSavedRecipient { get; set; }
+        [Display(Name = "Currency Code")]
+        public virtual string TaxCurrency { get; set; }
     }
 }

@@ -37,26 +37,41 @@
 
     <div style="color:#f44542"> @ViewBag.msg </div>
 
-<h2>The pickup Location  :</h2>
+<h2>The Pickup Location  :</h2>
     <div class="btn-group" style="margin:5px 0 10px 0;">
-        @Html.ActionLink("Same", "Create", new { waybillId = ViewBag.WaybillId, pickupType = Model.Pickup.Type, location = "Same" }, new { @class = "btn btn-success btn-large" })
-        @Html.ActionLink("Different", "Create", new { waybillId = ViewBag.WaybillId, pickupType = Model.Pickup.Type, location = "Diff" }, new { @class = "btn btn-warning btn-large" })
+        @Html.ActionLink("Same as your mailing address", "Create", new { waybillId = ViewBag.WaybillId, pickupType = Model.Pickup.Type, location = "Same" }, new { @class = "btn btn-success btn-large" })
+        @Html.ActionLink("Different: Select from Saved Address", "Create", new { waybillId = ViewBag.WaybillId, pickupType = Model.Pickup.Type, location = "Diff" }, new { @class = "btn btn-warning btn-large" })
+        @Html.ActionLink("Different: Enter directly", "Create", new { waybillId = ViewBag.WaybillId, pickupType = Model.Pickup.Type, location = "Direct" }, new { @class = "btn btn-info btn-large" })
+
+
     </div>
 
     <div>
         @if (ViewBag.location == "Same")
         {
+            <h5>Same:The below pickup location is the same as your mailing address:</h5>
             @Html.TextBoxFor(model => model.Pickup.Location, new { @Value = Model.Pickup.Location, @class = "form-control", @readonly = "readonly" })
         }
 
         @if (ViewBag.location == "Diff")
         {
-            @Html.DropDownListFor(model => model.PickupLocationNickname, new SelectList(ViewBag.pickupLocations), "Please select another pickup location", new {@class = "form-control" })
+           
+            <h5>Different:You may enter,save,edit and delete you pickup locations:</h5>
+            @Html.DropDownListFor(model => model.PickupLocationNickname, new SelectList(ViewBag.pickupLocations), "Please select a pickup location", new {@class = "form-control" })
             <div class="btn-group" style="margin:5px 0 10px 0;">
                 @Html.ActionLink("Edit my pickup locations", "Index", "SavedAddresses", new { waybillId = ViewBag.WaybillId }, new { @class = "btn btn-info btn-large"  })
                 @Html.ActionLink("Create a new pickup location", "Create", "SavedAddresses", new { type = "pickup" ,waybillId= ViewBag.WaybillId }, new { @class = "btn btn-primary btn-large" })
             </div>
-                }
+
+            }
+
+        
+        @if (ViewBag.location == "Direct")
+        {
+        <h5>Different:Or you can directly input a Pickup Location below:</h5>
+        <h6>Format:Building/Street/City/Province</h6>
+        @Html.TextBoxFor(model => model.Pickup.Location, htmlAttributes: new { placeholder = "e.g. Flat A 20/F Tower A Galaxia, 275 Fung Tak Road, Hong Kong, HK", @class = "form-control" })
+        }
             </div>
 
 <br />

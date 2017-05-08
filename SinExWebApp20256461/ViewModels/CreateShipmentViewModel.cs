@@ -45,7 +45,7 @@ namespace SinExWebApp20256461.ViewModels
         public virtual string IsSavedRecipient { get; set; }
         [Display(Name = "Currency Code")]
         public virtual string TaxCurrency { get; set; }
-        public virtual SelectList PackagesTypeSizesList { get; set; }
+        public virtual SelectList PackageTypeSizesList { get; set; }
         public virtual SelectList CurrenciesList { get; set; }
     }
 }

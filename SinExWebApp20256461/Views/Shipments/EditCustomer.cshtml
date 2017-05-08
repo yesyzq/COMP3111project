@@ -4,6 +4,15 @@
     ViewBag.Title = "Edit Shipment";
 }
 
+
+@Html.HiddenFor(model => model.Shipment.ShippingAccountId)
+@Html.HiddenFor(model => model.Shipment.Recipient.RecipientID)
+@Html.HiddenFor(model => model.IfSendEmail)
+@Html.HiddenFor(model => model.ShipmentPayer)
+@Html.HiddenFor(model => model.TaxPayer)
+@Html.HiddenFor(model => model.PackageTypeSizesList)
+@Html.HiddenFor(model => model.CurrenciesList)
+
 <h2>Edit Shipment</h2>
 @using (Html.BeginForm("EditCustomer", "Shipments"))
 {
@@ -76,7 +85,7 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].PackageTypeSize, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.DropDownListFor(model => model.Packages[i].PackageTypeSize, Model.PackagesTypeSizesList.Select(c => 
+                    @Html.DropDownListFor(model => model.Packages[i].PackageTypeSize, Model.PackageTypeSizesList.Select(c => 
                         new SelectListItem() { Value = c.Value, Text = c.Text, Selected = (c.Text == Model.Packages[i].PackageTypeSize) }
                         ).ToList(), new { @class = "form-control" })
                 </div>
@@ -104,10 +113,7 @@
                         ).ToList(), new { @class = "form-control" })
                 </div>
             </div>
-            if (Model.Packages[i].PackageTypeSize == "Envenlope-250x350mm")
-            {
-                <p class="col-md-offset-2" style="color: dodgerblue">Input 0 if your package type is "Envelope"</p>
-            }
+            <p class="col-md-offset-2" style="color: dodgerblue">Input 0 if your package type is "Envelope"</p>
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].WeightEstimated, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
@@ -278,12 +284,6 @@
                 <p class="col-md-offset-2">Please provide Shipping Account Number of the recipient.</p>           
             </div>
         </div>
-
-        @Html.HiddenFor(model => model.Shipment.ShippingAccountId)
-        @Html.HiddenFor(model => model.Shipment.Recipient.RecipientID)
-        @Html.HiddenFor(model => model.IfSendEmail)
-        @Html.HiddenFor(model => model.ShipmentPayer)
-        @Html.HiddenFor(model => model.TaxPayer)
 
 
         <div class="form-group">

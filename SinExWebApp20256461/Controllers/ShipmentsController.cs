@@ -1086,7 +1086,7 @@ namespace SinExWebApp20256461.Controllers
                 TaxPayer = taxPayer,
                 ShipmentAuthorizationCode = shipment.Invoices.FirstOrDefault(a => a.Type == "shipment").AuthenticationCode,
                 DutyAndTaxAuthorizationCode = shipment.Invoices.FirstOrDefault(a => a.Type == "tax_duty").AuthenticationCode,
-                PackagesTypeSizesList = new SelectList(db.PakageTypeSizes.Select(a => a.size).Distinct()),
+                PackageTypeSizesList = new SelectList(db.PakageTypeSizes.Select(a => a.size).Distinct()),
                 CurrenciesList = new SelectList(db.Currencies.Select(a => a.CurrencyCode).Distinct()),
             };
 
@@ -1116,6 +1116,10 @@ namespace SinExWebApp20256461.Controllers
             ViewBag.PackageCurrency = db.Currencies.Select(m => m.CurrencyCode).Distinct().ToList();
             ViewBag.ServiceTypes = db.ServiceTypes.Select(m => m.Type).Distinct().ToList();
             ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(m => m.size).Distinct().ToList();
+
+            shipmentView.PackageTypeSizesList = new SelectList(db.PakageTypeSizes.Select(a => a.size).Distinct());
+            shipmentView.CurrenciesList = new SelectList(db.Currencies.Select(a => a.CurrencyCode).Distinct());
+
             if (ModelState.IsValid)
             {
                 var shipment = shipmentView.Shipment;
@@ -1128,6 +1132,7 @@ namespace SinExWebApp20256461.Controllers
                 if (submit == "add" && shipmentView.Packages.Count < 10)
                 {
                     var new_package = new Package();
+                    new_package.PackageTypeSize = "";
                     shipmentView.Packages.Add(new_package);
                     return View(shipmentView);
                 }

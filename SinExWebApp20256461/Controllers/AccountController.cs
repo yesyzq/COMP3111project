@@ -139,49 +139,6 @@ namespace SinExWebApp20256461.Controllers
             }
         }
 
-        private bool ValidateCard(string cardNumber, string cardType)
-        {
-            bool isValid = false;
-            var prefix2 = cardNumber.Substring(0, 2);
-            switch (cardType)
-            {
-                case "American Express":
-                    if((prefix2 == "37" || prefix2 == "34") && cardNumber.Length == 15)
-                        isValid = true;
-                    break;
-                case "Diners Club":
-                    string[] prefixValid = { "300", "301", "302", "303", "304", "305", "309" };
-                    if ((prefix2 == "55" || prefix2 == "54") && cardNumber.Length == 16)
-                        isValid = true;
-                    else if ((prefix2 == "38" || prefix2 == "39" || prefix2 == "36") && cardNumber.Length == 14)
-                        isValid = true;
-                    else if(prefixValid.Contains(cardNumber.Substring(0, 3)) && cardNumber.Length == 14)
-                        isValid = true;
-                    break;
-                case "Discover":
-                    if (cardNumber[0] == '6' && (cardNumber.Length == 16 || cardNumber.Length == 19))
-                        isValid = true;
-                    break;
-                case "MasterCard":
-                    // 2221 - 2720
-                    string[] prefix = { "51", "52", "53", "54", "55" };
-                    var prefix4 = Int32.Parse(cardNumber.Substring(0, 4));
-                    if ((prefix4 >= 2221 && prefix4 <= 2720 || prefix.Contains(prefix2)) && cardNumber.Length == 16)
-                        isValid = true;
-                    break;
-                case "UnionPay":
-                    if (prefix2 == "62")
-                        isValid = true;
-                    break;
-                case "Visa":
-                    int[] validLength = { 13, 16, 19 };
-                    if (cardNumber[0] == '4' && validLength.Contains(cardNumber.Length))
-                        isValid = true;
-                    break;
-            }
-            return isValid;
-        }
-
         // GET: /Account/Register
         [AllowAnonymous]
         public ActionResult Register(string accountType, int? error)

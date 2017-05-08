@@ -87,6 +87,11 @@ namespace SinExWebApp20256461.Controllers
         public ActionResult Edit([Bind(Include = "ShippingAccountNumber, UserName, ShippingAccountID,BuildingInformation,StreetInformation,City,ProvinceCode,PostalCode,CardType,CardNumber,SecurityNumber,CardHolderName,Month,Year,PhoneNumber,EmailAddress,ContactPersonName,CompanyName,DepartmentName")] BusinessShippingAccount businessShippingAccount)
         {
             ViewBag.Cities = db.Destinations.Select(a => a.City).Distinct().ToList();
+            if (!ValidateCard(businessShippingAccount.CardNumber, businessShippingAccount.CardType))
+            {
+                ViewBag.errorMessage = "the card number does not match the card type";
+                return View(businessShippingAccount);
+            }
             if (ModelState.IsValid)
             {
                 db.Entry(businessShippingAccount).State = EntityState.Modified;

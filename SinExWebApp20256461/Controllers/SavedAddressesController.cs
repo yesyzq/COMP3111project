@@ -163,6 +163,13 @@ namespace SinExWebApp20256461.Controllers
 
             if (ModelState.IsValid)
             {
+                // var savedAddressDB = db.SavedAddresses.Find(savedAddress.SavedAddressID);
+                bool exist_nickname = db.SavedAddresses.Any(s => s.NickName == savedAddress.NickName && s.SavedAddressID != savedAddress.SavedAddressID);
+                if(exist_nickname)
+                {
+                    ViewBag.errorMessage = "the nickname already exists in the database";
+                    return View(savedAddress);
+                }
                 db.Entry(savedAddress).State = EntityState.Modified;
                 try
                 {

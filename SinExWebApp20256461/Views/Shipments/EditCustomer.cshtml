@@ -99,6 +99,7 @@
                     @Html.DropDownListFor(model => model.Packages[i].Currency, new SelectList(ViewBag.PackageCurrency), new { @class = "form-control", @value = Model.Packages[i].Currency })
                 </div>
             </div>
+            <p class="col-md-offset-2" style="color: dodgerblue">Input 0 if your package type is "Envelope"</p>
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].WeightEstimated, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">

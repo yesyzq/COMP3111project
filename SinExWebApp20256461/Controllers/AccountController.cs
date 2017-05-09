@@ -154,6 +154,10 @@ namespace SinExWebApp20256461.Controllers
             {
                 ViewBag.errorMessage = "City and Province must match";
             }
+            else if (error == 3)
+            {
+                ViewBag.errorMessage = "Credit card expire date error";
+            }
             return View(new RegisterCustomerViewModel());
         }
 
@@ -173,6 +177,11 @@ namespace SinExWebApp20256461.Controllers
                     {
                         return RedirectToAction("Register", "Account", new { accountType = "Personal", error = 1 });
                     }
+                    DateTime expireDate = new DateTime(int.Parse(model.PersonalInformation.Year), int.Parse(model.PersonalInformation.Month), 1);
+                    if (!isTodayOrLater(expireDate))
+                    {
+                        return RedirectToAction("Register", "Account", new { accountType = "Personal", error = 3 });
+                    }
                 }
                 else // AccountType = "Business"
                 {
@@ -180,6 +189,11 @@ namespace SinExWebApp20256461.Controllers
                     if (!ValidateCard(model.BusinessInformation.CardNumber, model.BusinessInformation.CardType))
                     {
                         return RedirectToAction("Register", "Account", new { accountType = "Business", error = 1 });
+                    }
+                    DateTime expireDate = new DateTime(int.Parse(model.BusinessInformation.Year), int.Parse(model.BusinessInformation.Month), 1);
+                    if (!isTodayOrLater(expireDate))
+                    {
+                        return RedirectToAction("Register", "Account", new { accountType = "Business", error = 3 });
                     }
                 }
                 var user = new ApplicationUser { UserName = model.LoginInformation.UserName, Email = model.LoginInformation.Email };
@@ -284,7 +298,7 @@ namespace SinExWebApp20256461.Controllers
                             catch (Exception e)
                             {
                                 ViewBag.errorMessage = e;
-                                return View();
+                                //return View();
                             }
                         }
                         catch (DbEntityValidationException e)

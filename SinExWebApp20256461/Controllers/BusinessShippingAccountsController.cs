@@ -92,6 +92,12 @@ namespace SinExWebApp20256461.Controllers
                 ViewBag.errorMessage = "the card number does not match the card type";
                 return View(businessShippingAccount);
             }
+            DateTime expireDate = new DateTime(int.Parse(businessShippingAccount.Year), int.Parse(businessShippingAccount.Month), 1);
+            if (!isTodayOrLater(expireDate))
+            {
+                ViewBag.errorMessage = "expire date error";
+                return View(businessShippingAccount);
+            }
             if (ModelState.IsValid)
             {
                 db.Entry(businessShippingAccount).State = EntityState.Modified;

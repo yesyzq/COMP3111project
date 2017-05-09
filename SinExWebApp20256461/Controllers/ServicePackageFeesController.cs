@@ -200,10 +200,10 @@ namespace SinExWebApp20256461.Controllers
                         //    ViewBag.msg = "Please input valid weight";
                         //    return View(CostViewModel);
                         //}
-                        if (Weights[i] <= 0 || Weights[i] > (decimal)5792000000000000000000000.0)
+                        if (Weights[i] < 0 || Weights[i] > 99999)
                         {
                             ViewBag.status = "Add Packages";
-                            ViewBag.msg = "Please weight can't be smaller or equal to 1, or larger than the weight of the earth ";
+                            ViewBag.msg = "Weight can't be smaller than 0, or larger than 99999";
                             return View(CostViewModel);
                         }
                     }

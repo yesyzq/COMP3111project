@@ -98,11 +98,15 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.Weights, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.EditorFor(model => model.Weights[i], new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Weights[i], "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.Weights[i], new { htmlAttributes = new { @class = "form-control", @maxlength = "10" } })
+                        @Html.ValidationMessageFor(model => model.Weights[i], "", new { @class = "text-danger" })   
+                        <div class="col-md-10">
+                            <span class="field-validation-error text-danger">@ViewBag.msg</span>
+                        </div>
                     </div>
-                </div>
+                    </div>
             }
+           
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <input type="submit" name="submit" value="Calculate" class="btn btn-default" />
@@ -180,7 +184,8 @@
              </tr>
          </table>
     }
-    @ViewBag.msg
+   
+
 </div>
 
 @section Scripts {

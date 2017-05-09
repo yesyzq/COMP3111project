@@ -270,6 +270,12 @@
                 <p class="col-md-offset-2">Please provide Shipping Account Number of the recipient.</p>
             </div>
         </div>
+
+        @if (@ViewBag.errorMessage != null)
+        {
+            <p class="col-md-offset-2" style="color: indianred">* @ViewBag.errorMessage</p>
+        }
+
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Create" class="btn btn-default" />

@@ -106,7 +106,7 @@ namespace SinExWebApp20256461.Controllers
             }
 
             /*Empty entry exception */
-            if (savedAddressViewModel.SavedAddress.PickupLocation == null)
+            if (savedAddressViewModel.SavedAddress.PickupLocation == null && savedAddressViewModel.SavedAddress.Type=="pickup")
             {
                 ViewBag.errorMessage2 = "Please enter a pickup location";
                 return View(savedAddressViewModel);

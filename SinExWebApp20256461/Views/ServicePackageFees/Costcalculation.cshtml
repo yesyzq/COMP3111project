@@ -13,6 +13,17 @@
             @Html.AntiForgeryToken()
 
             <div class="form-horizontal">
+
+                <div class="panel panel-success" style="display:inline-block">
+                    <div class="panel-heading" align="center">
+                        SYSTEM REQUIREMENTS 4.Package types, service types and fees
+                    </div>
+                    
+                    <h5 align="center">Anyone who visits the SinEx website should be able to determine the cost for a shipment by providing the
+shipment details (i.e., origin, destination, service type, package type(s) and weight(s)) and should be able
+to display the package costs and the total shipment cost in any of the preceding currencies.</h5>
+                </div>
+
                 <hr />
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 <div class="form-group">

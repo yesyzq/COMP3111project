@@ -3,6 +3,17 @@
     ViewBag.Title = "Tracking";
 }
 <h2>Tracking Shipment</h2>
+
+
+<div class="panel panel-success" style="display:inline-block">
+    <div class="panel-heading" align="center">
+        SYSTEM REQUIREMENTS 7.Customer support tools
+    </div class="panel-body">
+    <h5 align="center"> (a) Shipment tracking</h5>
+    <h5 align="center"> It should be possible for anyone to track a shipment by providing the shipment waybill number.</h5>
+</div>
+
+
 @using (Html.BeginForm("GetTracking", "Trackings", FormMethod.Get))
 {
     <div class="form-horizontal">

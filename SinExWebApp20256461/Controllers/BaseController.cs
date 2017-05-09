@@ -128,5 +128,18 @@ namespace SinExWebApp20256461.Controllers
             }
             return false;
         }
+
+        public bool isTodayOrLater(DateTime expireDate)
+        {
+            DateTime today = DateTime.Now.Date;
+            if(expireDate < today)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
     }
 }

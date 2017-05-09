@@ -166,7 +166,7 @@ namespace SinExWebApp20256461.Controllers
             // Instantiate an instance of the ShipmentsReportViewModel and the ShipmentsSearchViewModel.
             var invoiceSearch = new InvoicesReportViewModel();
             invoiceSearch.Invoice = new InvoicesSearchViewModel();
-            int pageSize = 5;
+            int pageSize = 100;
             int pageNumber = (page ?? 1);
 
             // Populate the ShippingAccountNumber dropdown list.
@@ -211,8 +211,10 @@ namespace SinExWebApp20256461.Controllers
             else //if (User.IsInRole("Customer"))
             {
                 string userName = System.Web.HttpContext.Current.User.Identity.Name;
+                var shippingAccountNumber = db.ShippingAccounts.FirstOrDefault(a => a.UserName == userName).ShippingAccountNumber;
+
                 invoiceQuery = from s in db.Invoices
-                               where s.Shipment.ShippingAccount.UserName == userName && valid_statuses.Contains(s.Shipment.Status)
+                               where s.ShippingAccountNumber == shippingAccountNumber && valid_statuses.Contains(s.Shipment.Status)
                                select new InvoicesListViewModel
                                {
                                    WaybillNumber = db.Shipments.FirstOrDefault(a => a.WaybillId == s.WaybillId).WaybillNumber,
@@ -1164,8 +1166,8 @@ namespace SinExWebApp20256461.Controllers
                     shipment.IfSendEmailRecipient = false;
 
                 /* Update Invoice */
-                var _invoice1 = shipmentDB.Invoices.SingleOrDefault(c => c.Type == "shipment");
-                var _invoice2 = shipmentDB.Invoices.SingleOrDefault(c => c.Type == "tax_duty");
+                var _invoice1 = shipmentDB.Invoices.FirstOrDefault(c => c.Type == "shipment");
+                var _invoice2 = shipmentDB.Invoices.FirstOrDefault(c => c.Type == "tax_duty");
                 var a = shipmentDB.ShippingAccount.ShippingAccountNumber;
                 if (ShipmentPayer == "Recipient" && string.IsNullOrWhiteSpace(shipmentView.RecipientShippingAccountNumber))
                     _invoice1.ShippingAccountNumber = shipmentView.RecipientShippingAccountNumber;
@@ -1315,9 +1317,17 @@ namespace SinExWebApp20256461.Controllers
                 ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(m => m.size).Distinct().ToList();
 
                 var shipmentDB = db.Shipments.Find(id);
+
+                var shippingAccountId = shipmentDB.ShippingAccountId;
+
                 var shippingAccount = (from s in db.ShippingAccounts
-                                       where s.UserName == User.Identity.Name
+                                       where s.ShippingAccountId == shippingAccountId
                                        select s).First();
+
+                //var shippingAccount = (from s in db.ShippingAccounts
+                //                       where s.UserName == User.Identity.Name
+                //                       select s).First();
+
                 var shipmentInvoices = shipmentDB.Invoices;
                 string payerRecipient = "";
                 if (!string.IsNullOrWhiteSpace(shipmentInvoices.ToList()[0].ShippingAccountNumber))
@@ -1331,7 +1341,7 @@ namespace SinExWebApp20256461.Controllers
                 {
                     if (shipmentInvoices.ToList()[1].ShippingAccountNumber != shippingAccount.ShippingAccountNumber)
                     {
-                        payerRecipient = shipmentInvoices.ToList()[0].ShippingAccountNumber;
+                        payerRecipient = shipmentInvoices.ToList()[1].ShippingAccountNumber;
                     }
                 }
                 if (payerRecipient != "")

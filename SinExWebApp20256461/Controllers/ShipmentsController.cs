@@ -211,8 +211,10 @@ namespace SinExWebApp20256461.Controllers
             else //if (User.IsInRole("Customer"))
             {
                 string userName = System.Web.HttpContext.Current.User.Identity.Name;
+                var shippingAccountNumber = db.ShippingAccounts.FirstOrDefault(a => a.UserName == userName).ShippingAccountNumber;
+
                 invoiceQuery = from s in db.Invoices
-                               where s.Shipment.ShippingAccount.UserName == userName && valid_statuses.Contains(s.Shipment.Status)
+                               where s.ShippingAccountNumber == shippingAccountNumber && valid_statuses.Contains(s.Shipment.Status)
                                select new InvoicesListViewModel
                                {
                                    WaybillNumber = db.Shipments.FirstOrDefault(a => a.WaybillId == s.WaybillId).WaybillNumber,

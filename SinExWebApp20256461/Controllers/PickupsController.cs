@@ -123,7 +123,7 @@ namespace SinExWebApp20256461.Controllers
         {
             
             DateTime endDate = DateTime.Now.AddDays(5);
-            if (pickupView.Pickup.Date > endDate || pickupView.Pickup.Date < DateTime.Now)
+            if (pickupView.Pickup.Date > endDate || pickupView.Pickup.Date < DateTime.Today)
             {
                 return RedirectToAction("Create", "Pickups", new { waybillId = pickupView.WaybillId, validDate = "false"});
             }

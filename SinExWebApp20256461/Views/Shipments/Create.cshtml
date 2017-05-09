@@ -100,13 +100,15 @@
                       @Html.DropDownListFor(model => model.Packages[i].Currency, new SelectList(ViewBag.PackageCurrency), new { @class = "form-control" })
                  </div>
             </div>
-            <p class="col-md-offset-2" style="color: dodgerblue">Input 0 if your package type is "Envelope"</p>
+            <p class="col-md-offset-2" style="color: red;font-weight:400">Note: Input 0 if your package type is "Envelope"</p>
             <div class="form-group">
                 @Html.LabelFor(model => model.Packages[i].WeightEstimated, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.EditorFor(model => model.Packages[i].WeightEstimated, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.Packages[i].WeightEstimated, "", new { @class = "text-danger" })
                 </div>
+           
+
             </div>
         }
         <div class="form-group">

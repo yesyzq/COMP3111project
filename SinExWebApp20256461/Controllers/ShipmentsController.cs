@@ -883,7 +883,7 @@ namespace SinExWebApp20256461.Controllers
             ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(a => a.size).Distinct().ToList();
             ViewBag.PackageCurrency = db.Currencies.Select(a => a.CurrencyCode).Distinct().ToList();
             ViewBag.Cities = db.Destinations.Select(a => a.City).Distinct().ToList();
-            ViewBag.SavedAddresses = db.SavedAddresses.Where(a => a.ShippingAccountId == shippingAccount.ShippingAccountId).Select(a => a.NickName).ToList();
+            ViewBag.SavedAddresses = db.SavedAddresses.Where(a => a.ShippingAccountId == shippingAccount.ShippingAccountId && a.Type == "pickup").Select(a => a.NickName).ToList();
             ViewBag.Origin = shippingAccount.City;
             shipmentView.Packages = new List<Package>();
             var new_package = new Package();
@@ -906,7 +906,7 @@ namespace SinExWebApp20256461.Controllers
             ViewBag.ServiceTypes = db.ServiceTypes.Select(a => a.Type).Distinct().ToList();
             ViewBag.PackageTypeSizes = db.PakageTypeSizes.Select(a => a.size).Distinct().ToList();
             ViewBag.PackageCurrency = db.Currencies.Select(a => a.CurrencyCode).Distinct().ToList();
-            ViewBag.SavedAddresses = db.SavedAddresses.Where(a => a.ShippingAccountId == shippingAccount.ShippingAccountId).Select(a => a.NickName).ToList();
+            ViewBag.SavedAddresses = db.SavedAddresses.Where(a => a.ShippingAccountId == shippingAccount.ShippingAccountId && a.Type == "pickup").Select(a => a.NickName).ToList();
             /* add packages */
             if (submit == "add")
             {
@@ -926,6 +926,17 @@ namespace SinExWebApp20256461.Controllers
                 }
                 return View(shipmentView);
             }
+
+            /* saved recipient address */
+            var address = db.SavedAddresses.FirstOrDefault(s => s.NickName == shipmentView.Nickname);
+
+            if (address == null && shipmentView.IsSavedRecipient == "saved_address")
+            {
+                ViewBag.errorMessage = "No saved address is selected!";
+                // ModelState.AddModelError("recipientPayer", "recipient not found");
+                return View(shipmentView);
+            }
+
             // if (ModelState.IsValid)
             // {
                 if (shipmentView.ShipmentPayer == "Recipient" || shipmentView.TaxPayer == "Recipient")
@@ -959,11 +970,8 @@ namespace SinExWebApp20256461.Controllers
                     db.Packages.Add(shipmentView.Packages[i]);
                 }
                 shipment.NumberOfPackages = shipmentView.Packages.Count;
-                /* saved recipient address */
-                var address = (from s in db.SavedAddresses
-                               where s.NickName == shipmentView.Nickname
-                               select s).FirstOrDefault();
-                if (shipmentView.IsSavedRecipient == "saved_address")
+
+                if (address != null && shipmentView.IsSavedRecipient == "saved_address")
                 {
                     shipment.Recipient.Building = address.Building;
                     shipment.Recipient.City = address.City;

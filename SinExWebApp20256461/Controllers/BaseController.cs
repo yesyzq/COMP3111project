@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using SinExWebApp20256461.Models;
+using SinExWebApp20256461.ViewModels;
 
 namespace SinExWebApp20256461.Controllers
 {
@@ -140,6 +141,110 @@ namespace SinExWebApp20256461.Controllers
             {
                 return true;
             }
+        }
+        public decimal getConvertedCost(double rate, decimal value)
+        {
+            decimal decimalExchangeRate = decimal.Parse(rate.ToString());
+            decimal result = decimalExchangeRate * value;
+            return result;
+        }
+
+        public bool validateProvinceCode(string code)
+        {
+            string[] validCodes = { "BJ", "JL", "HN", "SC", "CQ", "JX",
+                "QH", "GD", "GZ", "HI", "NM", "ZJ", "HL", "AH", "NM", "HK",
+                "NM", "SD", "XJ", "YN", "GS", "XZ", "MC", "JX", "JS", "JX",
+                "HL", "SH", "LN", "HE", "TW", "SX", "HE", "XJ", "HB", "SN",
+                "QH", "NX", "GS", "HA" };
+            if (validCodes.Contains(code))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public IQueryable sortByParam(string sortOrder, IQueryable<ShipmentsListViewModel> shipmentQuery)
+        {
+            switch (sortOrder)
+            {
+                case "ServiceType":
+                    shipmentQuery = shipmentQuery.OrderBy(s => s.ServiceType);
+                    break;
+                case "ShippedDate":
+                    shipmentQuery = shipmentQuery.OrderBy(s => s.ShippedDate);
+                    break;
+                case "DeliveredDate":
+                    shipmentQuery = shipmentQuery.OrderBy(s => s.DeliveredDate);
+                    break;
+                case "RecipientName":
+                    shipmentQuery = shipmentQuery.OrderBy(s => s.RecipientName);
+                    break;
+                case "Origin":
+                    shipmentQuery = shipmentQuery.OrderBy(s => s.Origin);
+                    break;
+                case "Destination":
+                    shipmentQuery = shipmentQuery.OrderBy(s => s.Destination);
+                    break;
+                case "ServiceType_desc":
+                    shipmentQuery = shipmentQuery.OrderByDescending(s => s.ServiceType);
+                    break;
+                case "ShippedDate_desc":
+                    shipmentQuery = shipmentQuery.OrderByDescending(s => s.ShippedDate);
+                    break;
+                case "DeliveredDate_desc":
+                    shipmentQuery = shipmentQuery.OrderByDescending(s => s.DeliveredDate);
+                    break;
+                case "RecipientName_desc":
+                    shipmentQuery = shipmentQuery.OrderByDescending(s => s.RecipientName);
+                    break;
+                case "Origin_desc":
+                    shipmentQuery = shipmentQuery.OrderByDescending(s => s.Origin);
+                    break;
+                case "Destination_desc":
+                    shipmentQuery = shipmentQuery.OrderByDescending(s => s.Destination);
+                    break;
+                default:
+                    shipmentQuery = shipmentQuery.OrderBy(s => s.WaybillNumber);
+                    break;
+            }
+            return shipmentQuery;
+        }
+        public ActionResult CheckRecipient(CreateShipmentViewModel shipmentView = null)
+        {
+            if (shipmentView.ShipmentPayer == "Recipient" || shipmentView.TaxPayer == "Recipient")
+            {
+                if (string.IsNullOrWhiteSpace(shipmentView.RecipientShippingAccountNumber))
+                {
+                    ViewBag.errorMessage = "Recipient's Shipping Account Number is required once selected as payer";
+                    return View(shipmentView);
+                }
+            }
+            return RedirectToAction("Index");
+        }
+        public ActionResult ManagePackage(string submit, CreateShipmentViewModel shipmentView = null)
+        {
+            /* add packages */
+            if (submit == "add")
+            {
+                if (shipmentView.Packages.Count < 10)
+                {
+                    var new_package = new Package();
+                    shipmentView.Packages.Add(new_package);
+                }
+                return View(shipmentView);
+            }
+            else if (submit != null)
+            {
+                if (shipmentView.Packages.Count > 1)
+                {
+                    int id = Int32.Parse(submit.Split(' ')[1]) - 1;
+                    shipmentView.Packages.Remove(shipmentView.Packages[id]);
+                }
+                return View(shipmentView);
+            }
+            return RedirectToAction("Index");
         }
     }
 }

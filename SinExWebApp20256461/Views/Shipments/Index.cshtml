@@ -9,6 +9,18 @@
 @if (User.IsInRole("Customer"))
 {
     <p>@Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })</p>
+
+    <div class="panel panel-success" style="display:inline-block">
+        <div class="panel-heading" align="center">
+            SYSTEM REQUIREMENTS 5.Package shipping
+        </div>
+
+        <h5 align="center">
+            Customer: Arrange for package shipping
+        </h5>
+
+    </div>
+
 }
 
 @if (User.IsInRole("Employee"))
@@ -121,5 +133,20 @@
         </tr>
     }
 }
-
 </table>
+
+
+
+<div class="panel panel-primary" style="display:inline-block; float: right;">
+    <div class="panel-heading" align="center" style="opacity: 0.7;">
+        Tips: If you want to confirm the shipment waybill, please click "Edit" 
+    </div>
+
+    <h5 align="center">
+        Once you have checked the waybill info, click "Continue" at the Bottom of Edit Page
+    </h5>
+    <h5 align="center">
+        Status: pending --- confirmed --- picked_up --- invoice_sent --- delivered/lost/cancelled
+    </h5>
+
+</div>

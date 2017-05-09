@@ -36,8 +36,11 @@
     }
 
     <div style="color:#f44542"> @ViewBag.msg </div>
+    <hr />
+
 
 <h2>The Pickup Location  :</h2>
+<div style="color:#f44542"> @ViewBag.msg2 </div>
     <div class="btn-group" style="margin:5px 0 10px 0;">
         @Html.ActionLink("Same as your mailing address", "Create", new { waybillId = ViewBag.WaybillId, pickupType = Model.Pickup.Type, location = "Same" }, new { @class = "btn btn-success btn-large" })
         @Html.ActionLink("Different: Select from Saved Address", "Create", new { waybillId = ViewBag.WaybillId, pickupType = Model.Pickup.Type, location = "Diff" }, new { @class = "btn btn-warning btn-large" })
@@ -75,7 +78,17 @@
             </div>
 
 <br />
+    <hr />
 <div class="form-group">
     <button type="submit" name="submit" value="Confirm" class="btn btn-primary">Confirm</button>
 </div>
 }
+
+<div class="panel panel-primary" style="display:inline-block" >
+    <div class="panel-heading" align="center" style="opacity: 0.7;" >
+Tips: Click 'Confirm' to Confirm the shipment
+       </div>       
+    <h5 align="center">
+        pending<span style="color: red">----></span>  confirmed
+    </h5>
+</div>

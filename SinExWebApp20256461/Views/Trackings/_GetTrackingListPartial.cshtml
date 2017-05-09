@@ -33,7 +33,7 @@
                 </dd>
             }
             -->
-            <dt>Weight</dt>
+            <dt>Actual Weight</dt>
             @foreach (var package in Model.Shipment.Packages)
             {
                 <dd>
@@ -41,6 +41,18 @@
                 </dd>
             }
         </dl>
+
+        <div class="panel panel-primary" style="display:inline-block">
+            <div class="panel-heading" align="center" style="opacity: 0.7;">
+                Tips:
+            </div>
+            <h5 align="center">
+                If the package type is Envelope, 0 stands for N/A
+            </h5>
+        </div>
+
+
+
     </div>
     <div class="col-md-12">
         <table class="table">

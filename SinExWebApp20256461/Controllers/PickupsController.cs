@@ -54,7 +54,7 @@ namespace SinExWebApp20256461.Controllers
         }
 
         // GET: Pickups/Create
-        public ActionResult Create(int? waybillId, string pickupType, string location,string validDate, NewPickupViewModel pickupView = null)
+        public ActionResult Create(int? waybillId, string pickupType, string location,string validDate,string validLocation, NewPickupViewModel pickupView = null)
         {
             if(waybillId == null)
             {
@@ -76,7 +76,13 @@ namespace SinExWebApp20256461.Controllers
                 return View(pickupView);
             }
 
-   
+            if (validLocation == "false")
+            {
+                ViewBag.msg2 = "You need to choose or enter an address for pickup";
+                return View(pickupView);
+            }
+
+
             /* bind shipment */
             var shipment = db.Shipments.FirstOrDefault(s => s.WaybillId == waybillId);
             if (shipment == null)//protect the database access
@@ -121,7 +127,15 @@ namespace SinExWebApp20256461.Controllers
       //  [ValidateAntiForgeryToken]    
         public ActionResult Create(string submit, NewPickupViewModel pickupView)   //model binding
         {
-            
+
+
+            if (String.IsNullOrEmpty(pickupView.PickupLocationNickname) && String.IsNullOrEmpty(pickupView.Pickup.Location))
+            {
+                ViewBag.msg2 = "You need to enter an address";
+                return RedirectToAction("Create", "Pickups", new { waybillId = pickupView.WaybillId,validLocation ="false" });
+            }
+
+
             DateTime endDate = DateTime.Now.AddDays(5);
             if (pickupView.Pickup.Date > endDate || pickupView.Pickup.Date < DateTime.Today)
             {

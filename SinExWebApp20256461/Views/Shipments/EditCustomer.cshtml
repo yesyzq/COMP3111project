@@ -297,17 +297,30 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-2">
-                <input type="submit" name="submit" value="Save" class="btn btn-default" title ="Click 'Save' if you want to save this Shipment for later" />
+                <input type="submit" name="submit" value="Save" class="btn btn-primary" title ="Click 'Save' if you want to save this Shipment for later" />
             </div>
             <div class="col-md-8">
                 <input type="submit" name="submit" value="Continue" class="btn btn-default" title ="Click 'Continue' if you want to choose Pickup and confirm the shipment" />
             </div>
 
-            <h6>Click 'Save' if you want to save this Shipment for later</h6>
-            <h6>Click 'Continue' if you want to choose Pickup and confirm the shipment</h6>
+
+         
         </div>
     </div>
 }
+
+<div class="panel panel-primary" style="display:inline-block">
+    <div class="panel-heading" align="center" style="opacity: 0.7;" >
+        Tips: Click 'Save' to save this Shipment waybill for later
+    </div>
+
+    <h5 align="center">
+        Click 'Continue' to choose Pickup and Confirm the shipment
+    </h5>
+    <h5 align="center">
+        Status: <span style="color: red">pending</span> - confirmed
+    </h5>
+</div>
 
 <div>
     @Html.ActionLink("Back to List", "Index")

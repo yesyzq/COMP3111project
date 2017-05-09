@@ -6,6 +6,22 @@
 
 <h2>Create New Shipment</h2>
 
+<div class="panel panel-success" style="display:inline-block">
+    <div class="panel-heading" align="center">
+        SYSTEM REQUIREMENTS 5.Package shipping
+    </div>
+
+    <h5 align="center">
+        Customer: Arrange for package shipping
+    </h5>
+    <h5>
+      If the customer enter the data correctly and press the 'Create' Button, The Shipment will be created as "Pending"
+    </h5>
+
+</div>
+
+
+
 @using (Html.BeginForm()) 
 {
     @Html.AntiForgeryToken()
@@ -283,6 +299,18 @@
                 <input type="submit" value="Create" class="btn btn-default" />
             </div>
         </div>
+
+        <div class="panel panel-danger" style="display:inline-block">
+            <div class="panel-heading" align="center">
+                When you click "Create", this shipment waybill is created as 'pending':
+            </div>
+
+            <h5 align="center">
+                You can  modify  recipient, shipment or notification information at any time before it is confirmed.
+            </h5>
+        </div>
+
+
     </div>
 }
 
